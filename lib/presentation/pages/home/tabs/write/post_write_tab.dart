@@ -8,18 +8,16 @@ class PostWriteTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text("글 작성")),
-      body: Column(
-        children: const [
-          SizedBox(height: 20),
-          PostInputField(),
-          SizedBox(height: 16),
-          TagButton(),
-          Spacer(),
-          BottomBar(),
-        ],
-      ),
+    return Column(
+      children: [
+        AppBar(title: const Text("글 작성")),
+        SizedBox(height: 20),
+        PostInputField(),
+        SizedBox(height: 16),
+        TagButton(),
+        Spacer(),
+        BottomBar(),
+      ],
     );
   }
 }
