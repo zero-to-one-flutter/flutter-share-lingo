@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'widgets/post_input_field.dart';
-import 'widgets/tag_button.dart';
+import 'widgets/tag_row_button.dart';
 import 'widgets/bottom_bar.dart';
 
 class PostWriteTab extends StatelessWidget {
@@ -14,7 +14,7 @@ class PostWriteTab extends StatelessWidget {
         SizedBox(height: 20),
         PostInputField(),
         SizedBox(height: 16),
-        TagButton(),
+        TagRowButton(),
         Spacer(),
         BottomBar(),
       ],

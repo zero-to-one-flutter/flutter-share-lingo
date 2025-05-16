@@ -6,9 +6,12 @@ class PostInputField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 369,
+      width: double.infinity,
       height: 482,
-      decoration: const BoxDecoration(color: Color(0xFFEDEDED)),
+      decoration: const BoxDecoration(
+        color: Color(0xFFEDEDED),
+        borderRadius: BorderRadius.all(Radius.circular(12)),
+      ),
       child: const Center(
         child: Text(
           '텍스트 입력 필드',
