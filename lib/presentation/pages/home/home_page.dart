@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:share_lingo/presentation/pages/home/tabs/feed/feed_tab.dart';
+import 'package:share_lingo/presentation/pages/home/tabs/write/post_write_tab.dart';
 import 'package:share_lingo/presentation/pages/home/widgets/home_bottom_navigation_bar.dart';
 
 import 'home_view_model.dart';
@@ -19,7 +20,7 @@ class HomePage extends StatelessWidget {
             index: currentIndex,
             children: [
               FeedTab(),
-              FeedTab(),
+              PostWriteTab(),
               FeedTab(),
             ],
           );
