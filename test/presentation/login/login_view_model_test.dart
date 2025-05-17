@@ -39,6 +39,7 @@ void main() {
     listener = Listener<LoginState>();
     container.listen<LoginState>(
       loginViewModelProvider,
+      // ignore: implicit_call_tearoffs
       listener,
       fireImmediately: true,
     );
