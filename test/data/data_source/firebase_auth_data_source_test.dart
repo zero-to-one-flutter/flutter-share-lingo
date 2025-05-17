@@ -69,14 +69,14 @@ void main() {
 
     test('authStateChanges returns the auth state stream', () async {
       // Arrange
-      final mockStream = Stream<User?>.fromIterable([mockUser, null]);
-      when(() => mockFirebaseAuth.authStateChanges()).thenAnswer((_) => mockStream);
+      final testStream = Stream<User?>.fromIterable([mockUser, null]);
+      when(() => mockFirebaseAuth.authStateChanges()).thenAnswer((_) => testStream);
 
       // Act
       final result = firebaseAuthDataSource.authStateChanges();
 
       // Assert
-      expect(result, equals(mockStream));
+      expect(result, equals(testStream));
       verify(() => mockFirebaseAuth.authStateChanges()).called(1);
     });
   });
