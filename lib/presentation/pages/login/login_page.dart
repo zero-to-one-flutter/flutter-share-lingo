@@ -1,18 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:share_lingo/app/constants/app_constants.dart';
+import 'package:share_lingo/core/utils/navigation_util.dart';
+
+import '../../user_global_view_model.dart';
+import 'login_view_model.dart';
 
 class LoginPage extends ConsumerWidget {
   const LoginPage({super.key});
 
-  void _login() async {
-  }
+  void _login(WidgetRef ref, BuildContext context) async {
+    final loginState = ref.read(loginViewModelProvider);
+    if (loginState.isLoading) return;
 
+    final loginViewModel = ref.read(loginViewModelProvider.notifier);
+    final appUser = await loginViewModel.signIn();
+
+    if (appUser != null && appUser.id.isNotEmpty && context.mounted) {
+      ref.read(userGlobalViewModelProvider.notifier).setUser(appUser);
+      NavigationUtil.navigateBasedOnProfile(context, appUser);
+    }
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // final loginState = ref.watch(loginViewModelProvider);
-
+    final loginState = ref.watch(loginViewModelProvider);
     return Scaffold(
       backgroundColor: Color(0XFF3478F6),
       body: SafeArea(
@@ -21,16 +33,16 @@ class LoginPage extends ConsumerWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Image.asset(
-                'assets/icons/app_logo_rounded.png',
-                height: 120,
-              ),
+              Image.asset('assets/icons/app_logo_rounded.png', height: 120),
               const SizedBox(height: 10),
 
-              // 앱 이름 또는 환영 텍스트
               const Text(
                 AppConstants.appTitle,
-                style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: Colors.white),
+                style: TextStyle(
+                  fontSize: 32,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
               ),
               const SizedBox(height: 15),
 
@@ -41,12 +53,11 @@ class LoginPage extends ConsumerWidget {
               ),
               const SizedBox(height: 50),
 
-              // 구글 로그인 버튼
               Center(
                 child: SizedBox(
                   width: 250,
                   child: ElevatedButton(
-                    onPressed: _login,
+                    onPressed: () => _login(ref, context),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.white,
                       foregroundColor: Colors.black87,
@@ -62,7 +73,7 @@ class LoginPage extends ConsumerWidget {
                         Image.asset('assets/icons/google.png', height: 18),
                         const SizedBox(width: 16),
                         Text(
-                          false ? '로그인 중...' : '구글 계정으로 시작하기',
+                          loginState.isLoading ? '로그인 중...' : '구글 계정으로 시작하기',
                           style: const TextStyle(fontSize: 16),
                         ),
                       ],

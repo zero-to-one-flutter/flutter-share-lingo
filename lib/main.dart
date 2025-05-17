@@ -2,14 +2,18 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:share_lingo/presentation/pages/home/home_page.dart';
+import 'package:share_lingo/presentation/pages/splash/splash_page.dart';
 import 'app/constants/app_constants.dart';
 import 'app/theme.dart';
 import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  try {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+  } catch (_) {} // Firebase가 이미 초기화된 경우 무시
 
   await dotenv.load(fileName: '.env');
   runApp(const ProviderScope(child: MyApp()));
@@ -25,7 +29,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       themeMode: ThemeMode.light,
       theme: AppTheme.buildTheme(),
-      home: const HomePage(),
+      home: const SplashPage(),
     );
   }
 }
