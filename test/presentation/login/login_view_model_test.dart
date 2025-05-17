@@ -67,6 +67,7 @@ void main() {
           // Check the loading state during the async operation
           final loadingState = container.read(loginViewModelProvider);
           expect(loadingState.isLoading, isTrue);
+          return AppUser(id: 'test-id', name: 'Test User');
         });
 
         // Act
