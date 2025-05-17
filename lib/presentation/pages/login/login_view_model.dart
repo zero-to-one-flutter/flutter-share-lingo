@@ -1,6 +1,5 @@
-import 'dart:developer';
-
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:share_lingo/core/utils/logger.dart';
 
 import '../../../domain/entity/app_user.dart';
 import '../../../domain/usecase/sign_in_with_google_usecase.dart';
@@ -35,8 +34,8 @@ class LoginViewModel extends Notifier<LoginState> {
       }
       state = state.copyWith(isLoading: false);
       return user;
-    } catch (e) {
-      log(e.toString());
+    } catch (e, stack) {
+      logError(e, stack);
       state = state.copyWith(
         isLoading: false,
         errorMessage: "Login failed\n${e.toString()}",
