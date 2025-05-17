@@ -5,10 +5,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:share_lingo/presentation/pages/home/home_page.dart';
 import 'app/constants/app_constants.dart';
 import 'app/theme.dart';
+import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   await dotenv.load(fileName: '.env');
   runApp(const ProviderScope(child: MyApp()));
