@@ -1,0 +1,82 @@
+name: Flutter CI/CD
+
+on:
+  push:
+    branches: [ master, test-apk ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  test:
+    if: github.ref == 'refs/heads/master' || github.event_name == 'pull_request'
+    name: Run tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.29.2'
+          channel: 'stable'
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Create empty .env file
+        run: echo "" > .env
+
+      - name: Analyze project
+        run: flutter analyze
+
+      - name: Run tests
+        run: flutter test
+
+  build-apk:
+    if: github.ref == 'refs/heads/test-apk'
+    name: Build Release APK
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.29.2'
+          channel: 'stable'
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Create empty .env file
+        run: echo "" > .env
+
+      - name: Decode google-services.json
+        run: |
+          echo "${{ secrets.FIREBASE_GOOGLE_SERVICES_JSON }}" | base64 --decode > android/app/google-services.json
+
+      - name: Decode GoogleService-Info.plist
+        run: |
+          mkdir -p ios/Runner
+          echo "${{ secrets.FIREBASE_GOOGLE_PLIST }}" | base64 --decode > ios/Runner/GoogleService-Info.plist
+
+      - name: Decode firebase_options.dart
+        run: |
+          mkdir -p lib
+          echo "${{ secrets.FIREBASE_DART_OPTIONS }}" | base64 --decode > lib/firebase_options.dart
+
+
+      - name: Analyze project
+        run: flutter analyze
+
+      - name: Run tests
+        run: flutter test
+
+      - name: Build APK
+        run: flutter build apk --release
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-release
+          path: build/app/outputs/flutter-apk/app-release.apk
