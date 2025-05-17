@@ -14,11 +14,10 @@ class LoginPage extends ConsumerWidget {
     if (loginState.isLoading) return;
 
     final loginViewModel = ref.read(loginViewModelProvider.notifier);
-    await loginViewModel.signIn();
-
-    final appUser = ref.read(userGlobalViewModelProvider);
+    final appUser = await loginViewModel.signIn();
 
     if (appUser != null && appUser.id.isNotEmpty && context.mounted) {
+      ref.read(userGlobalViewModelProvider.notifier).setUser(appUser);
       NavigationUtil.navigateBasedOnProfile(context, appUser);
     }
   }
