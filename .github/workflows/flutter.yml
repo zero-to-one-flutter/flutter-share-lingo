@@ -2,12 +2,14 @@ name: Flutter CI/CD
 
 on:
   push:
-    branches: [ master ]
+    branches: [ master, test-apk ]
   pull_request:
     branches: [ master ]
 
 jobs:
-  build:
+  test:
+    if: github.ref == 'refs/heads/master' || github.event_name == 'pull_request'
+    name: Run tests
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -25,6 +27,31 @@ jobs:
         run: |
           echo "" > .env
 
+      - name: Analyze project
+        run: flutter analyze
+
+      - name: Run tests
+        run: flutter test
+
+  build-apk:
+    if: github.ref == 'refs/heads/test-apk'
+    name: Build Release APK
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.29.2'
+          channel: 'stable'
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Create .env file
+        run: |
+          echo "" > .env
 
       - name: Analyze project
         run: flutter analyze
