@@ -11,6 +11,8 @@ import '../../data/repository/auth_repository_impl.dart';
 import '../../data/repository/post_repository_impl.dart';
 import '../../domain/repository/auth_repository.dart';
 import '../../domain/repository/post_repository.dart';
+import '../../domain/repository/user_repository.dart';
+import '../../data/repository/user_repository_impl.dart';
 
 final postRepositoryProvider = Provider<PostRepository>((ref) {
   final dataSource = ref.watch(postDataSourceProvider);
@@ -43,4 +45,8 @@ final authRepositoryProvider = Provider<AuthRepository>(
 
 final authStateChangesProvider = StreamProvider<String?>(
       (ref) => ref.watch(authRepositoryProvider).authStateChanges(),
+);
+
+final userRepositoryProvider = Provider<UserRepository>(
+      (ref) => UserRepositoryImpl(ref.watch(userFirestoreDataSourceProvider)),
 );
