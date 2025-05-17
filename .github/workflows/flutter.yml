@@ -26,6 +26,20 @@ jobs:
       - name: Create empty .env file
         run: echo "" > .env
 
+      - name: Decode google-services.json
+        run: |
+          echo "${{ secrets.FIREBASE_GOOGLE_SERVICES_JSON }}" | base64 --decode > android/app/google-services.json
+
+      - name: Decode GoogleService-Info.plist
+        run: |
+          mkdir -p ios/Runner
+          echo "${{ secrets.FIREBASE_GOOGLE_PLIST }}" | base64 --decode > ios/Runner/GoogleService-Info.plist
+
+      - name: Decode firebase_options.dart
+        run: |
+          mkdir -p lib
+          echo "${{ secrets.FIREBASE_DART_OPTIONS }}" | base64 --decode > lib/firebase_options.dart
+
       - name: Analyze project
         run: flutter analyze
 
