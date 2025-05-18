@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class AppUser {
   final String id;
   final String name;
@@ -10,6 +12,8 @@ class AppUser {
   final DateTime? birthdate;
   final String? partnerPreference;
   final String? languageLearningGoal;
+  final String? district;
+  final GeoPoint? location;
 
   AppUser({
     required this.id,
@@ -23,6 +27,8 @@ class AppUser {
     this.birthdate,
     this.partnerPreference,
     this.languageLearningGoal,
+    this.district,
+    this.location,
   }) : createdAt = createdAt ?? DateTime.now();
 
   int? get age {
@@ -47,6 +53,8 @@ class AppUser {
     DateTime? birthdate,
     String? partnerPreference,
     String? languageLearningGoal,
+    String? district,
+    GeoPoint? location,
   }) {
     return AppUser(
       id: id,
@@ -60,6 +68,8 @@ class AppUser {
       birthdate: birthdate ?? this.birthdate,
       partnerPreference: partnerPreference ?? this.partnerPreference,
       languageLearningGoal: languageLearningGoal ?? this.languageLearningGoal,
+      district: district ?? this.district,
+      location: location ?? this.location,
     );
   }
 }
