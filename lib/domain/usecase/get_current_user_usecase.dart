@@ -15,5 +15,5 @@ class GetUserByIdUseCase {
 }
 
 final getUserByIdUseCaseProvider = Provider<GetUserByIdUseCase>(
-      (ref) => GetUserByIdUseCase(ref.watch(userRepositoryProvider)),
+      (ref) => GetUserByIdUseCase(ref.read(userRepositoryProvider)),
 );
