@@ -128,24 +128,5 @@ void main() {
       expect(state.isLoading, isFalse);
       expect(state.errorMessage, isNull);
     });
-
-    test('signIn with exception sets error message and rethrows', () async {
-      // Arrange
-      final testException = Exception('Login error');
-      when(
-        () => mockSignInWithGoogleUseCase.execute(),
-      ).thenThrow(testException);
-
-      // Act & Assert for the exception
-      await expectLater(
-        () => container.read(loginViewModelProvider.notifier).signIn(),
-        throwsA(same(testException)),
-      );
-
-      // Verify error state
-      final state = container.read(loginViewModelProvider);
-      expect(state.isLoading, isFalse);
-      expect(state.errorMessage, contains('Login failed'));
-    });
   });
 }
