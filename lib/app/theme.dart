@@ -24,6 +24,7 @@ abstract class AppTheme {
         backgroundColor: Colors.transparent,
         systemOverlayStyle: SystemUiOverlayStyle.dark,
         centerTitle: true,
+        // titleSpacing: 25,
         titleTextStyle: TextStyle(
           fontSize: 20,
           color: Colors.black87,
