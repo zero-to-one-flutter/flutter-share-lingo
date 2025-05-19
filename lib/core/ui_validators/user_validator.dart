@@ -15,4 +15,10 @@ class UserValidator {
     if (age < 18) return '만 18세 이상만 가입할 수 있어요';
     return null;
   }
+
+  static String? validateBio(String? bio) {
+    if (bio == null || bio.trim().isEmpty) return '자기소개를 입력해 주세요';
+    if (bio.trim().length < 15) return '15글자 이상 입력해야 해요';
+    return null;
+  }
 }
