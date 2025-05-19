@@ -33,8 +33,9 @@ class OnboardingPage extends ConsumerWidget {
                   itemCount: OnboardingViewModel.totalPages,
                   itemBuilder: (context, index) {
                     return switch (index) {
-                      0 => InputNameTab(ref.read(userGlobalViewModelProvider)!),
-                      _ => InputNameTab(ref.read(userGlobalViewModelProvider)!),
+                      0 => InputNameDateTab(ref.read(userGlobalViewModelProvider)!),
+                      1 => InputNameDateTab(ref.read(userGlobalViewModelProvider)!),
+                      _ => InputNameDateTab(ref.read(userGlobalViewModelProvider)!),
                     };
                   },
                 ),

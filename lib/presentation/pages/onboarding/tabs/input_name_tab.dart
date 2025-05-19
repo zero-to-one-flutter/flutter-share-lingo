@@ -1,45 +1,57 @@
-// first_name_page.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:share_lingo/app/constants/app_colors.dart';
+import 'package:share_lingo/core/utils/ui_util.dart';
 import 'package:share_lingo/presentation/pages/onboarding/onboarding_view_model.dart';
+import 'package:share_lingo/presentation/pages/onboarding/widgets/onboarding_input_decoration.dart';
+import 'package:share_lingo/presentation/pages/onboarding/widgets/subtitle_text.dart';
+import 'package:share_lingo/presentation/pages/onboarding/widgets/title_section.dart';
 import 'package:share_lingo/presentation/user_global_view_model.dart';
 
 import '../../../../domain/entity/app_user.dart';
 
-class InputNameTab extends ConsumerStatefulWidget {
+class InputNameDateTab extends ConsumerStatefulWidget {
   final AppUser user;
 
-  const InputNameTab(this.user, {super.key});
+  const InputNameDateTab(this.user, {super.key});
 
   @override
-  ConsumerState<InputNameTab> createState() => _InputNameTabState();
+  ConsumerState<InputNameDateTab> createState() => _InputNameTabState();
 }
 
-class _InputNameTabState extends ConsumerState<InputNameTab> {
+class _InputNameTabState extends ConsumerState<InputNameDateTab> {
   final _formKey = GlobalKey<FormState>();
   late final TextEditingController _nameController;
+  late final TextEditingController _birthdateController;
+  DateTime? birthdate;
 
   @override
   void initState() {
     super.initState();
     _nameController = TextEditingController(text: widget.user.name);
+    _birthdateController = TextEditingController();
   }
 
   @override
   void dispose() {
     _nameController.dispose();
+    _birthdateController.dispose();
     super.dispose();
   }
 
   void _onNextPressed() {
     if (_formKey.currentState?.validate() == true) {
-      final name = _nameController.text.trim();
       final userGlobalViewModel = ref.read(
         userGlobalViewModelProvider.notifier,
       );
-      userGlobalViewModel.setUser(widget.user.copyWith(name: name));
-      final onBoardingViewModel = ref.read(onboardingViewModelProvider.notifier);
+      userGlobalViewModel.setUser(
+        widget.user.copyWith(
+          name: _nameController.text.trim(),
+          birthdate: birthdate,
+        ),
+      );
+      final onBoardingViewModel = ref.read(
+        onboardingViewModelProvider.notifier,
+      );
       onBoardingViewModel.nextPage();
     }
   }
@@ -49,74 +61,69 @@ class _InputNameTabState extends ConsumerState<InputNameTab> {
     return SafeArea(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(height: 20),
-            _Title(),
-            SizedBox(height: 28),
-            Padding(
-              padding: EdgeInsets.only(left: 5, bottom: 7),
-              child: Text('이름'),
-            ),
-            _buildForm(),
-            Spacer(),
-            ElevatedButton(
-              onPressed: _onNextPressed,
-              child: const Text('다음으로'),
-            ),
-            SizedBox(height: 24),
-          ],
+        child: Form(
+          key: _formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(height: 20),
+              TitleSection(title: '이름과 생년월일을 입력해 주세요'),
+              SizedBox(height: 12),
+              TitleSubtitleText('정확한 정보를 입력해 주시면 더 맞춤화된 서비스를 제공할 수 있습니다.'),
+              SizedBox(height: 28),
+              Padding(
+                padding: EdgeInsets.only(left: 5, bottom: 7),
+                child: Text('이름'),
+              ),
+              _buildNameFormField(),
+              SizedBox(height: 20),
+              Padding(
+                padding: EdgeInsets.only(left: 5, bottom: 7),
+                child: Text('생년월일'),
+              ),
+              _buildDateInputField(),
+              Spacer(),
+              ElevatedButton(
+                onPressed: _onNextPressed,
+                child: const Text('다음으로'),
+              ),
+              SizedBox(height: 24),
+            ],
+          ),
         ),
       ),
     );
   }
 
-  Widget _buildForm() {
-    return Form(
-      key: _formKey,
-      child: TextFormField(
-        controller: _nameController,
-        decoration: InputDecoration(
-          hintText: '김민수',
-          hintStyle: const TextStyle(color: Colors.grey),
-          enabledBorder: _buildBorder(radius: 18, color: Colors.grey[300]!),
-          focusedBorder: _buildBorder(radius: 12, color: AppColors.buttonsBlue),
-          errorBorder: _buildBorder(radius: 12, color: Colors.red),
-          focusedErrorBorder: _buildBorder(radius: 12, color: Colors.red),
-        ),
-        validator: (value) {
-          if (value == null || value.isEmpty) return '이름을 입력해 주세요';
-          if (value.length < 2) return '2글자 이상 입력해야 해요';
-          return null;
-        },
-      ),
+  Widget _buildNameFormField() {
+    return TextFormField(
+      controller: _nameController,
+      decoration: onboardingInputDecoration('이름을 입력해 주세요'),
+      validator: (value) {
+        final vm = ref.read(onboardingViewModelProvider.notifier);
+        return vm.validateName(value);
+      },
     );
   }
 
-  OutlineInputBorder _buildBorder({
-    required double radius,
-    required Color color,
-  }) {
-    return OutlineInputBorder(
-      borderRadius: BorderRadius.circular(radius),
-      borderSide: BorderSide(color: color),
-    );
-  }
-}
-
-class _Title extends StatelessWidget {
-  const _Title();
-
-  @override
-  Widget build(BuildContext context) {
-    return const Text(
-      '이름이나 닉네임을 입력해 주세요',
-      style: TextStyle(
-        fontSize: 24,
-        fontWeight: FontWeight.w800,
-        color: Color(0xFF1E1E1E),
-      ),
+  Widget _buildDateInputField() {
+    return TextFormField(
+      controller: _birthdateController,
+      decoration: onboardingInputDecoration('생년월일을 선택하세요', isDate: true),
+      readOnly: true,
+      onTap: () async {
+        birthdate = await UiUtil.pickBirthdate(context: context);
+        if (birthdate != null) {
+          setState(() {
+            _birthdateController.text =
+                "${birthdate!.year}년 ${birthdate!.month}월 ${birthdate!.day}일";
+          });
+        }
+      },
+      validator: (value) {
+        final vm = ref.read(onboardingViewModelProvider.notifier);
+        return vm.validateBirthdate(birthdate);
+      },
     );
   }
 }
