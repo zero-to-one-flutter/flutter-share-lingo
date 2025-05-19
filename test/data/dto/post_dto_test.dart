@@ -8,7 +8,7 @@ void main() {
     final entity = PostEntity(
       uid: 'test123',
       content: '내용입니다',
-      imageUrl: '',
+      imageUrl: [],
       tags: ['kor'],
       createdAt: DateTime(2023, 1, 1),
       likeCount: 0,
@@ -33,7 +33,7 @@ void main() {
     final restoredDto = PostDto.fromMap({
       'uid': 'test123',
       'content': '내용입니다',
-      'imageUrl': '',
+      'imageUrl': [],
       'tags': ['kor'],
       'createdAt': Timestamp.fromDate(DateTime(2023, 1, 1)),
       'likeCount': 0,
