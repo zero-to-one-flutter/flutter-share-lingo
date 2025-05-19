@@ -6,14 +6,15 @@ import 'package:share_lingo/domain/usecase/create_post_usecase.dart';
 import 'package:share_lingo/presentation/pages/home/tabs/write/post_write_view_model.dart';
 
 import '../../mock/mock_post_repository.dart';
+import '../../mock/mock_upload_image_usecase.dart';
 
 void main() {
   late MockPostRepository mockRepository;
-  late CreatePostUseCase useCase;
+  late MockUploadImageUseCase mockUploadImageUseCase;
+  late CreatePostUseCase createPostUseCase;
   late PostWriteViewModel viewModel;
 
   setUpAll(() {
-    // ✅ PostEntity fallback 등록
     registerFallbackValue(
       PostEntity(
         uid: 'dummy',
@@ -30,8 +31,13 @@ void main() {
 
   setUp(() {
     mockRepository = MockPostRepository();
-    useCase = CreatePostUseCase(mockRepository);
-    viewModel = PostWriteViewModel(useCase);
+    mockUploadImageUseCase = MockUploadImageUseCase();
+    createPostUseCase = CreatePostUseCase(mockRepository);
+
+    viewModel = PostWriteViewModel(
+      createPostUseCase: createPostUseCase,
+      uploadImageUseCase: mockUploadImageUseCase,
+    );
   });
 
   test('✅ submitPost 성공 시 AsyncData 상태로 변경됨', () async {
@@ -46,14 +52,19 @@ void main() {
       deleted: false,
     );
 
+    when(() => mockRepository.createPost(any())).thenAnswer((_) async {});
     when(
-      () => mockRepository.createPost(any()),
-    ).thenAnswer((_) async => Future.value());
+      () => mockUploadImageUseCase.call(
+        uid: any(named: 'uid'),
+        imageBytes: any(named: 'imageBytes'),
+      ),
+    ).thenAnswer((_) async => ''); // 기본 응답 지정
 
     await viewModel.submitPost(
       uid: testPost.uid,
       content: testPost.content,
       tags: testPost.tags,
+      imageBytesList: [],
     );
 
     expect(viewModel.state, const AsyncData<void>(null));
