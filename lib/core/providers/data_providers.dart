@@ -10,6 +10,10 @@ import '../../data/repository/auth_repository_impl.dart';
 import '../../domain/repository/auth_repository.dart';
 import '../../domain/repository/user_repository.dart';
 import '../../data/repository/user_repository_impl.dart';
+import '../../data/data_source/post_remote_data_source.dart';
+import '../../data/repository/post_repository_impl.dart';
+import '../../domain/repository/post_repository.dart';
+import '../../domain/usecase/create_post_usecase.dart';
 
 // final postRepositoryProvider = Provider<PostRepository>((ref) {
 //   final dataSource = ref.read(postDataSourceProvider);
@@ -21,19 +25,19 @@ final googleSignInProvider = Provider((ref) => GoogleSignIn());
 final firestoreProvider = Provider((ref) => FirebaseFirestore.instance);
 
 final googleSignInDataSourceProvider = Provider<GoogleSignInDataSource>(
-      (ref) => GoogleSignInDataSourceImpl(ref.read(googleSignInProvider)),
+  (ref) => GoogleSignInDataSourceImpl(ref.read(googleSignInProvider)),
 );
 
 final firebaseAuthDataSourceProvider = Provider<FirebaseAuthDataSource>(
-      (ref) => FirebaseAuthDataSourceImpl(ref.read(firebaseAuthProvider)),
+  (ref) => FirebaseAuthDataSourceImpl(ref.read(firebaseAuthProvider)),
 );
 
 final userFirestoreDataSourceProvider = Provider<UserFirestoreDataSource>(
-      (ref) => UserFirestoreDataSource(ref.read(firestoreProvider)),
+  (ref) => UserFirestoreDataSource(ref.read(firestoreProvider)),
 );
 
 final authRepositoryProvider = Provider<AuthRepository>(
-      (ref) => AuthRepositoryImpl(
+  (ref) => AuthRepositoryImpl(
     ref.read(googleSignInDataSourceProvider),
     ref.read(firebaseAuthDataSourceProvider),
     ref.read(userFirestoreDataSourceProvider),
@@ -41,9 +45,23 @@ final authRepositoryProvider = Provider<AuthRepository>(
 );
 
 final authStateChangesProvider = StreamProvider<String?>(
-      (ref) => ref.read(authRepositoryProvider).authStateChanges(),
+  (ref) => ref.read(authRepositoryProvider).authStateChanges(),
 );
 
 final userRepositoryProvider = Provider<UserRepository>(
-      (ref) => UserRepositoryImpl(ref.read(userFirestoreDataSourceProvider)),
+  (ref) => UserRepositoryImpl(ref.read(userFirestoreDataSourceProvider)),
 );
+
+final postRemoteDataSourceProvider = Provider<PostRemoteDataSource>((ref) {
+  return PostRemoteDataSource();
+});
+
+final postRepositoryProvider = Provider<PostRepository>((ref) {
+  final remoteDataSource = ref.read(postRemoteDataSourceProvider);
+  return PostRepositoryImpl(remoteDataSource);
+});
+
+final createPostUseCaseProvider = Provider<CreatePostUseCase>((ref) {
+  final repository = ref.read(postRepositoryProvider);
+  return CreatePostUseCase(repository);
+});
