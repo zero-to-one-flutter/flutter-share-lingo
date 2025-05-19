@@ -1,9 +1,10 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:share_lingo/data/data_source/post_remote_data_source.dart';
 import 'package:share_lingo/data/dto/post_dto.dart';
 
+//  sealed class는 Mock 금지 → Fake는 허용됨
 class MockFirebaseFirestore extends Mock implements FirebaseFirestore {}
 
 class MockCollectionReference extends Mock
@@ -17,6 +18,7 @@ void main() {
   late MockCollectionReference collection;
   late PostRemoteDataSource dataSource;
 
+  //  FakeDocumentReference는 반드시 등록
   setUpAll(() {
     registerFallbackValue(FakeDocumentReference());
   });
@@ -27,27 +29,28 @@ void main() {
     dataSource = PostRemoteDataSource(firestore: firestore);
   });
 
-  test('✅ createPost 호출 시 Firestore 컬렉션 add 실행', () async {
-    // given
+  test('Firestore add 호출 테스트', () async {
     final dto = PostDto(
-      uid: 'test-uid',
-      content: '내용',
+      uid: 'test',
+      content: '테스트',
       imageUrl: '',
-      tags: ['eng'],
+      tags: ['flutter'],
       createdAt: DateTime.now(),
       likeCount: 0,
       commentCount: 0,
       deleted: false,
     );
 
-    // when
+    //  mock 설정
     when(() => firestore.collection('posts')).thenReturn(collection);
     when(
       () => collection.add(any()),
-    ).thenAnswer((_) async => FakeDocumentReference());
+    ).thenAnswer((_) async => FakeDocumentReference()); // 절대 null 아님
 
-    // then
+    //  실행
     await dataSource.createPost(dto);
+
+    //  검증
     verify(() => collection.add(dto.toMap())).called(1);
   });
 }
