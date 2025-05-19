@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:share_lingo/presentation/pages/home/tabs/write/tag_select/select_tag_page.dart';
 
 class TagRowButton extends StatelessWidget {
-  const TagRowButton({super.key});
+  const TagRowButton({
+    super.key,
+    required Null Function(dynamic tag) onTagSelected,
+  });
 
   @override
   Widget build(BuildContext context) {
