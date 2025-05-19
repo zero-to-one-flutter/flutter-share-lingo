@@ -4,7 +4,16 @@ import 'package:share_lingo/presentation/pages/home/widgets/expandable_text.dart
 import 'package:share_lingo/presentation/widgets/app_cached_image.dart';
 
 class PostItem extends StatefulWidget {
-  const PostItem({super.key});
+  final String content;
+  final String imageUrl;
+  final List<String> tags;
+
+  const PostItem({
+    super.key,
+    required this.content,
+    required this.imageUrl,
+    required this.tags,
+  });
 
   @override
   State<PostItem> createState() => _PostItemState();
@@ -23,12 +32,7 @@ class _PostItemState extends State<PostItem> {
             SizedBox(height: 10),
             _topBar(),
             SizedBox(height: 10),
-            ExpandableText('''
-I can think in English, but my mouth doesn't follow\n
-Lately my English listening has gotten better, but speaking is still hard.\n
-I can think in English, but my mouth doesn't follow\n
-Lately my English listening has gotten better, but speaking is still hard.\n
-''', trimLines: 4),
+            ExpandableText(widget.content, trimLines: 4),
             SizedBox(height: 10),
             _imageBox(),
             SizedBox(height: 15),
@@ -44,12 +48,15 @@ Lately my English listening has gotten better, but speaking is still hard.\n
                       borderRadius: BorderRadius.circular(30),
                     ),
                     child: Center(
-                      child: Text('Tag', style: TextStyle(fontSize: 14)),
+                      child: Text(
+                        widget.tags[index],
+                        style: TextStyle(fontSize: 14),
+                      ),
                     ),
                   );
                 },
                 separatorBuilder: (context, index) => SizedBox(width: 8),
-                itemCount: 2,
+                itemCount: widget.tags.length,
               ),
             ),
             SizedBox(height: 15),
