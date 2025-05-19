@@ -13,17 +13,20 @@ class MockDocumentReference extends Mock
     implements DocumentReference<Map<String, dynamic>> {}
 
 void main() {
-  late FirebaseFirestore firestore;
-  late CollectionReference<Map<String, dynamic>> collection;
+  late MockFirebaseFirestore firestore;
+  late MockCollectionReference collection;
+  late MockDocumentReference mockDocRef;
   late PostRemoteDataSource dataSource;
 
   setUp(() {
     firestore = MockFirebaseFirestore();
     collection = MockCollectionReference();
+    mockDocRef = MockDocumentReference();
     dataSource = PostRemoteDataSource(firestore: firestore);
   });
 
-  test('PostRemoteDataSource - createPost 호출 시 add 실행', () async {
+  test('✅ createPost 호출 시 Firestore 컬렉션 add 실행', () async {
+    // given
     final dto = PostDto(
       uid: 'test-uid',
       content: '내용',
@@ -35,11 +38,11 @@ void main() {
       deleted: false,
     );
 
-    final mockDocRef = MockDocumentReference();
-
+    // when
     when(() => firestore.collection('posts')).thenReturn(collection);
     when(() => collection.add(any())).thenAnswer((_) async => mockDocRef);
 
+    // then
     await dataSource.createPost(dto);
     verify(() => collection.add(dto.toMap())).called(1);
   });
