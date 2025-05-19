@@ -35,7 +35,7 @@ class PostWriteViewModel extends StateNotifier<AsyncValue<void>> {
       final post = PostEntity(
         uid: uid,
         content: content,
-        imageUrl: imageUrls.isNotEmpty ? imageUrls.first : '',
+        imageUrl: imageUrls,
         tags: tags,
         createdAt: DateTime.now(), // 실제 저장은 serverTimestamp로 덮어씀
         likeCount: 0,

@@ -4,7 +4,7 @@ import '../../domain/entity/post_entity.dart';
 class PostDto {
   final String uid;
   final String content;
-  final String imageUrl;
+  final List<String> imageUrl;
   final List<String> tags;
   final DateTime createdAt;
   final int likeCount;
@@ -26,7 +26,8 @@ class PostDto {
     return PostDto(
       uid: map['uid'] ?? '',
       content: map['content'] ?? '',
-      imageUrl: map['imageUrl'] ?? '',
+      imageUrl: List<String>.from(map['imageUrl'] ?? []),
+
       tags: List<String>.from(map['tags'] ?? []),
       createdAt: (map['createdAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
       likeCount: map['likeCount'] ?? 0,

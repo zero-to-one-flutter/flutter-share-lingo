@@ -1,7 +1,7 @@
 class PostEntity {
   final String uid;
   final String content;
-  final String imageUrl;
+  final List<String> imageUrl;
   final List<String> tags;
   final DateTime createdAt;
   final int likeCount;
