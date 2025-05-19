@@ -1,7 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:share_lingo/domain/entity/post_entity.dart';
-import 'package:share_lingo/data/dto/post_dto.dart';
 import 'package:share_lingo/data/data_source/post_remote_data_source.dart';
 import 'package:share_lingo/data/repository/post_repository_impl.dart';
 
