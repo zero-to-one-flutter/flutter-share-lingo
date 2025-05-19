@@ -5,7 +5,7 @@ import 'package:share_lingo/presentation/widgets/app_cached_image.dart';
 
 class PostItem extends StatefulWidget {
   final String content;
-  final String imageUrl;
+  final List<String> imageUrl;
   final List<String> tags;
 
   const PostItem({
@@ -154,15 +154,15 @@ class _PostItemState extends State<PostItem> {
   }
 
   Widget _imageBox() {
-    // 테스트용 이미지리스트
-    List<String> images = [
-      'https://picsum.photos/200/200?random=2',
-      'https://picsum.photos/200/200?random=3',
-      'https://picsum.photos/200/200?random=4',
-      'https://picsum.photos/200/200?random=5',
-    ];
+    if (widget.imageUrl.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    final List<String> images = widget.imageUrl.take(3).toList();
+
     double sizedBoxHeight = 8;
     double sizedBoxWidth = 8;
+
     return LayoutBuilder(
       builder: (context, constraints) {
         Widget content;
@@ -178,13 +178,15 @@ class _PostItemState extends State<PostItem> {
                 ),
               ),
             );
+            break;
+
           case 2:
             content = Row(
               children: [
                 Expanded(
                   child: Container(
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.only(
+                      borderRadius: const BorderRadius.only(
                         topLeft: Radius.circular(10),
                         bottomLeft: Radius.circular(10),
                       ),
@@ -199,12 +201,12 @@ class _PostItemState extends State<PostItem> {
                 Expanded(
                   child: Container(
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.only(
+                      borderRadius: const BorderRadius.only(
                         topRight: Radius.circular(10),
                         bottomRight: Radius.circular(10),
                       ),
                       image: DecorationImage(
-                        image: NetworkImage(images[0]),
+                        image: NetworkImage(images[1]),
                         fit: BoxFit.cover,
                       ),
                     ),
@@ -212,6 +214,8 @@ class _PostItemState extends State<PostItem> {
                 ),
               ],
             );
+            break;
+
           case 3:
             content = Row(
               children: [
@@ -219,7 +223,7 @@ class _PostItemState extends State<PostItem> {
                   width: (constraints.maxWidth - sizedBoxWidth) / 2,
                   child: Container(
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.only(
+                      borderRadius: const BorderRadius.only(
                         topLeft: Radius.circular(10),
                         bottomLeft: Radius.circular(10),
                       ),
@@ -238,7 +242,7 @@ class _PostItemState extends State<PostItem> {
                       Expanded(
                         child: Container(
                           decoration: BoxDecoration(
-                            borderRadius: BorderRadius.only(
+                            borderRadius: const BorderRadius.only(
                               topRight: Radius.circular(10),
                             ),
                             image: DecorationImage(
@@ -252,7 +256,7 @@ class _PostItemState extends State<PostItem> {
                       Expanded(
                         child: Container(
                           decoration: BoxDecoration(
-                            borderRadius: BorderRadius.only(
+                            borderRadius: const BorderRadius.only(
                               bottomRight: Radius.circular(10),
                             ),
                             image: DecorationImage(
@@ -267,83 +271,12 @@ class _PostItemState extends State<PostItem> {
                 ),
               ],
             );
-          case 4:
-            content = Row(
-              children: [
-                SizedBox(
-                  width: (constraints.maxWidth - sizedBoxWidth) / 2,
-                  child: Column(
-                    children: [
-                      Expanded(
-                        child: Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(10),
-                            ),
-                            image: DecorationImage(
-                              image: NetworkImage(images[0]),
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        ),
-                      ),
-                      SizedBox(height: sizedBoxHeight),
-                      Expanded(
-                        child: Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.only(
-                              bottomLeft: Radius.circular(10),
-                            ),
-                            image: DecorationImage(
-                              image: NetworkImage(images[1]),
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                SizedBox(width: sizedBoxWidth),
-                SizedBox(
-                  width: (constraints.maxWidth - sizedBoxWidth) / 2,
-                  child: Column(
-                    children: [
-                      Expanded(
-                        child: Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.only(
-                              topRight: Radius.circular(10),
-                            ),
-                            image: DecorationImage(
-                              image: NetworkImage(images[2]),
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        ),
-                      ),
-                      SizedBox(height: sizedBoxHeight),
-                      Expanded(
-                        child: Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.only(
-                              bottomRight: Radius.circular(10),
-                            ),
-                            image: DecorationImage(
-                              image: NetworkImage(images[3]),
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            );
+            break;
+
           default:
-            content = SizedBox.shrink();
+            content = const SizedBox.shrink();
         }
+
         return AspectRatio(aspectRatio: 9 / 5, child: content);
       },
     );

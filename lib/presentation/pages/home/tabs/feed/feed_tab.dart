@@ -55,7 +55,9 @@ class FeedTab extends StatelessWidget {
                     itemBuilder: (context, index) {
                       final post = docs[index].data();
                       final content = post['content'] ?? '';
-                      final imageUrl = post['imageUrl'] ?? '';
+                      final imageUrl = List<String>.from(
+                        post['imageUrl'] ?? [],
+                      );
                       final tags = List<String>.from(post['tags'] ?? []);
 
                       return PostItem(
