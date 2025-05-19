@@ -57,7 +57,7 @@ class FeedTab extends StatelessWidget {
                       // 추후 사용
                       // final content = post['content'] ?? '';
                       // final imageUrl = post['imageUrl'] ?? '';
-
+                      // final tags = post['tags'] ?? [];
                       return PostItem();
                     },
                   );
