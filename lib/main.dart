@@ -49,6 +49,7 @@ class MyApp extends StatelessWidget {
         GlobalCupertinoLocalizations.delegate,
       ],
       supportedLocales: [Locale('ko')],
+      locale: Locale(('ko')),
       home: const AppEntryPage(),
     );
   }

@@ -6,6 +6,7 @@ import 'package:share_lingo/presentation/pages/onboarding/widgets/subtitle_text.
 import 'package:share_lingo/presentation/user_global_view_model.dart';
 import '../../../../app/constants/app_colors.dart';
 import '../onboarding_view_model.dart';
+import '../widgets/language_selection_modal.dart';
 
 class LanguageSelectionTab extends ConsumerWidget {
   final String title;
@@ -103,29 +104,11 @@ class LanguageSelectionTab extends ConsumerWidget {
   void _selectLanguage(BuildContext context, WidgetRef ref) async {
     // You would push to a language selection page here.
     // For now, simulate picking "Korean":
-    final picked = await _fakeLanguagePicker(context);
-    if (picked != null) {
+    final selectedLang = await showLanguageSelectionDialog(context);
+    if (selectedLang != null) {
       final vm = ref.read(userGlobalViewModelProvider.notifier);
-      isNative ? vm.setNativeLanguage(picked) : vm.setTargetLanguage(picked);
+      isNative ? vm.setNativeLanguage(selectedLang) : vm.setTargetLanguage(selectedLang);
     }
-  }
-
-  Future<String?> _fakeLanguagePicker(BuildContext context) async {
-    // TODO: Replace with real navigator and selection screen
-    return await showDialog<String>(
-      context: context,
-      builder:
-          (_) => AlertDialog(
-            title: const Text('Choose a language'),
-            content: const Text('Simulated selection'),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context, 'Korean'),
-                child: const Text('Korean'),
-              ),
-            ],
-          ),
-    );
   }
 
   ElevatedButton _buildNextButton(
