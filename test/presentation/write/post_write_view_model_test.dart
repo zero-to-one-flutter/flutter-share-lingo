@@ -32,9 +32,7 @@ void main() {
     );
 
     // act
-    when(
-      () => mockRepository.createPost(any()),
-    ).thenAnswer((_) async => Future.value());
+    when(() => mockRepository.createPost(any())).thenAnswer((_) async {});
 
     await viewModel.submitPost(
       uid: testPost.uid,
@@ -43,7 +41,7 @@ void main() {
     );
 
     // assert
-    expect(viewModel.debugState, const AsyncData<void>(null));
+    expect(viewModel.state, const AsyncData<void>(null));
   });
 
   test('❌ submitPost 실패 시 AsyncError 상태로 변경됨', () async {
@@ -57,16 +55,14 @@ void main() {
       tags: ['error'],
     );
 
-    expect(viewModel.debugState.hasError, true);
+    expect(viewModel.state.hasError, true);
   });
 
   test('⚠️ 빈 content일 경우에도 호출 가능 (후처리 필요)', () async {
-    when(
-      () => mockRepository.createPost(any()),
-    ).thenAnswer((_) async => Future.value());
+    when(() => mockRepository.createPost(any())).thenAnswer((_) async {});
 
     await viewModel.submitPost(uid: 'test-uid', content: '', tags: []);
 
-    expect(viewModel.debugState, const AsyncData<void>(null));
+    expect(viewModel.state, const AsyncData<void>(null));
   });
 }
