@@ -104,19 +104,18 @@ class _PostWriteTabState extends ConsumerState<PostWriteTab> {
                 },
               ),
             ),
-          TextButton.icon(
-            onPressed: _pickImage,
-            icon: const Icon(Icons.camera_alt),
-            label: const Text('이미지 추가'),
-          ),
+
           const SizedBox(height: 16),
+
           TagRowButton(
             onTagSelected: (tag) {
               if (!_selectedTags.contains(tag)) {
                 setState(() => _selectedTags.add(tag));
               }
             },
+            onPickImage: _pickImage,
           ),
+
           const Spacer(),
         ],
       ),
