@@ -132,7 +132,7 @@ class FeedTab extends StatelessWidget {
                   horizontal: 18,
                   vertical: 6,
                 ),
-                backgroundColor: Colors.blue.withOpacity(0.05),
+                backgroundColor: Colors.blue.withValues(alpha: 0.05),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
