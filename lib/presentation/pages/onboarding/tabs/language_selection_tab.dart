@@ -1,6 +1,8 @@
+import 'package:country_flags/country_flags.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:share_lingo/core/utils/snackbar_util.dart';
+import 'package:share_lingo/core/utils/ui_util.dart';
 import 'package:share_lingo/presentation/pages/onboarding/widgets/title_section.dart';
 import 'package:share_lingo/presentation/pages/onboarding/widgets/subtitle_text.dart';
 import 'package:share_lingo/presentation/user_global_view_model.dart';
@@ -24,7 +26,6 @@ class LanguageSelectionTab extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final user = ref.watch(userGlobalViewModelProvider)!;
-    final viewModel = ref.read(userGlobalViewModelProvider.notifier);
 
     final selectedLang = isNative ? user.nativeLanguage : user.targetLanguage;
 
@@ -67,6 +68,8 @@ class LanguageSelectionTab extends ConsumerWidget {
     WidgetRef ref,
   ) {
     final userGlobalViewModel = ref.read(userGlobalViewModelProvider.notifier);
+    final countryCode = UiUtil.getCountryCodeByName(selectedLang);
+
     return GestureDetector(
       onTap: () {
         _selectLanguage(context, ref);
@@ -81,7 +84,22 @@ class LanguageSelectionTab extends ConsumerWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(selectedLang),
+            if (countryCode != null)
+              Row(
+                children: [
+                  const SizedBox(width: 3),
+                  CountryFlag.fromCountryCode(
+                    countryCode,
+                    height: 24,
+                    width: 24,
+                    shape: const Circle(),
+                  ),
+                  const SizedBox(width: 14),
+                  Text(selectedLang),
+                ],
+              )
+            else
+              Text(selectedLang),
             IconButton(
               icon: const Icon(Icons.close),
               onPressed: () {
@@ -115,11 +133,12 @@ class LanguageSelectionTab extends ConsumerWidget {
         !isNative
             ? ref.read(userGlobalViewModelProvider)!.nativeLanguage
             : null;
-    final selectedLang = await showLanguageSelectionDialog(
+    final languageEntry = await showLanguageSelectionDialog(
       context,
       otherLanguage,
     );
-    if (selectedLang != null) {
+    if (languageEntry != null) {
+      final String selectedLang = languageEntry.koreanName;
       final vm = ref.read(userGlobalViewModelProvider.notifier);
       isNative
           ? vm.setNativeLanguage(selectedLang)

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../app/constants/app_constants.dart';
+
 class UiUtil {
   static Future<DateTime?> pickBirthdate({
     required BuildContext context,
@@ -35,5 +37,11 @@ class UiUtil {
         );
       },
     );
+  }
+
+  static String? getCountryCodeByName(String name) {
+    return AppConstants.allLanguages
+        .firstWhere((entry) => entry.koreanName == name)
+        .countryCode;
   }
 }

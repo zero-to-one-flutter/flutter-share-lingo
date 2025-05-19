@@ -3,13 +3,13 @@ import 'package:country_flags/country_flags.dart';
 import '../../../../app/constants/app_constants.dart';
 import '../../../../domain/entity/language_entry.dart';
 
-Future<String?> showLanguageSelectionDialog(
+Future<LanguageEntry?> showLanguageSelectionDialog(
   BuildContext context,
   String? otherLanguage,
 ) {
   final statusBarHeight = MediaQuery.of(context).padding.top;
 
-  return showModalBottomSheet<String>(
+  return showModalBottomSheet<LanguageEntry>(
     context: context,
     isScrollControlled: true,
     backgroundColor: Colors.transparent,
@@ -33,10 +33,10 @@ class LanguageSelectionDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final mostUsed = List.from(AppConstants.mostUsedLanguages);
-    final allLanguages = List.from(AppConstants.allLanguages);
-    mostUsed.removeWhere((entry) => entry.koreanName == otherLanguage);
-    allLanguages.removeWhere((entry) => entry.koreanName == otherLanguage);
+    final mostUsed = List.from(AppConstants.mostUsedLanguages)
+      ..removeWhere((entry) => entry.koreanName == otherLanguage);
+    final allLanguages = List.from(AppConstants.allLanguages)
+      ..removeWhere((entry) => entry.koreanName == otherLanguage);
 
     return DraggableScrollableSheet(
       expand: false,
@@ -50,39 +50,17 @@ class LanguageSelectionDialog extends StatelessWidget {
             controller: controller,
             children: [
               const SizedBox(height: 12),
-              const Center(
-                child: SizedBox(
-                  width: 40,
-                  height: 5,
-                  child: DecoratedBox(
-                    decoration: BoxDecoration(
-                      color: Colors.black26,
-                      borderRadius: BorderRadius.all(Radius.circular(2.5)),
-                    ),
-                  ),
-                ),
-              ),
+              _buildDragHandle(),
               const SizedBox(height: 16),
-              const Text(
-                '언어를 선택하세요',
-                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-              ),
-              SizedBox(height: 10),
-              Divider(),
+              _buildTitle(),
+              const SizedBox(height: 10),
+              const Divider(),
               const SizedBox(height: 20),
-              const Text(
-                '자주 쓰는 언어',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-              ),
+              _buildSectionTitle('자주 쓰는 언어'),
               const SizedBox(height: 10),
               ...mostUsed.map((entry) => _buildLanguageTile(context, entry)),
-              // SizedBox(height: 14),
-              // Divider(),
               const SizedBox(height: 24),
-              const Text(
-                '기타 언어',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-              ),
+              _buildSectionTitle('기타 언어'),
               const SizedBox(height: 10),
               ...allLanguages.map(
                 (entry) => _buildLanguageTile(context, entry),
@@ -95,10 +73,39 @@ class LanguageSelectionDialog extends StatelessWidget {
     );
   }
 
+  Widget _buildDragHandle() {
+    return const Center(
+      child: SizedBox(
+        width: 40,
+        height: 5,
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            color: Colors.black26,
+            borderRadius: BorderRadius.all(Radius.circular(2.5)),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTitle() {
+    return const Text(
+      '언어를 선택하세요',
+      style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+    );
+  }
+
+  Widget _buildSectionTitle(String title) {
+    return Text(
+      title,
+      style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+    );
+  }
+
   Widget _buildLanguageTile(BuildContext context, LanguageEntry entry) {
     return InkWell(
       onTap: () {
-        Navigator.pop(context, entry.koreanName);
+        Navigator.pop(context, entry);
       },
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 12),
