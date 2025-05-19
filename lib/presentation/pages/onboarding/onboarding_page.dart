@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:share_lingo/presentation/pages/onboarding/tabs/input_name_tab.dart';
+import 'package:share_lingo/presentation/pages/onboarding/tabs/input_name_date_tab.dart';
 import 'package:share_lingo/presentation/pages/onboarding/widgets/step_progress_header.dart';
 import 'package:share_lingo/presentation/user_global_view_model.dart';
 import 'onboarding_view_model.dart';
