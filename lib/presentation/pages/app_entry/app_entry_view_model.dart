@@ -4,7 +4,7 @@ import '../../../domain/entity/app_user.dart';
 import '../../../domain/usecase/get_current_user_usecase.dart';
 import '../../../domain/usecase/sign_out_use_case.dart';
 
-class SplashViewModel extends Notifier<void> {
+class AppEntryViewModel extends Notifier<void> {
   @override
   void build() {}
 
@@ -17,6 +17,6 @@ class SplashViewModel extends Notifier<void> {
   }
 }
 
-final splashViewModelProvider = NotifierProvider<SplashViewModel, void>(
-  () => SplashViewModel(),
+final appEntryViewModelProvider = NotifierProvider<AppEntryViewModel, void>(
+  () => AppEntryViewModel(),
 );

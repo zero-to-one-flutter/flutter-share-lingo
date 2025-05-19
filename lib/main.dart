@@ -5,7 +5,7 @@ import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:share_lingo/presentation/pages/splash/splash_page.dart';
+import 'package:share_lingo/presentation/pages/app_entry/app_entry_page.dart';
 import 'app/constants/app_constants.dart';
 import 'app/theme.dart';
 import 'firebase_options.dart';
@@ -42,7 +42,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       themeMode: ThemeMode.light,
       theme: AppTheme.buildTheme(),
-      home: const SplashPage(),
+      home: const AppEntryPage(),
     );
   }
 }
