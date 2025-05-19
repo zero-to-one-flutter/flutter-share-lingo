@@ -10,9 +10,7 @@ import 'package:share_lingo/presentation/user_global_view_model.dart';
 import '../../../../domain/entity/app_user.dart';
 
 class InputNameDateTab extends ConsumerStatefulWidget {
-  final AppUser user;
-
-  const InputNameDateTab(this.user, {super.key});
+  const InputNameDateTab({super.key});
 
   @override
   ConsumerState<InputNameDateTab> createState() => _InputNameTabState();
@@ -27,7 +25,8 @@ class _InputNameTabState extends ConsumerState<InputNameDateTab> {
   @override
   void initState() {
     super.initState();
-    _nameController = TextEditingController(text: widget.user.name);
+    final userName = ref.read(userGlobalViewModelProvider)!.name;
+    _nameController = TextEditingController(text: userName);
     _birthdateController = TextEditingController();
   }
 
@@ -43,12 +42,8 @@ class _InputNameTabState extends ConsumerState<InputNameDateTab> {
       final userGlobalViewModel = ref.read(
         userGlobalViewModelProvider.notifier,
       );
-      userGlobalViewModel.setUser(
-        widget.user.copyWith(
-          name: _nameController.text.trim(),
-          birthdate: birthdate,
-        ),
-      );
+      userGlobalViewModel.setName(_nameController.text.trim());
+      userGlobalViewModel.setBirthdate(birthdate!);
       final onBoardingViewModel = ref.read(
         onboardingViewModelProvider.notifier,
       );

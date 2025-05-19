@@ -8,7 +8,7 @@ InputDecoration onboardingInputDecoration(String hint, {bool isDate = false}) {
     hintText: hint,
     suffixIcon: !isDate ? null : const Icon(CupertinoIcons.calendar),
     hintStyle: const TextStyle(color: Colors.grey),
-    enabledBorder: _buildBorder(radius: 18, color: Colors.grey[300]!),
+    enabledBorder: _buildBorder(radius: 18, color: AppColors.borderGrey),
     focusedBorder: _buildBorder(radius: 12, color: AppColors.buttonsBlue),
     errorBorder: _buildBorder(radius: 12, color: Colors.red),
     focusedErrorBorder: _buildBorder(radius: 12, color: Colors.red),
