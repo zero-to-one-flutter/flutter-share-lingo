@@ -38,6 +38,7 @@ class PostDto {
   Map<String, dynamic> toMap() {
     return {
       'uid': uid,
+      'authorId': uid,
       'content': content,
       'imageUrl': imageUrl,
       'tags': tags,
