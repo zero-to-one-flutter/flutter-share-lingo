@@ -29,7 +29,7 @@ class SelectTagPage extends StatelessWidget {
                 ),
                 GestureDetector(
                   onTap: () {
-                    Navigator.pop(context); // 또는 PostWritePage 이동
+                    Navigator.pop(context); // 그냥 닫기
                   },
                   child: const Icon(Icons.close),
                 ),
@@ -44,18 +44,23 @@ class SelectTagPage extends StatelessWidget {
                 itemCount: tags.length,
                 separatorBuilder: (_, __) => const SizedBox(height: 12),
                 itemBuilder: (context, index) {
-                  return Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 10,
-                    ),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFF0F0F0),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Text(
-                      tags[index],
-                      style: const TextStyle(fontSize: 16),
+                  return GestureDetector(
+                    onTap: () {
+                      Navigator.pop(context, tags[index]); // 태그 리턴
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 10,
+                      ),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFF0F0F0),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Text(
+                        tags[index],
+                        style: const TextStyle(fontSize: 16),
+                      ),
                     ),
                   );
                 },

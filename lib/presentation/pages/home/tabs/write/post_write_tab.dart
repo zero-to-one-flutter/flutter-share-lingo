@@ -115,6 +115,28 @@ class _PostWriteTabState extends ConsumerState<PostWriteTab> {
             },
             onPickImage: _pickImage,
           ),
+          if (_selectedTags.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 16.0,
+                vertical: 8,
+              ),
+              child: Wrap(
+                spacing: 8,
+                runSpacing: 4,
+                children:
+                    _selectedTags.map((tag) {
+                      return Chip(
+                        label: Text(tag),
+                        onDeleted: () {
+                          setState(() {
+                            _selectedTags.remove(tag);
+                          });
+                        },
+                      );
+                    }).toList(),
+              ),
+            ),
 
           const Spacer(),
         ],
