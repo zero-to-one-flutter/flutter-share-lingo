@@ -9,10 +9,17 @@ class MockFirebaseFirestore extends Mock implements FirebaseFirestore {}
 class MockCollectionReference extends Mock
     implements CollectionReference<Map<String, dynamic>> {}
 
+class FakeDocumentReference extends Fake
+    implements DocumentReference<Map<String, dynamic>> {}
+
 void main() {
   late MockFirebaseFirestore firestore;
   late MockCollectionReference collection;
   late PostRemoteDataSource dataSource;
+
+  setUpAll(() {
+    registerFallbackValue(FakeDocumentReference());
+  });
 
   setUp(() {
     firestore = MockFirebaseFirestore();
@@ -37,7 +44,7 @@ void main() {
     when(() => firestore.collection('posts')).thenReturn(collection);
     when(
       () => collection.add(any()),
-    ).thenAnswer((_) async => Future.value()); // sealed class 회피
+    ).thenAnswer((_) async => FakeDocumentReference());
 
     // then
     await dataSource.createPost(dto);
