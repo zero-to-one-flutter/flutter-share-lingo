@@ -54,6 +54,8 @@ class _PostWriteTabState extends ConsumerState<PostWriteTab> {
     if (mounted) {
       _contentController.clear();
       _selectedImages.clear();
+      _selectedTags.clear();
+      setState(() {});
       SnackbarUtil.showSnackBar(context, '게시되었습니다');
       ref.read<HomeViewModel>(homeViewModelProvider.notifier).onIndexChanged(0);
     }
