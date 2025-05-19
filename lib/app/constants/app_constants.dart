@@ -5,9 +5,9 @@ abstract class AppConstants {
 
   static const List<LanguageEntry> mostUsedLanguages = [
     LanguageEntry(koreanName: '영어', countryCode: 'US', languageCode: 'en'),
+    LanguageEntry(koreanName: '한국어', countryCode: 'KR', languageCode: 'ko'),
     LanguageEntry(koreanName: '중국어', countryCode: 'CN', languageCode: 'zh'),
     LanguageEntry(koreanName: '일본어', countryCode: 'JP', languageCode: 'ja'),
-    LanguageEntry(koreanName: '한국어', countryCode: 'KR', languageCode: 'ko'),
     LanguageEntry(koreanName: '스페인어', countryCode: 'ES', languageCode: 'es'),
     LanguageEntry(koreanName: '프랑스어', countryCode: 'FR', languageCode: 'fr'),
   ];
@@ -18,7 +18,6 @@ abstract class AppConstants {
     LanguageEntry(koreanName: '덴마크어', countryCode: 'DK', languageCode: 'da'),
     LanguageEntry(koreanName: '독일어', countryCode: 'DE', languageCode: 'de'),
     LanguageEntry(koreanName: '말레이어', countryCode: 'MY', languageCode: 'ms'),
-    LanguageEntry(koreanName: '베트남어', countryCode: 'VN', languageCode: 'vi'),
     LanguageEntry(koreanName: '베트남어', countryCode: 'VN', languageCode: 'vi'),
     LanguageEntry(koreanName: '불가리아어', countryCode: 'BG', languageCode: 'bg'),
     LanguageEntry(koreanName: '세르비아어', countryCode: 'RS', languageCode: 'sr'),

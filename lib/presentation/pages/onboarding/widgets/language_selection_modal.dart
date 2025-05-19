@@ -3,7 +3,10 @@ import 'package:country_flags/country_flags.dart';
 import '../../../../app/constants/app_constants.dart';
 import '../../../../domain/entity/language_entry.dart';
 
-Future<String?> showLanguageSelectionDialog(BuildContext context) {
+Future<String?> showLanguageSelectionDialog(
+  BuildContext context,
+  String? otherLanguage,
+) {
   final statusBarHeight = MediaQuery.of(context).padding.top;
 
   return showModalBottomSheet<String>(
@@ -17,19 +20,23 @@ Future<String?> showLanguageSelectionDialog(BuildContext context) {
           color: Colors.white,
           borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
         ),
-        child: const LanguageSelectionDialog(),
+        child: LanguageSelectionDialog(otherLanguage: otherLanguage),
       );
     },
   );
 }
 
 class LanguageSelectionDialog extends StatelessWidget {
-  const LanguageSelectionDialog({super.key});
+  final String? otherLanguage;
+
+  const LanguageSelectionDialog({super.key, this.otherLanguage});
 
   @override
   Widget build(BuildContext context) {
-    final mostUsed = AppConstants.mostUsedLanguages;
-    final allLanguages = AppConstants.allLanguages;
+    final mostUsed = List.from(AppConstants.mostUsedLanguages);
+    final allLanguages = List.from(AppConstants.allLanguages);
+    mostUsed.removeWhere((entry) => entry.koreanName == otherLanguage);
+    allLanguages.removeWhere((entry) => entry.koreanName == otherLanguage);
 
     return DraggableScrollableSheet(
       expand: false,
@@ -78,7 +85,7 @@ class LanguageSelectionDialog extends StatelessWidget {
               ),
               const SizedBox(height: 10),
               ...allLanguages.map(
-                    (entry) => _buildLanguageTile(context, entry),
+                (entry) => _buildLanguageTile(context, entry),
               ),
               const SizedBox(height: 20),
             ],

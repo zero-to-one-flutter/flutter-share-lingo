@@ -5,6 +5,7 @@ import 'package:share_lingo/presentation/pages/onboarding/widgets/title_section.
 import 'package:share_lingo/presentation/pages/onboarding/widgets/subtitle_text.dart';
 import 'package:share_lingo/presentation/user_global_view_model.dart';
 import '../../../../app/constants/app_colors.dart';
+import '../../../../core/utils/dialogue_util.dart';
 import '../onboarding_view_model.dart';
 import '../widgets/language_selection_modal.dart';
 
@@ -42,7 +43,7 @@ class LanguageSelectionTab extends ConsumerWidget {
             if (selectedLang == null || selectedLang.isEmpty)
               _buildLangSelectButton(context: context, ref: ref)
             else ...[
-              _buildSelectedLanguageRow(selectedLang, viewModel),
+              _buildSelectedLanguageRow(selectedLang, context, ref),
               const SizedBox(height: 20),
               _buildLangSelectButton(
                 context: context,
@@ -60,29 +61,37 @@ class LanguageSelectionTab extends ConsumerWidget {
     );
   }
 
-  Container _buildSelectedLanguageRow(
+  Widget _buildSelectedLanguageRow(
     String selectedLang,
-    UserGlobalViewModel viewModel,
+    BuildContext context,
+    WidgetRef ref,
   ) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 5),
-      decoration: BoxDecoration(
-        border: Border.all(color: AppColors.borderGrey),
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(selectedLang),
-          IconButton(
-            icon: const Icon(Icons.close),
-            onPressed: () {
-              isNative
-                  ? viewModel.setNativeLanguage('')
-                  : viewModel.setTargetLanguage('');
-            },
-          ),
-        ],
+    final userGlobalViewModel = ref.read(userGlobalViewModelProvider.notifier);
+    return GestureDetector(
+      onTap: () {
+        _selectLanguage(context, ref);
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 5),
+        decoration: BoxDecoration(
+          color: Colors.transparent,
+          border: Border.all(color: AppColors.borderGrey),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(selectedLang),
+            IconButton(
+              icon: const Icon(Icons.close),
+              onPressed: () {
+                isNative
+                    ? userGlobalViewModel.setNativeLanguage('')
+                    : userGlobalViewModel.setTargetLanguage('');
+              },
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -102,34 +111,41 @@ class LanguageSelectionTab extends ConsumerWidget {
   }
 
   void _selectLanguage(BuildContext context, WidgetRef ref) async {
-    // You would push to a language selection page here.
-    // For now, simulate picking "Korean":
-    final selectedLang = await showLanguageSelectionDialog(context);
+    final otherLanguage =
+        !isNative
+            ? ref.read(userGlobalViewModelProvider)!.nativeLanguage
+            : null;
+    final selectedLang = await showLanguageSelectionDialog(
+      context,
+      otherLanguage,
+    );
     if (selectedLang != null) {
       final vm = ref.read(userGlobalViewModelProvider.notifier);
-      isNative ? vm.setNativeLanguage(selectedLang) : vm.setTargetLanguage(selectedLang);
+      isNative
+          ? vm.setNativeLanguage(selectedLang)
+          : vm.setTargetLanguage(selectedLang);
     }
   }
 
   ElevatedButton _buildNextButton(
-      String? selectedLang,
-      BuildContext context,
-      WidgetRef ref,
-      ) {
+    String? selectedLang,
+    BuildContext context,
+    WidgetRef ref,
+  ) {
     return ElevatedButton(
       onPressed:
-      (selectedLang == null || selectedLang.isEmpty)
-          ? null
-          : () => _onNextPressed(
-        selectedLang: selectedLang,
-        context: context,
-        ref: ref,
-      ),
+          (selectedLang == null || selectedLang.isEmpty)
+              ? null
+              : () => _onNextPressed(
+                selectedLang: selectedLang,
+                context: context,
+                ref: ref,
+              ),
       style: ElevatedButton.styleFrom(
         backgroundColor:
-        (selectedLang == null || selectedLang.isEmpty)
-            ? AppColors.inactiveButton
-            : AppColors.buttonsBlue,
+            (selectedLang == null || selectedLang.isEmpty)
+                ? AppColors.inactiveButton
+                : AppColors.buttonsBlue,
         foregroundColor: Colors.white,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         minimumSize: const Size(double.infinity, 50),
@@ -139,14 +155,21 @@ class LanguageSelectionTab extends ConsumerWidget {
     );
   }
 
-
   void _onNextPressed({
     required BuildContext context,
     required String? selectedLang,
     required WidgetRef ref,
   }) {
+    final user = ref.read(userGlobalViewModelProvider);
+
     if (selectedLang == null || selectedLang.isEmpty) {
       SnackbarUtil.showSnackBar(context, '언어를 선택해 주세요');
+    } else if (!isNative && selectedLang == user?.nativeLanguage) {
+      DialogueUtil.showAppCupertinoDialog(
+        context: context,
+        title: '잘못된 선택',
+        content: '모국어와 학습 언어는 같을 수 없습니다',
+      );
     } else {
       ref.read(onboardingViewModelProvider.notifier).nextPage();
     }
