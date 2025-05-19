@@ -8,4 +8,6 @@ abstract class AppColors {
   static const lightBlue = Color(0XFFD3E4FF);
   static const mediumBlue = Color(0xFF5D99FE);
   static final borderGrey = Colors.grey[300]!;
+
+  static const Color inactiveButton = Color(0xFFBDBDBD);
 }

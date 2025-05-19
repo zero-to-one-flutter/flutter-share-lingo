@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:share_lingo/presentation/pages/onboarding/tabs/language_selection_tab.dart';
 import 'package:share_lingo/presentation/pages/onboarding/tabs/input_name_date_tab.dart';
 import 'package:share_lingo/presentation/pages/onboarding/widgets/step_progress_header.dart';
-import 'package:share_lingo/presentation/user_global_view_model.dart';
 import 'onboarding_view_model.dart';
 
 class OnboardingPage extends ConsumerWidget {
@@ -37,8 +36,7 @@ class OnboardingPage extends ConsumerWidget {
                       0 => InputNameDateTab(),
                       1 => LanguageSelectionTab(
                         title: '모국어를 선택해 주세요',
-                        subtitle:
-                            '어릴 때부터 익숙하게 사용해 온 언어입니다. 나중에 변경할 수 있습니다',
+                        subtitle: '어릴 때부터 익숙하게 사용해 온 언어입니다. 나중에 변경할 수 있습니다',
                         isNative: true,
                       ),
                       2 => LanguageSelectionTab(

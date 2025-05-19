@@ -7,8 +7,6 @@ import 'package:share_lingo/presentation/pages/onboarding/widgets/subtitle_text.
 import 'package:share_lingo/presentation/pages/onboarding/widgets/title_section.dart';
 import 'package:share_lingo/presentation/user_global_view_model.dart';
 
-import '../../../../domain/entity/app_user.dart';
-
 class InputNameDateTab extends ConsumerStatefulWidget {
   const InputNameDateTab({super.key});
 

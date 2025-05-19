@@ -51,15 +51,7 @@ class LanguageSelectionTab extends ConsumerWidget {
             ],
 
             const Spacer(),
-            ElevatedButton(
-              onPressed:
-                  () => _onNextPressed(
-                    selectedLang: selectedLang,
-                    context: context,
-                    ref: ref,
-                  ),
-              child: const Text('다음으로'),
-            ),
+            _buildNextButton(selectedLang, context, ref),
             const SizedBox(height: 24),
           ],
         ),
@@ -135,6 +127,35 @@ class LanguageSelectionTab extends ConsumerWidget {
           ),
     );
   }
+
+  ElevatedButton _buildNextButton(
+      String? selectedLang,
+      BuildContext context,
+      WidgetRef ref,
+      ) {
+    return ElevatedButton(
+      onPressed:
+      (selectedLang == null || selectedLang.isEmpty)
+          ? null
+          : () => _onNextPressed(
+        selectedLang: selectedLang,
+        context: context,
+        ref: ref,
+      ),
+      style: ElevatedButton.styleFrom(
+        backgroundColor:
+        (selectedLang == null || selectedLang.isEmpty)
+            ? AppColors.inactiveButton
+            : AppColors.buttonsBlue,
+        foregroundColor: Colors.white,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        minimumSize: const Size(double.infinity, 50),
+        textStyle: const TextStyle(fontWeight: FontWeight.w600, fontSize: 17),
+      ),
+      child: const Text('다음으로'),
+    );
+  }
+
 
   void _onNextPressed({
     required BuildContext context,
