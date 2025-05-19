@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:share_lingo/presentation/pages/home/tabs/write/post_write_view_model.dart';
 
 import '../../../../../app/constants/app_colors.dart';
 import '../../../../widgets/app_cached_image.dart';
@@ -11,71 +12,77 @@ class FeedTab extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer(
       builder: (context, ref, child) {
+        final postsAsync = ref.watch(postsProvider);
+
         return Column(
           children: [
-            AppBar(
-              title: Text('바꾸기'),
-            ),
+            AppBar(title: Text('바꾸기')),
             Expanded(
-              child: ListView.builder(
-                padding: const EdgeInsets.only(
-                  left: 16,
-                  right: 16,
-                  top: 5,
-                  bottom: 100,
-                ),
-                itemCount: 4,
-                itemBuilder: (context, index) {
-                  return InkWell(
-                    highlightColor: AppColors.lightGrey,
-                    onTap: () {},
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        ClipOval(
-                          child: AppCachedImage(
-                            imageUrl: 'https://picsum.photos/200/200?random=1',
-                            width: 66,
-                            height: 66,
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                        const SizedBox(width: 12),
+              child: postsAsync.when(
+                loading: () => const Center(child: CircularProgressIndicator()),
+                error: (err, _) => Center(child: Text('에러 발생: $err')),
+                data: (snapshot) {
+                  final docs = snapshot.docs;
 
-                        // Info column
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              // Name, language
-                              _buildTopRow(),
-                              const SizedBox(height: 6),
-
-                              Padding(
-                                padding: const EdgeInsets.only(right: 40),
-                                child: Text(
-                                  '''
-Lately my English listening has gotten better, but speaking is still hard.\n
-I can think in English, but my mouth doesn't follow\n
-Anyone else been through this?
-I’d love to hear your advice or tips!
-                                    ''',
-                                  style: TextStyle(
-                                    color: Color(0xFF424242),
-                                    fontSize: 14,
-                                  ),
-                                ),
-                              ),
-                              Divider(
-                                indent: 0,
-                                height: 35,
-                                color: Colors.grey[300],
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
+                  return ListView.builder(
+                    padding: const EdgeInsets.only(
+                      left: 16,
+                      right: 16,
+                      top: 5,
+                      bottom: 100,
                     ),
+                    itemCount: docs.length,
+                    itemBuilder: (context, index) {
+                      final post = docs[index].data();
+                      final content = post['content'] ?? '';
+                      final imageUrl = post['imageUrl'] ?? '';
+
+                      return InkWell(
+                        highlightColor: AppColors.lightGrey,
+                        onTap: () {},
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            ClipOval(
+                              child: AppCachedImage(
+                                imageUrl:
+                                    imageUrl.isNotEmpty
+                                        ? imageUrl
+                                        : 'https://picsum.photos/200/200?random=$index',
+                                width: 66,
+                                height: 66,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  _buildTopRow(),
+                                  const SizedBox(height: 6),
+                                  Padding(
+                                    padding: const EdgeInsets.only(right: 40),
+                                    child: Text(
+                                      content,
+                                      style: const TextStyle(
+                                        color: Color(0xFF424242),
+                                        fontSize: 14,
+                                      ),
+                                    ),
+                                  ),
+                                  Divider(
+                                    indent: 0,
+                                    height: 35,
+                                    color: Colors.grey[300],
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
                   );
                 },
               ),
@@ -94,7 +101,6 @@ I’d love to hear your advice or tips!
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Name
               Text(
                 '김민수',
                 style: const TextStyle(
@@ -103,8 +109,6 @@ I’d love to hear your advice or tips!
                 ),
               ),
               const SizedBox(height: 4),
-
-              // Language exchange
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [

@@ -1,46 +1,69 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:share_lingo/core/utils/snackbar_util.dart';
 import 'package:share_lingo/presentation/pages/home/home_view_model.dart';
+import 'package:share_lingo/presentation/pages/home/tabs/write/post_write_view_model.dart';
 import 'package:share_lingo/presentation/pages/home/tabs/write/widgets/cancel_button.dart';
 import 'package:share_lingo/presentation/pages/home/tabs/write/widgets/post_input_field.dart';
 import 'package:share_lingo/presentation/pages/home/tabs/write/widgets/submit_button.dart';
 import 'package:share_lingo/presentation/pages/home/tabs/write/widgets/tag_row_button.dart';
 
-class PostWriteTab extends ConsumerWidget {
+class PostWriteTab extends ConsumerStatefulWidget {
   const PostWriteTab({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<PostWriteTab> createState() => _PostWriteTabState();
+}
+
+class _PostWriteTabState extends ConsumerState<PostWriteTab> {
+  final TextEditingController _contentController = TextEditingController();
+  final List<String> _selectedTags = [];
+
+  void _submit() async {
+    final uid = FirebaseAuth.instance.currentUser?.uid ?? 'test-user';
+    final content = _contentController.text;
+    final postNotifier = ref.read(postWriteViewModelProvider.notifier);
+
+    await postNotifier.submitPost(
+      uid: uid,
+      content: content,
+      tags: _selectedTags.map((tag) => tag.replaceAll('#', '')).toList(),
+    );
+
+    if (mounted) {
+      _contentController.clear();
+      SnackbarUtil.showSnackBar(context, '게시되었습니다');
+      ref.read<HomeViewModel>(homeViewModelProvider.notifier).onIndexChanged(0);
+    }
+  }
+
+  void _cancel() {
+    ref.read<HomeViewModel>(homeViewModelProvider.notifier).onIndexChanged(0);
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
-        leading: CancelButton(
-          onPressed: () {
-            ref
-                .read<HomeViewModel>(homeViewModelProvider.notifier)
-                .onIndexChanged(0); //  홈으로 이동
-          },
-        ),
-        actions: [
-          SubmitButton(
-            onPressed: () {
-              SnackbarUtil.showSnackBar(context, '게시되었습니다');
-              ref
-                  .read<HomeViewModel>(homeViewModelProvider.notifier)
-                  .onIndexChanged(0); //  게시 후 홈으로
-            },
-          ),
-        ],
+        leading: CancelButton(onPressed: _cancel),
+        actions: [SubmitButton(onPressed: _submit)],
       ),
       body: Column(
-        children: const [
-          SizedBox(height: 20),
-          PostInputField(),
-          SizedBox(height: 16),
-          TagRowButton(),
-          Spacer(),
+        children: [
+          const SizedBox(height: 20),
+          PostInputField(controller: _contentController),
+          const SizedBox(height: 16),
+          TagRowButton(
+            onTagSelected: (tag) {
+              if (!_selectedTags.contains(tag)) {
+                setState(() => _selectedTags.add(tag));
+              }
+            },
+          ),
+          const Spacer(),
         ],
       ),
     );

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
 class PostInputField extends StatelessWidget {
-  const PostInputField({super.key});
+  final TextEditingController controller;
+
+  const PostInputField({super.key, required this.controller});
 
   @override
   Widget build(BuildContext context) {
@@ -13,15 +15,16 @@ class PostInputField extends StatelessWidget {
         color: Color(0xFFEDEDED),
         borderRadius: BorderRadius.all(Radius.circular(12)),
       ),
-      child: const TextField(
-        maxLines: null, // 여러 줄 입력 가능
-        expands: true, // 남은 영역 모두 차지
-        style: TextStyle(
+      child: TextField(
+        controller: controller,
+        maxLines: null,
+        expands: true,
+        style: const TextStyle(
           fontSize: 15,
           color: Colors.black,
           fontWeight: FontWeight.w400,
         ),
-        decoration: InputDecoration(
+        decoration: const InputDecoration(
           hintText: '내용을 입력하세요...',
           border: InputBorder.none,
         ),
