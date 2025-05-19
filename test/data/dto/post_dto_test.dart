@@ -19,7 +19,7 @@ void main() {
     final dto = PostDto.fromEntity(entity);
     final map = dto.toMap();
 
-    // ✅ createdAt은 FieldValue.serverTimestamp()로 고정되므로 비교 불가
+    // createdAt은 FieldValue.serverTimestamp()로 고정되므로 비교 불가
     expect(map['uid'], entity.uid);
     expect(map['authorId'], entity.uid); // 🔥 authorId 필드도 확인
     expect(map['content'], entity.content);
@@ -29,8 +29,8 @@ void main() {
     expect(map['commentCount'], entity.commentCount);
     expect(map['deleted'], entity.deleted);
 
-    // ✅ fromMap + toEntity 테스트 (createdAt은 실제 Timestamp 사용)
-    final restoredDto = PostDto.fromMap('abc123', {
+    // fromMap + toEntity 테스트 (createdAt은 실제 Timestamp 사용)
+    final restoredDto = PostDto.fromMap({
       'uid': 'test123',
       'content': '내용입니다',
       'imageUrl': '',
