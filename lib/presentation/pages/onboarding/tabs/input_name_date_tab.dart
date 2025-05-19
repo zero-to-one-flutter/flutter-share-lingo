@@ -90,6 +90,7 @@ class _InputNameTabState extends ConsumerState<InputNameDateTab> {
 
   Widget _buildNameFormField() {
     return TextFormField(
+      maxLength: 28,
       controller: _nameController,
       decoration: onboardingInputDecoration('이름을 입력해 주세요'),
       validator: (value) {
