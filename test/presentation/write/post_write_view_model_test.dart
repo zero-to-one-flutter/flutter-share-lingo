@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
@@ -27,6 +29,9 @@ void main() {
         deleted: false,
       ),
     );
+
+    //  Uint8List fallback 등록
+    registerFallbackValue(Uint8List(0));
   });
 
   setUp(() {
@@ -40,7 +45,7 @@ void main() {
     );
   });
 
-  test('✅ submitPost 성공 시 AsyncData 상태로 변경됨', () async {
+  test(' submitPost 성공 시 AsyncData 상태로 변경됨', () async {
     final testPost = PostEntity(
       uid: 'test-uid',
       content: '테스트 글입니다',
@@ -58,7 +63,7 @@ void main() {
         uid: any(named: 'uid'),
         imageBytes: any(named: 'imageBytes'),
       ),
-    ).thenAnswer((_) async => ''); // 기본 응답 지정
+    ).thenAnswer((_) async => '');
 
     await viewModel.submitPost(
       uid: testPost.uid,
