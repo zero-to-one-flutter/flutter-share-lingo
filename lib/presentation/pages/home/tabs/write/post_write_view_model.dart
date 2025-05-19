@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:share_lingo/core/providers/data_providers.dart';
 import 'package:share_lingo/domain/entity/post_entity.dart';
 import 'package:share_lingo/domain/usecase/create_post_usecase.dart';
 
@@ -33,4 +34,10 @@ class PostWriteViewModel extends StateNotifier<AsyncValue<void>> {
       state = AsyncError(e, st);
     }
   }
+
+  final postWriteViewModelProvider =
+      StateNotifierProvider<PostWriteViewModel, AsyncValue<void>>((ref) {
+        final useCase = ref.read(createPostUseCaseProvider);
+        return PostWriteViewModel(useCase);
+      });
 }
