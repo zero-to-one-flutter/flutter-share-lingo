@@ -54,8 +54,9 @@ class FeedTab extends StatelessWidget {
                     itemCount: docs.length,
                     itemBuilder: (context, index) {
                       final post = docs[index].data();
-                      final content = post['content'] ?? '';
-                      final imageUrl = post['imageUrl'] ?? '';
+                      // 추후 사용
+                      // final content = post['content'] ?? '';
+                      // final imageUrl = post['imageUrl'] ?? '';
 
                       return PostItem();
                     },
