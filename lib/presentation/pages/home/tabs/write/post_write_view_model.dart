@@ -32,8 +32,6 @@ class PostWriteViewModel extends StateNotifier<AsyncValue<void>> {
       await createPostUseCase(post);
       state = const AsyncData(null);
     } catch (e, st) {
-      print("Firestore 저장 실패: $e");
-      print(st);
       state = AsyncError(e, st);
     }
   }
