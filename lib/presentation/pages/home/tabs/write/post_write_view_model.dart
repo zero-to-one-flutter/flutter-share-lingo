@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:share_lingo/core/providers/data_providers.dart';
 import 'package:share_lingo/domain/entity/post_entity.dart';
@@ -31,13 +32,25 @@ class PostWriteViewModel extends StateNotifier<AsyncValue<void>> {
       await createPostUseCase(post);
       state = const AsyncData(null);
     } catch (e, st) {
+      print("Firestore 저장 실패: $e");
+      print(st);
       state = AsyncError(e, st);
     }
   }
-
-  final postWriteViewModelProvider =
-      StateNotifierProvider<PostWriteViewModel, AsyncValue<void>>((ref) {
-        final useCase = ref.read(createPostUseCaseProvider);
-        return PostWriteViewModel(useCase);
-      });
 }
+
+final postWriteViewModelProvider =
+    StateNotifierProvider<PostWriteViewModel, AsyncValue<void>>((ref) {
+      final useCase = ref.read(createPostUseCaseProvider);
+      return PostWriteViewModel(useCase);
+    });
+
+final postsProvider = StreamProvider.autoDispose((ref) {
+  final snapshots =
+      FirebaseFirestore.instance
+          .collection('posts')
+          .orderBy('createdAt', descending: true)
+          .snapshots();
+
+  return snapshots;
+});
