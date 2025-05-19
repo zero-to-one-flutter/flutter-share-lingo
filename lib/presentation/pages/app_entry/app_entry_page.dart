@@ -2,19 +2,19 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:share_lingo/core/utils/navigation_util.dart';
-import 'package:share_lingo/presentation/pages/splash/splash_view_model.dart';
+import 'package:share_lingo/presentation/pages/app_entry/app_entry_view_model.dart';
 
 import '../../../core/providers/data_providers.dart';
 import '../../user_global_view_model.dart';
 import '../login/login_page.dart';
 
-class SplashPage extends ConsumerWidget {
-  const SplashPage({super.key});
+class AppEntryPage extends ConsumerWidget {
+  const AppEntryPage({super.key});
 
   void _resolveAuthAndRoute(WidgetRef ref, BuildContext context) {
     ref.listen(authStateChangesProvider, (prev, next) {
       next.whenData((firebaseUserId) async {
-        final splashViewModel = ref.read(splashViewModelProvider.notifier);
+        final splashViewModel = ref.read(appEntryViewModelProvider.notifier);
         if (firebaseUserId == null) {
           _navigateToLoginPage(context); // Not logged in → go to login page
         } else {

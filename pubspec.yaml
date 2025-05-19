@@ -25,6 +25,7 @@ dependencies:
   google_sign_in: ^6.3.0
   firebase_auth: ^5.5.3
   firebase_crashlytics: ^4.3.5
+  geolocator: ^14.0.0
 
 dev_dependencies:
   flutter_test:
@@ -38,4 +39,5 @@ flutter:
   assets:
     - .env
     - assets/icons/
+    - assets/images/
 

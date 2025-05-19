@@ -14,6 +14,8 @@ class UserDto {
   final Timestamp? birthdate;
   final String? partnerPreference;
   final String? languageLearningGoal;
+  final String? district;
+  final GeoPoint? location;
 
   UserDto({
     required this.id,
@@ -27,6 +29,8 @@ class UserDto {
     this.birthdate,
     this.partnerPreference,
     this.languageLearningGoal,
+    this.district,
+    this.location,
   });
 
   factory UserDto.fromMap(String id, Map<String, dynamic> map) {
@@ -42,6 +46,9 @@ class UserDto {
       birthdate: map['birthdate'],
       partnerPreference: map['partnerPreference'],
       languageLearningGoal: map['languageLearningGoal'],
+      district: map['district'],
+      location: map['location'],
+
     );
   }
 
@@ -58,6 +65,8 @@ class UserDto {
       birthdate: user.birthdate != null ? Timestamp.fromDate(user.birthdate!) : null,
       partnerPreference: user.partnerPreference,
       languageLearningGoal: user.languageLearningGoal,
+      district: user.district,
+      location: user.location,
     );
   }
 
@@ -74,6 +83,8 @@ class UserDto {
       'birthdate': birthdate,
       'partnerPreference': partnerPreference,
       'languageLearningGoal': languageLearningGoal,
+      'district': district,
+      'location': location,
     };
   }
 
@@ -90,6 +101,8 @@ class UserDto {
       birthdate: birthdate?.toDate(),
       partnerPreference: partnerPreference,
       languageLearningGoal: languageLearningGoal,
+      district: district,
+      location: location,
     );
   }
 }

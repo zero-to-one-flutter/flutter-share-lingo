@@ -12,5 +12,5 @@ class SignOutUseCase {
 }
 
 final signOutUseCaseProvider = Provider(
-      (ref) => SignOutUseCase(ref.watch(authRepositoryProvider)),
+      (ref) => SignOutUseCase(ref.read(authRepositoryProvider)),
 );

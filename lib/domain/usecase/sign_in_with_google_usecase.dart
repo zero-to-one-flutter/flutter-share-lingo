@@ -13,5 +13,5 @@ class SignInWithGoogleUseCase {
 }
 
 final signInWithGoogleUseCaseProvider = Provider(
-      (ref) => SignInWithGoogleUseCase(ref.watch(authRepositoryProvider)),
+      (ref) => SignInWithGoogleUseCase(ref.read(authRepositoryProvider)),
 );

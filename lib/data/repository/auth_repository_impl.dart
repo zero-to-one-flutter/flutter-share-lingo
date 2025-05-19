@@ -8,12 +8,12 @@ import '../dto/user_dto.dart';
 class AuthRepositoryImpl implements AuthRepository {
   final GoogleSignInDataSource _googleSignIn;
   final FirebaseAuthDataSource _firebaseAuth;
-  final UserDataSource userDataSource;
+  final UserDataSource _userDataSource;
 
   AuthRepositoryImpl(
     this._googleSignIn,
     this._firebaseAuth,
-    this.userDataSource,
+    this._userDataSource,
   );
 
   @override
@@ -31,11 +31,11 @@ class AuthRepositoryImpl implements AuthRepository {
       email: firebaseUser.email,
     );
 
-    final fullUserDto = await userDataSource.getUserById(partialUser.id);
+    final fullUserDto = await _userDataSource.getUserById(partialUser.id);
     if (fullUserDto != null) { // User exists in backend
       return fullUserDto.toEntity(); // Return existing user in backend
     } else { // User is new sign up. Add to backend
-      await userDataSource.saveUser(UserDto.fromEntity(partialUser));
+      await _userDataSource.saveUser(UserDto.fromEntity(partialUser));
       return partialUser; // Return newly added user
     }
   }
