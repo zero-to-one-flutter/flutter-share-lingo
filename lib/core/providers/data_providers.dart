@@ -1,7 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:share_lingo/domain/usecase/upload_image_usecase.dart';
 
 import '../../data/data_source/firebase_auth_data_source.dart';
 import '../../data/data_source/google_sign_in_data_source.dart';
@@ -53,7 +55,10 @@ final userRepositoryProvider = Provider<UserRepository>(
 );
 
 final postRemoteDataSourceProvider = Provider<PostRemoteDataSource>((ref) {
-  return PostRemoteDataSource();
+  return PostRemoteDataSource(
+    storage: FirebaseStorage.instance,
+    firestore: FirebaseFirestore.instance,
+  );
 });
 
 final postRepositoryProvider = Provider<PostRepository>((ref) {
@@ -64,4 +69,8 @@ final postRepositoryProvider = Provider<PostRepository>((ref) {
 final createPostUseCaseProvider = Provider<CreatePostUseCase>((ref) {
   final repository = ref.read(postRepositoryProvider);
   return CreatePostUseCase(repository);
+});
+final uploadImageUseCaseProvider = Provider<UploadImageUseCase>((ref) {
+  final repository = ref.watch(postRepositoryProvider);
+  return UploadImageUseCase(repository);
 });

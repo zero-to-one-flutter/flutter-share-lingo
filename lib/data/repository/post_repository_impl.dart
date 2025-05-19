@@ -8,6 +8,8 @@ class PostRepositoryImpl implements PostRepository {
   PostRepositoryImpl(this._dataSource);
 }
 */
+import 'dart:typed_data';
+
 import '../../domain/entity/post_entity.dart';
 import '../../domain/repository/post_repository.dart';
 import '../data_source/post_remote_data_source.dart';
@@ -22,5 +24,10 @@ class PostRepositoryImpl implements PostRepository {
   Future<void> createPost(PostEntity post) async {
     final dto = PostDto.fromEntity(post);
     await remoteDataSource.createPost(dto);
+  }
+
+  @override
+  Future<String> uploadImage(String uid, Uint8List bytes) {
+    return remoteDataSource.uploadImage(uid, bytes);
   }
 }

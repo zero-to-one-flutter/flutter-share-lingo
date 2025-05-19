@@ -3,8 +3,13 @@ import 'package:share_lingo/presentation/pages/home/tabs/write/tag_select/select
 
 class TagRowButton extends StatelessWidget {
   final void Function(String tag) onTagSelected;
+  final VoidCallback onPickImage;
 
-  const TagRowButton({super.key, required this.onTagSelected});
+  const TagRowButton({
+    super.key,
+    required this.onTagSelected,
+    required this.onPickImage,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -50,7 +55,7 @@ class TagRowButton extends StatelessWidget {
           // 오른쪽: 카메라 버튼
           GestureDetector(
             onTap: () {
-              // TODO: 사진 선택 기능
+              onPickImage();
             },
             child: Container(
               width: 48,

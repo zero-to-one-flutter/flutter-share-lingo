@@ -53,12 +53,18 @@ class FeedTab extends StatelessWidget {
                     },
                     itemCount: docs.length,
                     itemBuilder: (context, index) {
-                      // final post = docs[index].data();
-                      // 추후 사용
-                      // final content = post['content'] ?? '';
-                      // final imageUrl = post['imageUrl'] ?? '';
+                      final post = docs[index].data();
+                      final content = post['content'] ?? '';
+                      final imageUrl = List<String>.from(
+                        post['imageUrl'] ?? [],
+                      );
+                      final tags = List<String>.from(post['tags'] ?? []);
 
-                      return PostItem();
+                      return PostItem(
+                        content: content,
+                        imageUrl: imageUrl,
+                        tags: tags,
+                      );
                     },
                   );
                 },

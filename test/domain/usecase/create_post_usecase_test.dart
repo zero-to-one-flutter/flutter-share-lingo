@@ -19,7 +19,7 @@ void main() {
     final post = PostEntity(
       uid: 'uid123',
       content: '테스트입니다',
-      imageUrl: '',
+      imageUrl: [],
       tags: ['kor'],
       createdAt: DateTime.now(),
       likeCount: 0,
@@ -40,7 +40,7 @@ void main() {
     final post = PostEntity(
       uid: 'uid123',
       content: '에러 테스트',
-      imageUrl: '',
+      imageUrl: [],
       tags: [],
       createdAt: DateTime.now(),
       likeCount: 0,
