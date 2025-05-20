@@ -59,6 +59,7 @@ class SettingsPage extends ConsumerWidget {
         );
       }
     } catch (e) {
+      // ignore: use_build_context_synchronously
       SnackbarUtil.showSnackBar(context, '로그아웃 중 오류가 발생했습니다');
     }
   }
