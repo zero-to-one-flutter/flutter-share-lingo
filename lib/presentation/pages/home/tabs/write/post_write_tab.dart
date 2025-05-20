@@ -71,77 +71,107 @@ class _PostWriteTabState extends ConsumerState<PostWriteTab> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
-        leading: CancelButton(onPressed: _cancel),
-        actions: [SubmitButton(onPressed: _submit)],
-      ),
-      body: Column(
-        children: [
-          const SizedBox(height: 20),
-          PostInputField(controller: _contentController),
-          const SizedBox(height: 16),
-          if (_selectedImages.isNotEmpty)
-            SizedBox(
-              height: 100,
-              child: ListView.separated(
-                scrollDirection: Axis.horizontal,
-                itemCount: _selectedImages.length,
-                separatorBuilder: (_, __) => const SizedBox(width: 8),
-                itemBuilder: (context, index) {
-                  return Stack(
-                    children: [
-                      Image.memory(_selectedImages[index], height: 100),
-                      Positioned(
-                        right: 0,
-                        child: GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              _selectedImages.removeAt(index);
-                            });
-                          },
-                          child: const Icon(Icons.cancel, color: Colors.red),
-                        ),
-                      ),
-                    ],
-                  );
-                },
-              ),
-            ),
-
-          const SizedBox(height: 16),
-
-          TagRowButton(
-            onTagSelected: (tag) {
-              if (!_selectedTags.contains(tag)) {
-                setState(() => _selectedTags.add(tag));
-              }
-            },
-            onPickImage: _pickImage,
+        leading: Padding(
+          padding: const EdgeInsets.only(left: 12),
+          child: CancelButton(onPressed: _cancel),
+        ),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 12),
+            child: SubmitButton(onPressed: _submit),
           ),
-          if (_selectedTags.isNotEmpty)
-            Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 16.0,
-                vertical: 8,
-              ),
-              child: Wrap(
-                spacing: 8,
-                runSpacing: 4,
-                children:
-                    _selectedTags.map((tag) {
-                      return Chip(
-                        label: Text(tag),
-                        onDeleted: () {
-                          setState(() {
-                            _selectedTags.remove(tag);
-                          });
-                        },
-                      );
-                    }).toList(),
-              ),
-            ),
-
-          const Spacer(),
         ],
+      ),
+
+      body: SafeArea(
+        child: LayoutBuilder(
+          //반응형 대응
+          builder: (context, constraints) {
+            return SingleChildScrollView(
+              padding: EdgeInsets.only(
+                left: 16,
+                right: 16,
+                bottom: MediaQuery.of(context).viewInsets.bottom + 20,
+                top: 20,
+              ),
+              child: ConstrainedBox(
+                constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                child: IntrinsicHeight(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      PostInputField(controller: _contentController),
+                      const SizedBox(height: 16),
+                      if (_selectedImages.isNotEmpty)
+                        SizedBox(
+                          height: 100,
+                          child: ListView.separated(
+                            scrollDirection: Axis.horizontal,
+                            itemCount: _selectedImages.length,
+                            separatorBuilder:
+                                (_, __) => const SizedBox(width: 8),
+                            itemBuilder: (context, index) {
+                              return Stack(
+                                children: [
+                                  Image.memory(
+                                    _selectedImages[index],
+                                    height: 100,
+                                  ),
+                                  Positioned(
+                                    right: 0,
+                                    child: GestureDetector(
+                                      onTap: () {
+                                        setState(() {
+                                          _selectedImages.removeAt(index);
+                                        });
+                                      },
+                                      child: const Icon(
+                                        Icons.cancel,
+                                        color: Colors.red,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              );
+                            },
+                          ),
+                        ),
+                      const SizedBox(height: 16),
+                      TagRowButton(
+                        onTagSelected: (tag) {
+                          if (!_selectedTags.contains(tag)) {
+                            setState(() => _selectedTags.add(tag));
+                          }
+                        },
+                        onPickImage: _pickImage,
+                      ),
+                      if (_selectedTags.isNotEmpty)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 12),
+                          child: Wrap(
+                            spacing: 8,
+                            runSpacing: 4,
+                            children:
+                                _selectedTags.map((tag) {
+                                  return Chip(
+                                    label: Text(tag),
+                                    onDeleted: () {
+                                      setState(() {
+                                        _selectedTags.remove(tag);
+                                      });
+                                    },
+                                  );
+                                }).toList(),
+                          ),
+                        ),
+                      const SizedBox(height: 16),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          },
+        ),
       ),
     );
   }
