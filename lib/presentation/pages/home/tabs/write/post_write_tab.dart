@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:share_lingo/core/utils/snackbar_util.dart';
-import 'package:share_lingo/presentation/pages/home/home_view_model.dart';
 import 'package:share_lingo/presentation/pages/home/tabs/write/post_write_view_model.dart';
 import 'package:share_lingo/presentation/pages/home/tabs/write/widgets/cancel_button.dart';
 import 'package:share_lingo/presentation/pages/home/tabs/write/widgets/post_input_field.dart';
