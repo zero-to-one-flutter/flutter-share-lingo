@@ -18,6 +18,13 @@ class FeedNotifier extends AutoDisposeAsyncNotifier<List<PostEntity>> {
     return await _fetchInitialPosts();
   }
 
+  Future<void> refresh() async {
+    state = const AsyncLoading(); // UI에서 로딩 상태 보이게
+    state = await AsyncValue.guard(() async {
+      return await _fetchInitialPosts();
+    });
+  }
+
   Future<List<PostEntity>> _fetchInitialPosts() async {
     try {
       final posts = await initialPostsUsecase.execute();
