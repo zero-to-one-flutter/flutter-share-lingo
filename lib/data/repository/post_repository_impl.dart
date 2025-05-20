@@ -10,6 +10,8 @@ class PostRepositoryImpl implements PostRepository {
 */
 import 'dart:typed_data';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 import '../../domain/entity/post_entity.dart';
 import '../../domain/repository/post_repository.dart';
 import '../data_source/post_remote_data_source.dart';
@@ -34,6 +36,12 @@ class PostRepositoryImpl implements PostRepository {
   @override
   Future<List<PostEntity>> fetchInitialPosts() async {
     final dtoList = await remoteDataSource.fetchInitialPosts();
+    return dtoList.map((dto) => dto.toEntity()).toList();
+  }
+
+  @override
+  Future<List<PostEntity>> fetchOlderPosts(PostEntity lastPost) async {
+    final dtoList = await remoteDataSource.fetchOlderPosts(lastPost);
     return dtoList.map((dto) => dto.toEntity()).toList();
   }
 }

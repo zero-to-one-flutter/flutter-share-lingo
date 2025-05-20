@@ -1,5 +1,3 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:share_lingo/core/providers/data_providers.dart';
 import 'package:share_lingo/domain/entity/post_entity.dart';
 import 'package:share_lingo/domain/repository/post_repository.dart';
 
@@ -12,7 +10,3 @@ class FetchInitialPostsUsecase {
     return await repository.fetchInitialPosts();
   }
 }
-
-final fetchInitialPostsUsecaseProvider = Provider(
-  (ref) => FetchInitialPostsUsecase(ref.read(postRepositoryProvider)),
-);

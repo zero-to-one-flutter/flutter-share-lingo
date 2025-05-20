@@ -3,6 +3,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:share_lingo/domain/usecase/fetch_initial_posts_usecase.dart';
+import 'package:share_lingo/domain/usecase/fetch_older_posts_usecase.dart';
 import 'package:share_lingo/domain/usecase/upload_image_usecase.dart';
 
 import '../../data/data_source/firebase_auth_data_source.dart';
@@ -74,3 +76,11 @@ final uploadImageUseCaseProvider = Provider<UploadImageUseCase>((ref) {
   final repository = ref.watch(postRepositoryProvider);
   return UploadImageUseCase(repository);
 });
+
+final fetchInitialPostsUsecaseProvider = Provider(
+  (ref) => FetchInitialPostsUsecase(ref.read(postRepositoryProvider)),
+);
+
+final fetchOlderPostsUsecaseProvider = Provider(
+  (ref) => FetchOlderPostsUsecase(ref.read(postRepositoryProvider)),
+);
