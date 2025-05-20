@@ -6,4 +6,5 @@ abstract class PostRepository {
   Future<void> createPost(PostEntity post);
   Future<String> uploadImage(String uid, Uint8List imageBytes);
   Future<List<PostEntity>> fetchInitialPosts();
+  Future<List<PostEntity>> fetchOlderPosts(PostEntity lastPost);
 }

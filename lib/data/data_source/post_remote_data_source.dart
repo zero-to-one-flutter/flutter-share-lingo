@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:share_lingo/data/dto/post_dto.dart';
+import 'package:share_lingo/domain/entity/post_entity.dart';
 
 class PostRemoteDataSource {
   final FirebaseFirestore firestore;
@@ -28,12 +29,23 @@ class PostRemoteDataSource {
         await firestore
             .collection('posts')
             .orderBy('createdAt', descending: true)
+            .limit(20)
             .get();
     final posts =
-        snapshot.docs.map((doc) {
-          return PostDto.fromMap(doc.data());
-        }).toList();
+        snapshot.docs.map((doc) => PostDto.fromMap(doc.data())).toList();
 
     return posts;
+  }
+
+  Future<List<PostDto>> fetchOlderPosts(PostEntity lastPost) async {
+    final snapshot =
+        await firestore
+            .collection('posts')
+            .orderBy('createdAt', descending: true)
+            .startAfter([lastPost.createdAt])
+            .limit(20)
+            .get();
+
+    return snapshot.docs.map((doc) => PostDto.fromMap(doc.data())).toList();
   }
 }
