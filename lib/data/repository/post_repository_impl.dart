@@ -30,4 +30,10 @@ class PostRepositoryImpl implements PostRepository {
   Future<String> uploadImage(String uid, Uint8List bytes) {
     return remoteDataSource.uploadImage(uid, bytes);
   }
+
+  @override
+  Future<List<PostEntity>> fetchInitialPosts() async {
+    final dtoList = await remoteDataSource.fetchInitialPosts();
+    return dtoList.map((dto) => dto.toEntity()).toList();
+  }
 }

@@ -22,4 +22,18 @@ class PostRemoteDataSource {
     final uploadTask = await ref.putData(bytes);
     return await uploadTask.ref.getDownloadURL();
   }
+
+  Future<List<PostDto>> fetchInitialPosts() async {
+    final snapshot =
+        await firestore
+            .collection('posts')
+            .orderBy('createAt', descending: true)
+            .get();
+    final posts =
+        snapshot.docs.map((doc) {
+          return PostDto.fromMap(doc.data());
+        }).toList();
+
+    return posts;
+  }
 }
