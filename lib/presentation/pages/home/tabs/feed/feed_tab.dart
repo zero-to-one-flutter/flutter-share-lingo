@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:share_lingo/presentation/pages/home/tabs/write/post_write_view_model.dart';
-
+import 'package:share_lingo/presentation/pages/home/tabs/feed/feed_view_model.dart';
 import 'package:share_lingo/presentation/pages/home/widgets/post_item.dart';
 
 import '../../../../../app/constants/app_colors.dart';
@@ -13,7 +12,7 @@ class FeedTab extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer(
       builder: (context, ref, child) {
-        final postsAsync = ref.watch(postsProvider);
+        final feedAsync = ref.watch(feedNotifierProvider);
 
         return Column(
           children: [
@@ -28,12 +27,14 @@ class FeedTab extends StatelessWidget {
               ),
             ),
             Expanded(
-              child: postsAsync.when(
+              child: feedAsync.when(
                 loading: () => const Center(child: CircularProgressIndicator()),
                 error: (err, _) => Center(child: Text('에러 발생: $err')),
-                data: (snapshot) {
-                  final docs = snapshot.docs;
-
+                data: (data) {
+                  final posts = data;
+                  if (posts.isEmpty) {
+                    return const Center(child: Text('게시글이 없습니다.'));
+                  }
                   return ListView.separated(
                     padding: const EdgeInsets.only(
                       left: 16,
@@ -49,16 +50,13 @@ class FeedTab extends StatelessWidget {
                         ],
                       );
                     },
-                    itemCount: docs.length,
+                    itemCount: posts.length,
                     itemBuilder: (context, index) {
-                      // TODO: 클린아키텍처 적용
-                      final post = docs[index].data();
-                      final content = post['content'] ?? '';
-                      final imageUrl = List<String>.from(
-                        post['imageUrl'] ?? [],
-                      );
-                      final tags = List<String>.from(post['tags'] ?? []);
-                      final commentCount = post['commentCount'] ?? 0;
+                      final post = posts[index];
+                      final content = post.content;
+                      final imageUrl = post.imageUrl;
+                      final tags = post.tags;
+                      final commentCount = post.commentCount;
 
                       return PostItem(
                         content: content,
