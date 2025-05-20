@@ -9,6 +9,7 @@ import 'package:share_lingo/presentation/pages/app_entry/app_entry_page.dart';
 import 'app/constants/app_constants.dart';
 import 'app/theme.dart';
 import 'firebase_options.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 void main() async {
   runZonedGuarded(
@@ -42,6 +43,13 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       themeMode: ThemeMode.light,
       theme: AppTheme.buildTheme(),
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: [Locale('ko')],
+      locale: Locale(('ko')),
       home: const AppEntryPage(),
     );
   }

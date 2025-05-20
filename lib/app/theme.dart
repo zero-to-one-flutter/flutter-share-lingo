@@ -34,10 +34,30 @@ abstract class AppTheme {
 
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.lightBlue,
+          elevation: 0,
+          backgroundColor: AppColors.buttonsBlue,
           foregroundColor: Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          minimumSize: const Size(double.infinity, 50),
+          textStyle: const TextStyle(fontWeight: FontWeight.w600, fontSize: 17),
         ),
       ),
+
+        outlinedButtonTheme: OutlinedButtonThemeData(
+          style: ElevatedButton.styleFrom(
+            elevation: 0,
+            // backgroundColor: AppColors.buttonsBlue,
+            foregroundColor: AppColors.buttonsBlue,
+            side: BorderSide(color: AppColors.buttonsBlue),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            minimumSize: const Size(double.infinity, 50),
+            textStyle: const TextStyle(fontWeight: FontWeight.w600, fontSize: 17),
+          ),
+        )
     );
   }
 
