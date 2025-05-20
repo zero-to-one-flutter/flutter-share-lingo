@@ -10,8 +10,6 @@ class PostRepositoryImpl implements PostRepository {
 */
 import 'dart:typed_data';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
-
 import '../../domain/entity/post_entity.dart';
 import '../../domain/repository/post_repository.dart';
 import '../data_source/post_remote_data_source.dart';
