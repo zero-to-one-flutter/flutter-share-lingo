@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:share_lingo/presentation/pages/home/tabs/write/tag_select/select_tag_page.dart';
 
+import '../../../../../../app/constants/app_colors.dart';
+
 class TagRowButton extends StatelessWidget {
   final void Function(String tag) onTagSelected;
   final VoidCallback onPickImage;
@@ -14,7 +16,7 @@ class TagRowButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
+      padding: const EdgeInsets.symmetric(horizontal: 6),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -32,15 +34,8 @@ class TagRowButton extends StatelessWidget {
                 onTagSelected(selectedTag);
               }
             },
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12),
-              height: 32,
-              decoration: BoxDecoration(
-                color: const Color(0xFFA9A9A9),
-                borderRadius: BorderRadius.circular(20),
-              ),
-              alignment: Alignment.center,
-              child: const Text(
+            child: Chip(
+              label: const Text(
                 '태그 추가',
                 style: TextStyle(
                   color: Colors.black,
@@ -49,6 +44,12 @@ class TagRowButton extends StatelessWidget {
                   fontWeight: FontWeight.w400,
                 ),
               ),
+              backgroundColor: AppColors.lightGrey,
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              shape: const StadiumBorder(),
+              side: BorderSide.none,
+              elevation: 0,
+              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
             ),
           ),
 

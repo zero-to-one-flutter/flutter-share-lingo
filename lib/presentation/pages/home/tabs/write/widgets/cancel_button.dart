@@ -2,13 +2,18 @@ import 'package:flutter/material.dart';
 
 class CancelButton extends StatelessWidget {
   final VoidCallback onPressed;
+
   const CancelButton({super.key, required this.onPressed});
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onPressed,
-      child: const SizedBox(
+      child: IconButton(
+        onPressed: onPressed,
+        icon: Icon(Icons.close, size: 27),
+      ),
+      /*const SizedBox(
         width: 61,
         height: 40,
         child: Center(
@@ -23,7 +28,7 @@ class CancelButton extends StatelessWidget {
             ),
           ),
         ),
-      ),
+      )*/
     );
   }
 }

@@ -3,6 +3,16 @@ import '../../domain/entity/language_entry.dart';
 abstract class AppConstants {
   static const appTitle = 'ShareLingo';
 
+  static const tags = [
+    '어떻게 고쳐야 하나요?',
+    '자연스럽게 번역해 주세요',
+    '무슨 의미인가요?',
+    '이런 표현들의 차이점은 뭐예요?',
+    '숙제를 도와주세요',
+    '오늘의 문장',
+    '언어 교환',
+  ];
+
   static const List<LanguageEntry> mostUsedLanguages = [
     LanguageEntry(koreanName: '영어', countryCode: 'US', languageCode: 'en'),
     LanguageEntry(koreanName: '한국어', countryCode: 'KR', languageCode: 'ko'),

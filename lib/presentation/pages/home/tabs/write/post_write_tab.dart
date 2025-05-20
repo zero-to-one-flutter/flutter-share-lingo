@@ -92,7 +92,7 @@ class _PostWriteTabState extends ConsumerState<PostWriteTab> {
                 left: 16,
                 right: 16,
                 bottom: MediaQuery.of(context).viewInsets.bottom + 20,
-                top: 20,
+                top: 5,
               ),
               child: ConstrainedBox(
                 constraints: BoxConstraints(minHeight: constraints.maxHeight),

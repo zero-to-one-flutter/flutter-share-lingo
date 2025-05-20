@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../../../../../app/constants/app_colors.dart';
+
 class PostInputField extends StatelessWidget {
   final TextEditingController controller;
 
@@ -12,7 +14,7 @@ class PostInputField extends StatelessWidget {
       height: 482,
       padding: const EdgeInsets.all(16),
       decoration: const BoxDecoration(
-        color: Color(0xFFEDEDED),
+        color: AppColors.chipGrey,
         borderRadius: BorderRadius.all(Radius.circular(12)),
       ),
       child: TextField(
