@@ -42,28 +42,30 @@ class FeedTab extends StatelessWidget {
                       bottom: 100,
                     ),
                     separatorBuilder: (context, index) {
-                      return SizedBox(
-                        height: 25,
-                        width: double.infinity,
-                        child: Align(
-                          alignment: Alignment.bottomCenter,
-                          child: Divider(),
-                        ),
+                      return Column(
+                        children: [
+                          SizedBox(height: 8, width: double.infinity),
+                          Divider(),
+                        ],
                       );
                     },
                     itemCount: docs.length,
                     itemBuilder: (context, index) {
+                      // TODO: 클린아키텍처 적용
                       final post = docs[index].data();
                       final content = post['content'] ?? '';
                       final imageUrl = List<String>.from(
                         post['imageUrl'] ?? [],
                       );
                       final tags = List<String>.from(post['tags'] ?? []);
+                      final commentCount = post['commentCount'] ?? 0;
 
                       return PostItem(
                         content: content,
                         imageUrl: imageUrl,
                         tags: tags,
+                        commentCount: commentCount,
+                        displayComments: true,
                       );
                     },
                   );
