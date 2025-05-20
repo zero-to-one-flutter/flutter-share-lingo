@@ -2,7 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:share_lingo/domain/usecase/fetch_initial_posts_usecase.dart';
 import 'package:share_lingo/domain/entity/post_entity.dart';
 
-class FeedNotifier extends AsyncNotifier<List<PostEntity>> {
+class FeedNotifier extends AutoDisposeAsyncNotifier<List<PostEntity>> {
   late final FetchInitialPostsUsecase usecase;
 
   @override
@@ -30,4 +30,4 @@ class FeedNotifier extends AsyncNotifier<List<PostEntity>> {
 }
 
 final feedNotifierProvider =
-    AsyncNotifierProvider<FeedNotifier, List<PostEntity>>(() => FeedNotifier());
+    AsyncNotifierProvider.autoDispose<FeedNotifier, List<PostEntity>>(() => FeedNotifier());
