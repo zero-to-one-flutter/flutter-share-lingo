@@ -9,7 +9,7 @@ import 'package:share_lingo/presentation/user_global_view_model.dart';
 import '../../../../app/constants/app_colors.dart';
 import '../../../../core/utils/dialogue_util.dart';
 import '../onboarding_view_model.dart';
-import '../widgets/language_selection_modal.dart';
+import '../../../widgets/language_selection_modal.dart';
 
 class LanguageSelectionTab extends ConsumerWidget {
   final String title;

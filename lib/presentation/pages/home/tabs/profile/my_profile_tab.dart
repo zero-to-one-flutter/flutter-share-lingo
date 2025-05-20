@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:share_lingo/presentation/pages/settings/settings_page.dart';
 
 import '../../../../user_global_view_model.dart';
 import '../../../../widgets/profile_layout.dart';
@@ -11,7 +12,11 @@ class MyProfileTab extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer(
       builder: (BuildContext context, WidgetRef ref, Widget? child) {
-        final user = ref.watch(userGlobalViewModelProvider)!;
+        final user = ref.watch(userGlobalViewModelProvider);
+        if (user == null) {
+          return Center(child: Text('로그인 정보가 없습니다.'));
+        }
+
         return ListView(
           children: [
             AppBar(
@@ -21,13 +26,13 @@ class MyProfileTab extends StatelessWidget {
                   icon: Icon(Icons.settings),
                   tooltip: '설정',
                   onPressed: () {
-                    // Navigator.of(context).push(
-                    //   MaterialPageRoute(
-                    //     builder: (context) {
-                    //       return ProfileEditPage(user: user);
-                    //     },
-                    //   ),
-                    // );
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) {
+                          return SettingsPage();
+                        },
+                      ),
+                    );
                   },
                 )
               ],
