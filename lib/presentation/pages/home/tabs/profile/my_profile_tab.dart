@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:share_lingo/presentation/pages/settings/settings_page.dart';
 
 import '../../../../user_global_view_model.dart';
 import '../../../../widgets/profile_layout.dart';
@@ -21,13 +22,13 @@ class MyProfileTab extends StatelessWidget {
                   icon: Icon(Icons.settings),
                   tooltip: '설정',
                   onPressed: () {
-                    // Navigator.of(context).push(
-                    //   MaterialPageRoute(
-                    //     builder: (context) {
-                    //       return ProfileEditPage(user: user);
-                    //     },
-                    //   ),
-                    // );
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) {
+                          return SettingsPage();
+                        },
+                      ),
+                    );
                   },
                 )
               ],
