@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../home_view_model.dart';
+import '../tabs/write/post_write_tab.dart';
 
 class HomeBottomNavigationBar extends StatelessWidget {
   const HomeBottomNavigationBar({super.key});
@@ -28,31 +29,54 @@ class HomeBottomNavigationBar extends StatelessWidget {
             backgroundColor: Colors.transparent,
             elevation: 0,
             currentIndex: currentIndex,
-            onTap: viewModel.onIndexChanged,
+            onTap: (index) {
+              if (index == 1) {
+                Navigator.of(
+                  context,
+                ).push(MaterialPageRoute(builder: (_) => PostWriteTab()));
+              } else {
+                viewModel.onIndexChanged(index);
+              }
+            },
             iconSize: 28,
-            selectedLabelStyle: const TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.bold,
-            ),
-            unselectedLabelStyle: const TextStyle(fontSize: 12),
-            selectedItemColor: Colors.blueAccent,
-            items: const [
+            showSelectedLabels: false,
+            showUnselectedLabels: false,
+            // selectedItemColor: Colors.blueAccent,
+            unselectedItemColor: Colors.black,
+            selectedItemColor: Colors.black,
+            items: [
               BottomNavigationBarItem(
-                icon: Icon(Icons.people_outline),
-                activeIcon: Icon(Icons.people),
-                label: '교류',
-                tooltip: '교류',
+                icon: Image.asset(
+                  'assets/icons/hut.png',
+                  width: 24,
+                  height: 24,
+                ),
+                activeIcon: Image.asset(
+                  'assets/icons/home.png',
+                  width: 28,
+                  height: 28,
+                ),
+                label: '',
+                tooltip: '홈',
               ),
               BottomNavigationBarItem(
-                icon: Icon(Icons.add_circle_outline),
-                activeIcon: Icon(Icons.add_circle),
-                label: '글쓰기',
+                icon: Image.asset(
+                  'assets/icons/add_square_icon.png',
+                  width: 28,
+                  height: 28,
+                ),
+                activeIcon: Image.asset(
+                  'assets/icons/add_square_icon.png',
+                  width: 28,
+                  height: 28,
+                ),
+                label: '',
                 tooltip: '글쓰기',
               ),
               BottomNavigationBarItem(
                 icon: Icon(CupertinoIcons.person_circle),
                 activeIcon: Icon(CupertinoIcons.person_circle_fill),
-                label: '프로필',
+                label: '',
                 tooltip: '프로필',
               ),
             ],
