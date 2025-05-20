@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../app/constants/app_constants.dart';
 
-class UiUtil {
+class GeneralUtils {
   static Future<DateTime?> pickBirthdate({
     required BuildContext context,
     DateTime? initialDate,

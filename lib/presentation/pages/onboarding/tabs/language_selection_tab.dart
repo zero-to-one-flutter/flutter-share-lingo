@@ -2,7 +2,7 @@ import 'package:country_flags/country_flags.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:share_lingo/core/utils/snackbar_util.dart';
-import 'package:share_lingo/core/utils/ui_util.dart';
+import 'package:share_lingo/core/utils/general_utils.dart';
 import 'package:share_lingo/presentation/pages/onboarding/widgets/title_section.dart';
 import 'package:share_lingo/presentation/pages/onboarding/widgets/subtitle_text.dart';
 import 'package:share_lingo/presentation/user_global_view_model.dart';
@@ -68,7 +68,7 @@ class LanguageSelectionTab extends ConsumerWidget {
     WidgetRef ref,
   ) {
     final userGlobalViewModel = ref.read(userGlobalViewModelProvider.notifier);
-    final countryCode = UiUtil.getCountryCodeByName(selectedLang);
+    final countryCode = GeneralUtils.getCountryCodeByName(selectedLang);
 
     return GestureDetector(
       onTap: () {

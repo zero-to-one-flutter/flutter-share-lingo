@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:share_lingo/core/utils/ui_util.dart';
+import 'package:share_lingo/core/utils/general_utils.dart';
 import 'package:share_lingo/presentation/pages/onboarding/onboarding_view_model.dart';
 import 'package:share_lingo/presentation/pages/onboarding/widgets/onboarding_input_decoration.dart';
 import 'package:share_lingo/presentation/pages/onboarding/widgets/subtitle_text.dart';
@@ -106,7 +106,7 @@ class _InputNameTabState extends ConsumerState<InputNameDateTab> {
       decoration: onboardingInputDecoration('생년월일을 선택하세요', isDate: true),
       readOnly: true,
       onTap: () async {
-        birthdate = await UiUtil.pickBirthdate(context: context);
+        birthdate = await GeneralUtils.pickBirthdate(context: context);
         if (birthdate != null) {
           setState(() {
             _birthdateController.text =
