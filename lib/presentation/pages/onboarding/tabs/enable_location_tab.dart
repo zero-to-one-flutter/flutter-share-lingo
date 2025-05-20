@@ -17,7 +17,7 @@ class EnableLocationTab extends ConsumerStatefulWidget {
 }
 
 class _EnableLocationTabState extends ConsumerState<EnableLocationTab> {
-  Future<void> _onEnableLocationPressed() async {
+  Future<void> _onEnableLocationPressed(BuildContext context) async {
     final vm = ref.read(locationViewModelProvider.notifier);
     await vm.fetchLocation();
 
@@ -26,15 +26,17 @@ class _EnableLocationTabState extends ConsumerState<EnableLocationTab> {
       final userVM = ref.read(userGlobalViewModelProvider.notifier);
       userVM.setLocation(state.geoPoint!);
 
-      await _saveUserAndNavigate();
+      if (context.mounted) {
+        await _saveUserAndNavigate(context);
+      }
     }
   }
 
-  Future<void> _onSkipPressed() async {
-    await _saveUserAndNavigate();
+  Future<void> _onSkipPressed(BuildContext context) async {
+    await _saveUserAndNavigate(context);
   }
 
-  Future<void> _saveUserAndNavigate() async {
+  Future<void> _saveUserAndNavigate(BuildContext context) async {
     final userVM = ref.read(userGlobalViewModelProvider.notifier);
     await userVM.saveUserToDatabase();
 
@@ -44,7 +46,8 @@ class _EnableLocationTabState extends ConsumerState<EnableLocationTab> {
         title: '회원가입 완료',
         content: '🎉 회원가입이 완료되었습니다!\n이제 언어 친구들을 만나보세요.',
       );
-
+    }
+    if (context.mounted) {
       NavigationUtil.navigateBasedOnProfile(
         context,
         ref.read(userGlobalViewModelProvider)!,
@@ -104,7 +107,9 @@ class _EnableLocationTabState extends ConsumerState<EnableLocationTab> {
         SizedBox(
           width: double.infinity,
           child: ElevatedButton(
-            onPressed: state.isLoading ? null : _onEnableLocationPressed,
+            onPressed:
+                () =>
+                    state.isLoading ? null : _onEnableLocationPressed(context),
             child:
                 state.isLoading
                     ? const CupertinoActivityIndicator()
@@ -112,7 +117,10 @@ class _EnableLocationTabState extends ConsumerState<EnableLocationTab> {
           ),
         ),
         const SizedBox(height: 2),
-        TextButton(onPressed: _onSkipPressed, child: const Text('위치 없이 진행하기')),
+        TextButton(
+          onPressed: () => _onSkipPressed(context),
+          child: const Text('위치 없이 진행하기'),
+        ),
         const SizedBox(height: 19),
       ],
     );
