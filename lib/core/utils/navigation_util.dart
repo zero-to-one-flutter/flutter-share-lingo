@@ -6,13 +6,13 @@ import '../../presentation/pages/home/home_page.dart';
 
 abstract class NavigationUtil {
   static void navigateBasedOnProfile(BuildContext context, AppUser? appUser) {
-    final hasLanguages =
-        appUser?.nativeLanguage != null && appUser?.targetLanguage != null;
+    final isProfileCompleted = appUser?.nativeLanguage != null;
 
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
-        builder: (_) => hasLanguages ? const HomePage() : OnboardingPage(),
+        builder:
+            (_) => isProfileCompleted ? const HomePage() : OnboardingPage(),
       ),
     );
   }
