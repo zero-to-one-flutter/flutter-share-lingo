@@ -1,17 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:share_lingo/app/constants/app_constants.dart';
 
 class SelectTagPage extends StatelessWidget {
   const SelectTagPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final tags = [
-      '#어떻게 고쳐야 하나요?',
-      '#무슨 의미인가요?',
-      '#자연스럽게 번역해 주세요',
-      '#발음 피드백 주세요',
-    ];
-
     return Scaffold(
       backgroundColor: Colors.white,
       body: Padding(
@@ -41,25 +35,29 @@ class SelectTagPage extends StatelessWidget {
             // 태그 리스트
             Expanded(
               child: ListView.separated(
-                itemCount: tags.length,
+                itemCount: AppConstants.tags.length,
                 separatorBuilder: (_, __) => const SizedBox(height: 12),
                 itemBuilder: (context, index) {
                   return GestureDetector(
                     onTap: () {
-                      Navigator.pop(context, tags[index]); // 태그 리턴
+                      Navigator.pop(context, AppConstants.tags[index]); // 태그 리턴
                     },
                     child: Container(
                       padding: const EdgeInsets.symmetric(
                         horizontal: 16,
-                        vertical: 10,
+                        vertical: 13,
                       ),
                       decoration: BoxDecoration(
                         color: const Color(0xFFF0F0F0),
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Text(
-                        tags[index],
-                        style: const TextStyle(fontSize: 16),
+                        '#${AppConstants.tags[index]}',
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.blueAccent,
+                        ),
                       ),
                     ),
                   );
