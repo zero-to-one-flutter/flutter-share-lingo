@@ -71,9 +71,18 @@ class _PostWriteTabState extends ConsumerState<PostWriteTab> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
-        leading: CancelButton(onPressed: _cancel),
-        actions: [SubmitButton(onPressed: _submit)],
+        leading: Padding(
+          padding: const EdgeInsets.only(left: 12),
+          child: CancelButton(onPressed: _cancel),
+        ),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 12),
+            child: SubmitButton(onPressed: _submit),
+          ),
+        ],
       ),
+
       body: SafeArea(
         child: LayoutBuilder(
           //반응형 대응
