@@ -10,7 +10,7 @@ class TitleSubtitleText extends StatelessWidget {
     return Text(
       text,
       style: TextStyle(
-        fontSize: 14,
+        fontSize: 15,
         color: Colors.grey[700],
         height: 1.5,
       ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:share_lingo/presentation/pages/onboarding/tabs/enable_location_tab.dart';
 import 'package:share_lingo/presentation/pages/onboarding/tabs/input_bio_tab.dart';
 import 'package:share_lingo/presentation/pages/onboarding/tabs/language_selection_tab.dart';
 import 'package:share_lingo/presentation/pages/onboarding/tabs/input_name_date_tab.dart';
@@ -45,20 +46,13 @@ class OnboardingPage extends ConsumerWidget {
                         subtitle: '지금 공부 중이거나 관심 있는 언어입니다',
                         isNative: false,
                       ),
-                    3 => InputBioTab(),
+                      3 => InputBioTab(),
+                      4 => EnableLocationTab(),
                       _ => InputNameDateTab(),
                     };
                   },
                 ),
               ),
-              // Continue Button
-              // Padding(
-              //   padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
-              //   child: ElevatedButton(
-              //     onPressed: viewModel.nextPage,
-              //     child: const Text('다음으로'),
-              //   ),
-              // ),
             ],
           ),
         ),

@@ -2,7 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:share_lingo/core/ui_validators/user_validator.dart';
 
 class OnboardingViewModel extends AutoDisposeNotifier<int> {
-  static const int totalPages = 4;
+  static const int totalPages = 5;
 
   @override
   int build() => 0;
