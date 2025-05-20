@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:country_flags/country_flags.dart';
-import '../../../../app/constants/app_constants.dart';
-import '../../../../domain/entity/language_entry.dart';
+import '../../app/constants/app_constants.dart';
+import '../../domain/entity/language_entry.dart';
 
 Future<LanguageEntry?> showLanguageSelectionDialog(
   BuildContext context,
