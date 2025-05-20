@@ -27,7 +27,7 @@ class PostRemoteDataSource {
     final snapshot =
         await firestore
             .collection('posts')
-            .orderBy('createAt', descending: true)
+            .orderBy('createdAt', descending: true)
             .get();
     final posts =
         snapshot.docs.map((doc) {

@@ -1,5 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:share_lingo/domain/usecase/get_recent_posts_usecase.dart';
+import 'package:share_lingo/domain/usecase/fetch_initial_posts_usecase.dart';
 import 'package:share_lingo/domain/entity/post_entity.dart';
 
 class FeedNotifier extends AsyncNotifier<List<PostEntity>> {
