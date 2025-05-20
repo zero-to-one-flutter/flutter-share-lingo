@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:share_lingo/core/utils/throttler_util.dart';
 import 'package:share_lingo/presentation/pages/home/tabs/feed/feed_view_model.dart';
 import 'package:share_lingo/presentation/pages/home/widgets/post_item.dart';
 
@@ -35,20 +36,22 @@ class FeedTab extends StatelessWidget {
                 error: (err, _) => Center(child: Text('에러 발생: $err')),
                 data: (data) {
                   final posts = data;
-                  log('${posts.length}');
                   if (posts.isEmpty) {
                     return const Center(child: Text('게시글이 없습니다.'));
                   }
+                  // throttler 사용
+                  final throttler = Throttler(
+                    duration: Duration(seconds: 1),
+                    callback: () {
+                      ref.read(feedNotifierProvider.notifier).fetchOlderPosts();
+                    },
+                  );
                   return NotificationListener(
                     onNotification: (notification) {
                       if (notification is ScrollUpdateNotification) {
                         if (notification.metrics.pixels >=
                             notification.metrics.maxScrollExtent) {
-                          log('fetchOlderPosts 호출됨');
-                          ref
-                              .read(feedNotifierProvider.notifier)
-                              .fetchOlderPosts();
-                          log('${posts.length}');
+                          throttler.run();
                         }
                       }
                       return true;
