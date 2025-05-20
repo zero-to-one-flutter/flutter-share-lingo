@@ -55,6 +55,8 @@ class _PostWriteTabState extends ConsumerState<PostWriteTab> {
 
     await ref.read(feedNotifierProvider.notifier).refresh();
 
+    if (!mounted) return;
+
     _contentController.clear();
     _selectedImages.clear();
     _selectedTags.clear();
