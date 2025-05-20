@@ -40,7 +40,6 @@ class _PostWriteTabState extends ConsumerState<PostWriteTab> {
   }
 
   Future<void> _submit() async {
-    final scaffoldContext = context; // 🔐 context 안전하게 저장
     final uid = FirebaseAuth.instance.currentUser?.uid ?? 'test-user';
     final content = _contentController.text;
     final postNotifier = ref.read(postWriteViewModelProvider.notifier);
@@ -61,8 +60,8 @@ class _PostWriteTabState extends ConsumerState<PostWriteTab> {
     _selectedTags.clear();
     setState(() {});
 
-    SnackbarUtil.showSnackBar(scaffoldContext, '게시되었습니다');
-    Navigator.of(scaffoldContext).pop();
+    SnackbarUtil.showSnackBar(context, '게시되었습니다');
+    Navigator.of(context).pop();
   }
 
   void _cancel() {
