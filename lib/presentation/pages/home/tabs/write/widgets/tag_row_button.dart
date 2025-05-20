@@ -2,7 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:share_lingo/presentation/pages/home/tabs/write/tag_select/select_tag_page.dart';
 
 class TagRowButton extends StatelessWidget {
-  const TagRowButton({super.key});
+  final void Function(String tag) onTagSelected;
+  final VoidCallback onPickImage;
+
+  const TagRowButton({
+    super.key,
+    required this.onTagSelected,
+    required this.onPickImage,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -13,11 +20,17 @@ class TagRowButton extends StatelessWidget {
         children: [
           // 왼쪽: 태그 추가 버튼
           GestureDetector(
-            onTap: () {
-              Navigator.push(
+            onTap: () async {
+              //  추후 SelectTagPage에서 선택된 태그 받아올 수 있도록 설계
+              final selectedTag = await Navigator.push<String>(
                 context,
                 MaterialPageRoute(builder: (context) => const SelectTagPage()),
               );
+
+              //  선택된 태그가 있으면 콜백 실행
+              if (selectedTag != null && selectedTag.isNotEmpty) {
+                onTagSelected(selectedTag);
+              }
             },
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -42,7 +55,7 @@ class TagRowButton extends StatelessWidget {
           // 오른쪽: 카메라 버튼
           GestureDetector(
             onTap: () {
-              // TODO: 사진 선택 기능
+              onPickImage();
             },
             child: Container(
               width: 48,

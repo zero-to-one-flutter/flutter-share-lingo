@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:share_lingo/presentation/pages/home/tabs/write/post_write_view_model.dart';
+
+import 'package:share_lingo/presentation/pages/home/widgets/post_item.dart';
 
 import '../../../../../app/constants/app_colors.dart';
-import '../../../../widgets/app_cached_image.dart';
 
 class FeedTab extends StatelessWidget {
   const FeedTab({super.key});
@@ -11,71 +13,61 @@ class FeedTab extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer(
       builder: (context, ref, child) {
+        final postsAsync = ref.watch(postsProvider);
+
         return Column(
           children: [
             AppBar(
-              title: Text('바꾸기'),
+              title: Text(
+                'ShareLingo',
+                style: TextStyle(
+                  color: AppColors.primary,
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ),
             Expanded(
-              child: ListView.builder(
-                padding: const EdgeInsets.only(
-                  left: 16,
-                  right: 16,
-                  top: 5,
-                  bottom: 100,
-                ),
-                itemCount: 4,
-                itemBuilder: (context, index) {
-                  return InkWell(
-                    highlightColor: AppColors.lightGrey,
-                    onTap: () {},
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        ClipOval(
-                          child: AppCachedImage(
-                            imageUrl: 'https://picsum.photos/200/200?random=1',
-                            width: 66,
-                            height: 66,
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                        const SizedBox(width: 12),
+              child: postsAsync.when(
+                loading: () => const Center(child: CircularProgressIndicator()),
+                error: (err, _) => Center(child: Text('에러 발생: $err')),
+                data: (snapshot) {
+                  final docs = snapshot.docs;
 
-                        // Info column
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              // Name, language
-                              _buildTopRow(),
-                              const SizedBox(height: 6),
-
-                              Padding(
-                                padding: const EdgeInsets.only(right: 40),
-                                child: Text(
-                                  '''
-Lately my English listening has gotten better, but speaking is still hard.\n
-I can think in English, but my mouth doesn't follow\n
-Anyone else been through this?
-I’d love to hear your advice or tips!
-                                    ''',
-                                  style: TextStyle(
-                                    color: Color(0xFF424242),
-                                    fontSize: 14,
-                                  ),
-                                ),
-                              ),
-                              Divider(
-                                indent: 0,
-                                height: 35,
-                                color: Colors.grey[300],
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
+                  return ListView.separated(
+                    padding: const EdgeInsets.only(
+                      left: 16,
+                      right: 16,
+                      top: 5,
+                      bottom: 100,
                     ),
+                    separatorBuilder: (context, index) {
+                      return Column(
+                        children: [
+                          SizedBox(height: 8, width: double.infinity),
+                          Divider(),
+                        ],
+                      );
+                    },
+                    itemCount: docs.length,
+                    itemBuilder: (context, index) {
+                      // TODO: 클린아키텍처 적용
+                      final post = docs[index].data();
+                      final content = post['content'] ?? '';
+                      final imageUrl = List<String>.from(
+                        post['imageUrl'] ?? [],
+                      );
+                      final tags = List<String>.from(post['tags'] ?? []);
+                      final commentCount = post['commentCount'] ?? 0;
+
+                      return PostItem(
+                        content: content,
+                        imageUrl: imageUrl,
+                        tags: tags,
+                        commentCount: commentCount,
+                        displayComments: true,
+                      );
+                    },
                   );
                 },
               ),
@@ -83,70 +75,6 @@ I’d love to hear your advice or tips!
           ],
         );
       },
-    );
-  }
-
-  Row _buildTopRow() {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Name
-              Text(
-                '김민수',
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              const SizedBox(height: 4),
-
-              // Language exchange
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('한국어', style: TextStyle(fontSize: 14)),
-                  const SizedBox(width: 5),
-                  Icon(Icons.sync_alt_outlined, color: Colors.black, size: 17),
-                  const SizedBox(width: 5),
-                  Text('영어', style: TextStyle(fontSize: 14)),
-                ],
-              ),
-            ],
-          ),
-        ),
-        Spacer(),
-        Consumer(
-          builder: (BuildContext context, WidgetRef ref, Widget? child) {
-            return TextButton(
-              onPressed: () {},
-              style: TextButton.styleFrom(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 18,
-                  vertical: 6,
-                ),
-                backgroundColor: Colors.blue.withValues(alpha: 0.05),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                minimumSize: Size.zero,
-              ),
-              child: Text(
-                '팔로우',
-                style: TextStyle(
-                  fontSize: 14.5,
-                  color: Colors.blueAccent,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            );
-          },
-        ),
-      ],
     );
   }
 }

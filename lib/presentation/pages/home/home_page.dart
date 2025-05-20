@@ -19,11 +19,7 @@ class HomePage extends StatelessWidget {
           final currentIndex = ref.watch(homeViewModelProvider);
           return IndexedStack(
             index: currentIndex,
-            children: [
-              FeedTab(),
-              PostWriteTab(),
-              MyProfileTab(),
-            ],
+            children: [FeedTab(), PostWriteTab(), MyProfileTab()],
           );
         },
       ),
