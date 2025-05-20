@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:share_lingo/app/constants/app_colors.dart';
 import 'package:share_lingo/app/constants/app_constants.dart';
 import 'package:share_lingo/core/utils/navigation_util.dart';
 
@@ -26,7 +27,7 @@ class LoginPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final loginState = ref.watch(loginViewModelProvider);
     return Scaffold(
-      backgroundColor: Color(0XFF3478F6),
+      backgroundColor: Colors.white,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20.0),
@@ -41,7 +42,7 @@ class LoginPage extends ConsumerWidget {
                 style: TextStyle(
                   fontSize: 32,
                   fontWeight: FontWeight.bold,
-                  color: Colors.white,
+                  color: Colors.black,
                 ),
               ),
               const SizedBox(height: 15),
@@ -49,20 +50,21 @@ class LoginPage extends ConsumerWidget {
               Text(
                 '글로 하는 언어 교환, 지금 시작하세요',
                 textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 17, color: Colors.white),
+                style: TextStyle(fontSize: 17, color: Colors.black),
               ),
               const SizedBox(height: 50),
 
               Center(
                 child: SizedBox(
-                  width: 250,
-                  child: ElevatedButton(
+                  width: 310,
+                  child: OutlinedButton(
                     onPressed: () => _login(ref, context),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white,
+                      // backgroundColor: Colors.white,
                       foregroundColor: Colors.black87,
+                      side: BorderSide(color: Colors.grey[400]!),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(6),
+                        borderRadius: BorderRadius.circular(24),
                         // side: const BorderSide(color: Colors.grey),
                       ),
                       minimumSize: const Size(double.infinity, 53),
