@@ -57,12 +57,12 @@ class _PostWriteTabState extends ConsumerState<PostWriteTab> {
       _selectedTags.clear();
       setState(() {});
       SnackbarUtil.showSnackBar(context, '게시되었습니다');
-      ref.read<HomeViewModel>(homeViewModelProvider.notifier).onIndexChanged(0);
+      Navigator.of(context).pop();
     }
   }
 
   void _cancel() {
-    ref.read<HomeViewModel>(homeViewModelProvider.notifier).onIndexChanged(0);
+    Navigator.of(context).pop();
   }
 
   @override

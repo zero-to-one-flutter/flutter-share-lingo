@@ -18,7 +18,8 @@ class HomePage extends StatelessWidget {
         builder: (context, ref, child) {
           final currentIndex = ref.watch(homeViewModelProvider);
           return IndexedStack(
-            index: currentIndex,
+            // handle middle index 1 as fallback (ignored)
+            index: currentIndex == 1 ? 0 : currentIndex,
             children: [FeedTab(), PostWriteTab(), MyProfileTab()],
           );
         },

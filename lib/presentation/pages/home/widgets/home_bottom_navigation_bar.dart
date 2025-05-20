@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../home_view_model.dart';
+import '../tabs/write/post_write_tab.dart';
 
 class HomeBottomNavigationBar extends StatelessWidget {
   const HomeBottomNavigationBar({super.key});
@@ -28,7 +29,15 @@ class HomeBottomNavigationBar extends StatelessWidget {
             backgroundColor: Colors.transparent,
             elevation: 0,
             currentIndex: currentIndex,
-            onTap: viewModel.onIndexChanged,
+            onTap: (index) {
+              if (index == 1) {
+                Navigator.of(
+                  context,
+                ).push(MaterialPageRoute(builder: (_) => PostWriteTab()));
+              } else {
+                viewModel.onIndexChanged(index);
+              }
+            },
             iconSize: 28,
             showSelectedLabels: false,
             showUnselectedLabels: false,
