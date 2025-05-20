@@ -51,15 +51,18 @@ class _PostWriteTabState extends ConsumerState<PostWriteTab> {
       imageBytesList: _selectedImages,
     );
 
-    if (mounted) {
-      await ref.read(feedNotifierProvider.notifier).refresh();
-      _contentController.clear();
-      _selectedImages.clear();
-      _selectedTags.clear();
-      setState(() {});
-      SnackbarUtil.showSnackBar(context, '게시되었습니다');
-      Navigator.of(context).pop();
-    }
+    //  context를 사용하기 전에 mounted 체크!
+    if (!mounted) return;
+
+    await ref.read(feedNotifierProvider.notifier).refresh();
+
+    _contentController.clear();
+    _selectedImages.clear();
+    _selectedTags.clear();
+    setState(() {});
+
+    SnackbarUtil.showSnackBar(context, '게시되었습니다');
+    Navigator.of(context).pop();
   }
 
   void _cancel() {
