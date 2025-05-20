@@ -12,14 +12,13 @@ class ExpandableText extends StatefulWidget {
 
 class _ExpandableTextState extends State<ExpandableText> {
   bool _isExpanded = false;
-  bool _isOverflowing = false;
 
   @override
   void initState() {
     super.initState();
   }
 
-  void _checkTextOverflow(double maxWidth) {
+  bool _checkTextOverflow(double maxWidth) {
     final span = TextSpan(text: widget.text);
     final postPainter = TextPainter(
       text: span,
@@ -27,11 +26,13 @@ class _ExpandableTextState extends State<ExpandableText> {
       textDirection: TextDirection.ltr,
     )..layout(maxWidth: maxWidth);
 
-    if (mounted) {
-      setState(() {
-        _isOverflowing = postPainter.didExceedMaxLines;
-      });
-    }
+    bool nextOverflowing = postPainter.didExceedMaxLines;
+
+    return nextOverflowing;
+  }
+
+  void toggle(double maxWidth, bool value) {
+    setState(() => _isExpanded = value);
   }
 
   @override
@@ -39,22 +40,17 @@ class _ExpandableTextState extends State<ExpandableText> {
     return LayoutBuilder(
       builder: (context, constraints) {
         final maxWidth = constraints.maxWidth;
-
-        if (!_isExpanded || !_isOverflowing) {
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            _checkTextOverflow(maxWidth);
-          });
-        }
-        if (_isExpanded || !_isOverflowing) {
+        final isOverflowing = _checkTextOverflow(maxWidth);
+        if (_isExpanded || !isOverflowing) {
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               RichText(
                 text: TextSpan(text: widget.text, style: postTextStyle()),
               ),
-              if (_isOverflowing)
+              if (isOverflowing)
                 GestureDetector(
-                  onTap: () => setState(() => _isExpanded = false),
+                  onTap: () => toggle(maxWidth, false),
                   child: Text("접기", style: TextStyle(color: Colors.grey)),
                 ),
             ],
@@ -84,11 +80,8 @@ class _ExpandableTextState extends State<ExpandableText> {
                   alignment: PlaceholderAlignment.baseline,
                   baseline: TextBaseline.alphabetic,
                   child: GestureDetector(
-                    onTap: () => setState(() => _isExpanded = true),
-                    child: Text(
-                      "더 많이 보기",
-                      style: TextStyle(color: Colors.grey),
-                    ),
+                    onTap: () => toggle(maxWidth, true),
+                    child: Text("더보기", style: TextStyle(color: Colors.grey)),
                   ),
                 ),
               ],

@@ -7,12 +7,16 @@ class PostItem extends StatefulWidget {
   final String content;
   final List<String> imageUrl;
   final List<String> tags;
+  final int commentCount;
+  final bool displayComments;
 
   const PostItem({
     super.key,
     required this.content,
     required this.imageUrl,
     required this.tags,
+    required this.commentCount,
+    required this.displayComments,
   });
 
   @override
@@ -28,59 +32,48 @@ class _PostItemState extends State<PostItem> {
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(height: 10),
+            SizedBox(height: 12),
             _topBar(),
             SizedBox(height: 10),
             ExpandableText(widget.content, trimLines: 4),
             SizedBox(height: 10),
             _imageBox(),
-            SizedBox(height: 15),
-            SizedBox(
-              height: 30,
-              child: ListView.separated(
-                scrollDirection: Axis.horizontal,
-                itemBuilder: (context, index) {
-                  return Container(
-                    padding: EdgeInsets.symmetric(horizontal: 30),
-                    decoration: BoxDecoration(
-                      color: Colors.grey[400],
-                      borderRadius: BorderRadius.circular(30),
+            _tagBar(),
+            // comment 개수 표시
+            // detail 페이지에서는 표시 X
+            !widget.displayComments
+                ? SizedBox.shrink()
+                : Column(
+                  children: [
+                    SizedBox(height: 15),
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.chat_bubble_outline_outlined,
+                          color: Colors.grey[500],
+                          size: 20,
+                        ),
+                        SizedBox(width: 8),
+                        Text(
+                          '${widget.commentCount}',
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Colors.grey[700],
+                          ),
+                        ),
+                      ],
                     ),
-                    child: Center(
-                      child: Text(
-                        widget.tags[index],
-                        style: TextStyle(fontSize: 14),
-                      ),
-                    ),
-                  );
-                },
-                separatorBuilder: (context, index) => SizedBox(width: 8),
-                itemCount: widget.tags.length,
-              ),
-            ),
-            SizedBox(height: 15),
-            Row(
-              children: [
-                Icon(
-                  Icons.chat_bubble_outline_outlined,
-                  color: Colors.grey[500],
-                  size: 20,
+                  ],
                 ),
-                SizedBox(width: 8),
-                Text(
-                  '2',
-                  style: TextStyle(fontSize: 14, color: Colors.grey[700]),
-                ),
-              ],
-            ),
           ],
         ),
       ),
     );
   }
 
-  Row _topBar() {
+  Widget _topBar() {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -154,11 +147,12 @@ class _PostItemState extends State<PostItem> {
   }
 
   Widget _imageBox() {
-    if (widget.imageUrl.isEmpty) {
+    final List<String> images =
+        widget.imageUrl.where((url) => url.trim().isNotEmpty).take(3).toList();
+
+    if (images.isEmpty) {
       return const SizedBox.shrink();
     }
-
-    final List<String> images = widget.imageUrl.take(3).toList();
 
     double sizedBoxHeight = 8;
     double sizedBoxWidth = 8;
@@ -272,13 +266,41 @@ class _PostItemState extends State<PostItem> {
               ],
             );
             break;
-
           default:
             content = const SizedBox.shrink();
         }
 
-        return AspectRatio(aspectRatio: 9 / 5, child: content);
+        return Column(
+          children: [AspectRatio(aspectRatio: 9 / 5, child: content)],
+        );
       },
+    );
+  }
+
+  Widget _tagBar() {
+    final tags = widget.tags;
+    return Column(
+      children: [
+        tags.isEmpty ? SizedBox.shrink() : SizedBox(height: 15),
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children:
+              tags.map((text) {
+                return Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 8,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.grey[400],
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Text(text, style: const TextStyle(fontSize: 14)),
+                );
+              }).toList(),
+        ),
+      ],
     );
   }
 }
