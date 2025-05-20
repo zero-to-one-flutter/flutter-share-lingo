@@ -2,8 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:share_lingo/core/utils/dialogue_util.dart';
+import 'package:share_lingo/core/utils/navigation_util.dart';
 import 'package:share_lingo/presentation/pages/onboarding/onboarding_view_model.dart';
-import 'package:share_lingo/presentation/pages/onboarding/widgets/onboarding_input_decoration.dart';
 import 'package:share_lingo/presentation/pages/onboarding/widgets/subtitle_text.dart';
 import 'package:share_lingo/presentation/pages/onboarding/widgets/title_section.dart';
 import 'package:share_lingo/presentation/user_global_view_model.dart';
@@ -26,14 +26,19 @@ class _EnableLocationTabState extends ConsumerState<EnableLocationTab> {
     if (state.geoPoint != null) {
       final userVM = ref.read(userGlobalViewModelProvider.notifier);
       userVM.setLocation(state.geoPoint!);
+      await userVM.saveUserToDatabase();
 
       if (context.mounted) {
-        DialogueUtil.showAppCupertinoDialog(
+        await DialogueUtil.showAppCupertinoDialog(
           context: context,
           title: '회원가입 완료',
           content: '🎉 회원가입이 완료되었습니다!\n이제 언어 친구들을 만나보세요.',
         );
-        ref.read(onboardingViewModelProvider.notifier).nextPage();
+
+        NavigationUtil.navigateBasedOnProfile(
+          context,
+          ref.read(userGlobalViewModelProvider)!,
+        );
       }
     }
   }

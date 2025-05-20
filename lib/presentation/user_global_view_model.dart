@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:share_lingo/core/extensions/geopoint_extensions.dart';
+import 'package:share_lingo/domain/usecase/save_user_to_database_usecase.dart';
 
 import '../domain/entity/app_user.dart';
 
@@ -14,6 +15,11 @@ class UserGlobalViewModel extends Notifier<AppUser?> {
 
   void clearUser() {
     state = null;
+  }
+
+  Future<void> saveUserToDatabase() async {
+    if (state == null) return;
+    await ref.read(saveUserToDatabaseUseCaseProvider).execute(state!);
   }
 
   /// Calculates the distance in kilometers between the user's location and [otherLocation].
