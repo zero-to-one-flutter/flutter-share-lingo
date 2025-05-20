@@ -46,13 +46,17 @@ class PostWriteViewModel extends StateNotifier<AsyncValue<void>> {
       await createPostUseCase(post);
       state = const AsyncData(null);
     } catch (e, st) {
-      state = AsyncError(e, st);
+      if (mounted) {
+        state = AsyncError(e, st);
+      }
     }
   }
 }
 
 final postWriteViewModelProvider =
-    StateNotifierProvider.autoDispose<PostWriteViewModel, AsyncValue<void>>((ref) {
+    StateNotifierProvider.autoDispose<PostWriteViewModel, AsyncValue<void>>((
+      ref,
+    ) {
       final createUseCase = ref.read(createPostUseCaseProvider);
       final uploadUseCase = ref.read(uploadImageUseCaseProvider);
       return PostWriteViewModel(
