@@ -12,7 +12,11 @@ class MyProfileTab extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer(
       builder: (BuildContext context, WidgetRef ref, Widget? child) {
-        final user = ref.watch(userGlobalViewModelProvider)!;
+        final user = ref.watch(userGlobalViewModelProvider);
+        if (user == null) {
+          return Center(child: Text('로그인 정보가 없습니다.'));
+        }
+
         return ListView(
           children: [
             AppBar(

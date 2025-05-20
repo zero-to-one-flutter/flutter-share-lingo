@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:share_lingo/app/constants/app_colors.dart';
 import 'package:share_lingo/app/constants/app_constants.dart';
 import 'package:share_lingo/core/utils/navigation_util.dart';
 

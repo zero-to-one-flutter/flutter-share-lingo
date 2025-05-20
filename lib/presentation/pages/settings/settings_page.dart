@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:settings_ui/settings_ui.dart';
 import 'package:share_lingo/app/constants/app_colors.dart';
+import 'package:share_lingo/core/utils/dialogue_util.dart';
 import 'package:share_lingo/domain/usecase/sign_out_use_case.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../app/constants/app_styles.dart';
 import '../../../core/utils/snackbar_util.dart';
+import '../../user_global_view_model.dart';
 import '../login/login_page.dart';
 
 /// Settings page that allows users to configure app preferences.
@@ -40,12 +42,22 @@ class SettingsPage extends ConsumerWidget {
 
   Future<void> _logout(BuildContext context, WidgetRef ref) async {
     try {
-      await ref.read(signOutUseCaseProvider).execute();
-      // ignore: use_build_context_synchronously
-      Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(builder: (context) => const LoginPage()),
-        (route) => false,
+      final result = await DialogueUtil.showAppCupertinoDialog(
+        context: context,
+        title: '로그아웃할까요?',
+        content: '정말 로그아웃하시겠습니까?',
+        showCancel: true,
       );
+      if (result == AppDialogResult.confirm) {
+        await ref.read(signOutUseCaseProvider).execute();
+        ref.read(userGlobalViewModelProvider.notifier).clearUser();
+
+        // ignore: use_build_context_synchronously
+        Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (context) => const LoginPage()),
+          (route) => false,
+        );
+      }
     } catch (e) {
       SnackbarUtil.showSnackBar(context, '로그아웃 중 오류가 발생했습니다');
     }
