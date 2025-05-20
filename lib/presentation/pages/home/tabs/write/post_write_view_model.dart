@@ -25,12 +25,11 @@ class PostWriteViewModel extends StateNotifier<AsyncValue<void>> {
     state = const AsyncLoading();
 
     try {
-      final imageUrls = <String>[];
-
-      for (final imageBytes in imageBytesList) {
-        final url = await uploadImageUseCase(uid: uid, imageBytes: imageBytes);
-        imageUrls.add(url);
-      }
+      final imageUrls = await Future.wait(
+        imageBytesList.map(
+          (imageBytes) => uploadImageUseCase(uid: uid, imageBytes: imageBytes),
+        ),
+      );
 
       final post = PostEntity(
         uid: uid,

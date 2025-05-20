@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:share_lingo/core/utils/snackbar_util.dart';
+import 'package:share_lingo/presentation/pages/home/tabs/feed/feed_view_model.dart';
 import 'package:share_lingo/presentation/pages/home/tabs/write/post_write_view_model.dart';
 import 'package:share_lingo/presentation/pages/home/tabs/write/widgets/cancel_button.dart';
 import 'package:share_lingo/presentation/pages/home/tabs/write/widgets/post_input_field.dart';
@@ -50,14 +51,19 @@ class _PostWriteTabState extends ConsumerState<PostWriteTab> {
       imageBytesList: _selectedImages,
     );
 
-    if (mounted) {
-      _contentController.clear();
-      _selectedImages.clear();
-      _selectedTags.clear();
-      setState(() {});
-      SnackbarUtil.showSnackBar(context, '게시되었습니다');
-      Navigator.of(context).pop();
-    }
+    if (!mounted) return;
+
+    await ref.read(feedNotifierProvider.notifier).refresh();
+
+    if (!mounted) return;
+
+    _contentController.clear();
+    _selectedImages.clear();
+    _selectedTags.clear();
+    setState(() {});
+
+    SnackbarUtil.showSnackBar(context, '게시되었습니다');
+    Navigator.of(context).pop();
   }
 
   void _cancel() {
