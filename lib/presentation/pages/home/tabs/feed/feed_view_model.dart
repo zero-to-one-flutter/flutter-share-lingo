@@ -14,20 +14,30 @@ class FeedNotifier extends AutoDisposeAsyncNotifier<List<PostEntity>> {
   late final FetchLastestPostsUsecase latestPostsUsecase;
   late final PostRepository repository;
 
+  bool _isInitialized = false;
+
   @override
   Future<List<PostEntity>> build() async {
-    initialPostsUsecase = ref.read(fetchInitialPostsUsecaseProvider);
-    olderPostsUsecase = ref.read(fetchOlderPostsUsecaseProvider);
-    latestPostsUsecase = ref.read(fetchLatestPostsUsecaseProvider);
-    repository = ref.read(postRepositoryProvider);
+    // 중복 초기화 방지
+    if (!_isInitialized) {
+      initialPostsUsecase = ref.read(fetchInitialPostsUsecaseProvider);
+      olderPostsUsecase = ref.read(fetchOlderPostsUsecaseProvider);
+      latestPostsUsecase = ref.read(fetchLatestPostsUsecaseProvider);
+      repository = ref.read(postRepositoryProvider);
+      _isInitialized = true;
+    }
+
     return await _fetchInitialPosts();
   }
 
   Future<void> refresh() async {
-    state = const AsyncLoading(); // UI에서 로딩 상태 보이게
-    state = await AsyncValue.guard(() async {
-      return await _fetchInitialPosts();
-    });
+    state = const AsyncLoading();
+    try {
+      final posts = await _fetchInitialPosts();
+      state = AsyncValue.data(posts);
+    } catch (e, st) {
+      state = AsyncValue.error(e, st);
+    }
   }
 
   Future<List<PostEntity>> _fetchInitialPosts() async {
@@ -35,7 +45,6 @@ class FeedNotifier extends AutoDisposeAsyncNotifier<List<PostEntity>> {
       final posts = await initialPostsUsecase.execute();
       return posts;
     } catch (e, st) {
-      // state를 에러 상태로 설정
       state = AsyncError(e, st);
       return [];
     }
