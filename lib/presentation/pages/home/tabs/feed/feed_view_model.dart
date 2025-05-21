@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:share_lingo/core/providers/data_providers.dart';
 import 'package:share_lingo/domain/repository/post_repository.dart';
@@ -92,4 +94,23 @@ class FeedNotifier extends AutoDisposeAsyncNotifier<List<PostEntity>> {
 final feedNotifierProvider =
     AsyncNotifierProvider.autoDispose<FeedNotifier, List<PostEntity>>(
       () => FeedNotifier(),
+    );
+
+class TimeAgoNotifier extends AutoDisposeNotifier<DateTime> {
+  @override
+  DateTime build() {
+    _startTimer();
+    return DateTime.now();
+  }
+
+  void _startTimer() {
+    Timer.periodic(const Duration(minutes: 1), (_) {
+      state = DateTime.now(); // 매 분마다 상태 갱신
+    });
+  }
+}
+
+final timeAgoNotifierProvider =
+    NotifierProvider.autoDispose<TimeAgoNotifier, DateTime>(
+      () => TimeAgoNotifier(),
     );

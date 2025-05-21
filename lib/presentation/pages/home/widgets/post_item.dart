@@ -12,11 +12,13 @@ import '../../profile/profile_page.dart';
 
 class PostItem extends StatefulWidget {
   final PostEntity post;
+  final DateTime now;
   final bool displayComments;
 
   const PostItem({
     super.key,
     required this.post,
+    required this.now,
     required this.displayComments,
   });
 
@@ -131,7 +133,10 @@ class _PostItemState extends State<PostItem> {
                   ),
                   SizedBox(width: 8),
                   Text(
-                    FormatTimeAgo.formatTimeAgo(widget.post.createdAt),
+                    FormatTimeAgo.formatTimeAgo(
+                      now: widget.now,
+                      createdAt: widget.post.createdAt,
+                    ),
                     style: TextStyle(
                       fontSize: 15,
                       color: Colors.black54,
