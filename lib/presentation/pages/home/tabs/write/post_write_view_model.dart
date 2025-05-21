@@ -22,6 +22,11 @@ class PostWriteViewModel extends StateNotifier<AsyncValue<void>> {
     required List<String> tags,
     required List<Uint8List> imageBytesList,
   }) async {
+    if (content.trim().isEmpty) {
+      state = const AsyncError('내용을 입력해주세요', StackTrace.empty);
+      return;
+    }
+
     state = const AsyncLoading();
 
     try {
@@ -37,7 +42,6 @@ class PostWriteViewModel extends StateNotifier<AsyncValue<void>> {
         imageUrl: imageUrls,
         tags: tags,
         createdAt: DateTime.now(),
-        // 실제 저장은 serverTimestamp로 덮어씀
         likeCount: 0,
         commentCount: 0,
         deleted: false,
