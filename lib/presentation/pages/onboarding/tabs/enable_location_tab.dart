@@ -112,7 +112,7 @@ class _EnableLocationTabState extends ConsumerState<EnableLocationTab> {
                     state.isLoading ? null : _onEnableLocationPressed(context),
             child:
                 state.isLoading
-                    ? const CupertinoActivityIndicator()
+                    ? const CupertinoActivityIndicator(color: Colors.white)
                     : const Text('위치 사용하기'),
           ),
         ),
