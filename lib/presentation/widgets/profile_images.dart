@@ -31,15 +31,10 @@ class ProfileImages extends ConsumerWidget {
         SizedBox(
           height: 170,
           width: double.infinity,
-          child: Image.network(
-            mapUrl,
+          child: AppCachedImage(
+            imageUrl: mapUrl,
             fit: BoxFit.cover,
-            errorBuilder: (context, error, stackTrace) {
-              return Image.asset(
-                'assets/images/world_background.jpg',
-                fit: BoxFit.cover,
-              );
-            },
+            errorAssetPath: 'assets/images/world_background.jpg',
           ),
         ),
         Positioned(

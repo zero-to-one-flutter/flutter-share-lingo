@@ -10,12 +10,14 @@ class AppCachedImage extends StatelessWidget {
   final double? width;
   final double? height;
   final BoxFit? fit;
+  final String? errorAssetPath;
 
   const AppCachedImage({
     required this.imageUrl,
     this.width,
     this.height,
     this.fit,
+    this.errorAssetPath,
     super.key,
   });
 
@@ -25,15 +27,23 @@ class AppCachedImage extends StatelessWidget {
       imageUrl: imageUrl,
       placeholder:
           (context, url) => Center(
-        child: SizedBox(
-          width: 20,
-          height: 20,
-          child: CupertinoActivityIndicator(
-            color: Colors.grey,
+            child: SizedBox(
+              width: 20,
+              height: 20,
+              child: CupertinoActivityIndicator(color: Colors.grey),
+            ),
           ),
-        ),
-      ),
-      errorWidget: (context, url, error) => Icon(Icons.error),
+      errorWidget: (context, url, error) {
+        if (errorAssetPath != null) {
+          return Image.asset(
+            errorAssetPath!,
+            width: width,
+            height: height,
+            fit: fit,
+          );
+        }
+        return const Icon(Icons.error);
+      },
       width: width,
       height: height,
       fit: fit,
