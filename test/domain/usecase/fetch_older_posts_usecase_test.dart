@@ -19,13 +19,19 @@ void main() {
   setUpAll(() {
     registerFallbackValue(
       PostEntity(
-        uid: 'uid',
-        content: 'content',
-        imageUrl: ['imageUrl'],
-        tags: ['tags'],
-        createdAt: DateTime.now(),
-        likeCount: 1,
-        commentCount: 2,
+        uid: 'test123',
+        userName: 'user',
+        userProfileImage: 'abcd.jpg',
+        userNativeLanguage: 'KO',
+        userTargetLanguage: 'EN',
+        userDistrict: null,
+        userLocation: null,
+        content: '내용입니다',
+        imageUrl: [],
+        tags: ['kor'],
+        createdAt: DateTime(2023, 1, 1),
+        likeCount: 0,
+        commentCount: 0,
         deleted: false,
       ),
     );
@@ -33,26 +39,38 @@ void main() {
 
   test('FetchOlderPostsUsecase', () async {
     final lastPost = PostEntity(
-      uid: 'uid',
-      content: 'content',
-      imageUrl: ['imageUrl'],
-      tags: ['tags'],
-      createdAt: DateTime.now(),
-      likeCount: 1,
-      commentCount: 2,
+      uid: 'test123',
+      userName: 'user',
+      userProfileImage: 'abcd.jpg',
+      userNativeLanguage: 'KO',
+      userTargetLanguage: 'EN',
+      userDistrict: null,
+      userLocation: null,
+      content: '내용입니다',
+      imageUrl: [],
+      tags: ['kor'],
+      createdAt: DateTime(2023, 1, 1),
+      likeCount: 0,
+      commentCount: 0,
       deleted: false,
     );
 
     when(() => mockPostRepository!.fetchOlderPosts(any())).thenAnswer(
       (invocation) async => [
         PostEntity(
-          uid: 'a12345',
-          content: 'Nice to meet you',
-          imageUrl: ['abc.jpg'],
-          tags: ['help', 'request'],
-          createdAt: DateTime.now(),
-          likeCount: 1,
-          commentCount: 4,
+          uid: 'test123',
+          userName: 'user',
+          userProfileImage: 'abcd.jpg',
+          userNativeLanguage: 'KO',
+          userTargetLanguage: 'EN',
+          userDistrict: null,
+          userLocation: null,
+          content: '내용입니다',
+          imageUrl: [],
+          tags: ['kor'],
+          createdAt: DateTime(2023, 1, 1),
+          likeCount: 0,
+          commentCount: 0,
           deleted: false,
         ),
       ],
@@ -60,7 +78,7 @@ void main() {
     final result = await fetchOlderPostsUsecase!.execute(lastPost);
 
     expect(result.length, 1);
-    expect(result.first.content, 'Nice to meet you');
-    expect(result.first.imageUrl[0], 'abc.jpg');
+    expect(result.first.content, '내용입니다');
+    expect(result.first.userProfileImage, 'abcd.jpg');
   });
 }
