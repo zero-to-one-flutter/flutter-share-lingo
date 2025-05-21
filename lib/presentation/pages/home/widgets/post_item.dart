@@ -1,16 +1,19 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:share_lingo/app/constants/app_colors.dart';
+import 'package:share_lingo/core/providers/comment_providers.dart';
 import 'package:share_lingo/core/utils/format_time_ago.dart';
 import 'package:share_lingo/core/utils/general_utils.dart';
 import 'package:share_lingo/domain/entity/post_entity.dart';
 import 'package:share_lingo/presentation/pages/home/widgets/expandable_text.dart';
+import 'package:share_lingo/presentation/pages/post/post_detail_page.dart';
 import 'package:share_lingo/presentation/widgets/app_cached_image.dart';
 
 import '../../../../domain/entity/app_user.dart';
 import '../../profile/profile_page.dart';
 
-class PostItem extends StatefulWidget {
+class PostItem extends ConsumerStatefulWidget {
   final PostEntity post;
   final bool displayComments;
 
@@ -21,10 +24,10 @@ class PostItem extends StatefulWidget {
   });
 
   @override
-  State<PostItem> createState() => _PostItemState();
+  ConsumerState<PostItem> createState() => _PostItemState();
 }
 
-class _PostItemState extends State<PostItem> {
+class _PostItemState extends ConsumerState<PostItem> {
   @override
   Widget build(BuildContext context) {
     final List<String> images =
@@ -35,7 +38,14 @@ class _PostItemState extends State<PostItem> {
 
     return InkWell(
       highlightColor: AppColors.lightGrey,
-      onTap: () {},
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => PostDetailPage(post: widget.post),
+          ),
+        );
+      },
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10),
         child: Column(
@@ -53,30 +63,37 @@ class _PostItemState extends State<PostItem> {
             !widget.displayComments
                 ? SizedBox.shrink()
                 : Column(
-                  children: [
-                    SizedBox(height: 15),
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.chat_bubble_outline_outlined,
-                          color: Colors.grey[500],
-                          size: 20,
-                        ),
-                        SizedBox(width: 8),
-                        Text(
-                          '${widget.post.commentCount}',
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: Colors.grey[700],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
+                  children: [SizedBox(height: 15), _buildCommentCount()],
                 ),
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildCommentCount() {
+    final commentCountAsync = ref.watch(
+      postCommentCountProvider(widget.post.id),
+    );
+
+    return commentCountAsync.when(
+      data:
+          (count) => Row(
+            children: [
+              Icon(
+                Icons.chat_bubble_outline_outlined,
+                color: Colors.grey[500],
+                size: 20,
+              ),
+              SizedBox(width: 8),
+              Text(
+                '$count',
+                style: TextStyle(fontSize: 14, color: Colors.grey[700]),
+              ),
+            ],
+          ),
+      loading: () => const SizedBox.shrink(),
+      error: (_, __) => const SizedBox.shrink(),
     );
   }
 
