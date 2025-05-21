@@ -5,62 +5,32 @@ import 'package:share_lingo/presentation/pages/settings/settings_page.dart';
 import '../../../../user_global_view_model.dart';
 import '../../../../widgets/profile_layout.dart';
 
-class MyProfileTab extends StatelessWidget {
+class MyProfileTab extends ConsumerWidget {
   const MyProfileTab({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return Consumer(
-      builder: (BuildContext context, WidgetRef ref, Widget? child) {
-        final user = ref.watch(userGlobalViewModelProvider);
-        if (user == null) {
-          return Center(child: Text('로그인 정보가 없습니다.'));
-        }
+  Widget build(BuildContext context, WidgetRef ref) {
+    final user = ref.watch(userGlobalViewModelProvider);
+    if (user == null) {
+      return const Center(child: Text('로그인 정보가 없습니다.'));
+    }
 
-        return ListView(
-          children: [
-            AppBar(
-              title: Text('나의 프로필'),
-              actions: [
-                IconButton(
-                  icon: Icon(Icons.settings),
-                  tooltip: '설정',
-                  onPressed: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) {
-                          return SettingsPage();
-                        },
-                      ),
-                    );
-                  },
-                )
-              ],
-              // actions: [
-              //   InkWell(
-              //     onTap: () {
-              //       Navigator.of(context).push(
-              //         MaterialPageRoute(
-              //           builder: (context) => ProfileEditPage(user: user),
-              //         ),
-              //       );
-              //     },
-              //     child: Padding(
-              //       padding: const EdgeInsets.only(right: 4),
-              //       child: SvgPicture.asset(
-              //         'assets/icons/edit_square.svg',
-              //         width: 24,
-              //         height: 24,
-              //         color: const Color(0xFF504347),
-              //       ),
-              //     ),
-              //   ),
-              // ],
-            ),
-            ProfileLayout(user: user),
-          ],
-        );
-      },
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('나의 프로필'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.settings),
+            tooltip: '설정',
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => const SettingsPage()),
+              );
+            },
+          ),
+        ],
+      ),
+      body: ProfileLayout(user: user),
     );
   }
 }
