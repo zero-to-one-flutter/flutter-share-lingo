@@ -16,19 +16,32 @@ class PostMenuButton extends ConsumerWidget {
     final isMyPost = post.uid == FirebaseAuth.instance.currentUser?.uid;
 
     return PopupMenuButton<String>(
+      icon: const Icon(Icons.more_vert),
+      itemBuilder: (context) {
+        if (!isMyPost) {
+          return <PopupMenuEntry<String>>[];
+        }
+        return const [
+          PopupMenuItem(value: 'edit', child: Text('수정하기')),
+          PopupMenuItem(value: 'delete', child: Text('삭제하기')),
+        ];
+      },
       onSelected: (value) async {
-        if (!isMyPost) return; // 본인 글이 아니면 동작 안 함
+        if (!isMyPost) return;
+
+        final navigator = Navigator.of(context);
+        final scaffoldMessenger = ScaffoldMessenger.of(context);
 
         if (value == 'edit') {
-          final result = await Navigator.push(
-            context,
+          final result = await navigator.push(
             MaterialPageRoute(builder: (_) => PostWriteTab(post: post)),
           );
-          if (context.mounted && result == true) {
+
+          if (result == true) {
             ref.invalidate(feedNotifierProvider);
-            ScaffoldMessenger.of(
-              context,
-            ).showSnackBar(const SnackBar(content: Text('게시글이 수정되었습니다')));
+            scaffoldMessenger.showSnackBar(
+              const SnackBar(content: Text('게시글이 수정되었습니다')),
+            );
           }
         } else if (value == 'delete') {
           final confirm = await showDialog<bool>(
@@ -39,11 +52,11 @@ class PostMenuButton extends ConsumerWidget {
                   content: const Text('삭제된 글은 복구할 수 없습니다.'),
                   actions: [
                     TextButton(
-                      onPressed: () => Navigator.pop(context, false),
+                      onPressed: () => navigator.pop(false),
                       child: const Text('취소'),
                     ),
                     TextButton(
-                      onPressed: () => Navigator.pop(context, true),
+                      onPressed: () => navigator.pop(true),
                       child: const Text(
                         '삭제',
                         style: TextStyle(color: Colors.red),
@@ -53,27 +66,15 @@ class PostMenuButton extends ConsumerWidget {
                 ),
           );
 
-          if (context.mounted && confirm == true) {
+          if (confirm == true) {
             await ref.read(postRepositoryProvider).deletePost(post.id);
             ref.invalidate(feedNotifierProvider);
-            ScaffoldMessenger.of(
-              context,
-            ).showSnackBar(const SnackBar(content: Text('게시글이 삭제되었습니다')));
+            scaffoldMessenger.showSnackBar(
+              const SnackBar(content: Text('게시글이 삭제되었습니다')),
+            );
           }
         }
       },
-
-      itemBuilder: (context) {
-        if (!isMyPost) {
-          return <PopupMenuEntry<String>>[];
-        }
-        return const [
-          PopupMenuItem(value: 'edit', child: Text('수정하기')),
-          PopupMenuItem(value: 'delete', child: Text('삭제하기')),
-        ];
-      },
-
-      icon: const Icon(Icons.more_vert),
     );
   }
 }
