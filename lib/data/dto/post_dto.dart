@@ -58,7 +58,6 @@ class PostDto {
 
   Map<String, dynamic> toMap() {
     return {
-      'id': id,
       'uid': uid,
       'userName': userName,
       'userProfileImage': userProfileImage,
