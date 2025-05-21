@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:share_lingo/app/constants/app_colors.dart';
 import 'package:share_lingo/app/constants/app_constants.dart';
 
 class SelectTagPage extends StatelessWidget {
@@ -48,7 +49,7 @@ class SelectTagPage extends StatelessWidget {
                         vertical: 13,
                       ),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFF0F0F0),
+                        color: AppColors.widgetBackgroundBlue,
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Text(

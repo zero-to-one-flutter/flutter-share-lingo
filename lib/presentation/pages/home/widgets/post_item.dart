@@ -26,6 +26,9 @@ class PostItem extends StatefulWidget {
 class _PostItemState extends State<PostItem> {
   @override
   Widget build(BuildContext context) {
+    final List<String> images =
+        widget.imageUrl.where((url) => url.trim().isNotEmpty).take(3).toList();
+
     return InkWell(
       highlightColor: AppColors.lightGrey,
       onTap: () {},
@@ -38,8 +41,8 @@ class _PostItemState extends State<PostItem> {
             _topBar(),
             SizedBox(height: 10),
             ExpandableText(widget.content, trimLines: 4),
-            SizedBox(height: 10),
-            _imageBox(),
+            if (images.isNotEmpty) SizedBox(height: 10),
+            _imageBox(images),
             _tagBar(),
             // comment 개수 표시
             // detail 페이지에서는 표시 X
@@ -146,10 +149,7 @@ class _PostItemState extends State<PostItem> {
     );
   }
 
-  Widget _imageBox() {
-    final List<String> images =
-        widget.imageUrl.where((url) => url.trim().isNotEmpty).take(3).toList();
-
+  Widget _imageBox(List<String> images) {
     if (images.isEmpty) {
       return const SizedBox.shrink();
     }
@@ -293,10 +293,17 @@ class _PostItemState extends State<PostItem> {
                     vertical: 8,
                   ),
                   decoration: BoxDecoration(
-                    color: Colors.grey[400],
+                    color: AppColors.widgetBackgroundBlue,
                     borderRadius: BorderRadius.circular(20),
                   ),
-                  child: Text(text, style: const TextStyle(fontSize: 14)),
+                  child: Text(
+                    '# $text',
+                    style: const TextStyle(
+                      fontSize: 14,
+                      color: Colors.blueAccent,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                 );
               }).toList(),
         ),
