@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:share_lingo/presentation/widgets/input_decorations.dart';
-import '../../../app/constants/app_constants.dart';
 import '../../../core/utils/dialogue_util.dart';
 import '../../../core/utils/snackbar_util.dart';
 import '../../../domain/entity/app_user.dart';
@@ -24,8 +23,8 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
   late TextEditingController nativeLanguageController;
   late TextEditingController targetLanguageController;
   late TextEditingController bioController;
-  late TextEditingController partnerPreferenceController;
   late TextEditingController languageLearningGoalController;
+  late TextEditingController partnerPreferenceController;
   late TextEditingController birthdateController;
 
   final _formKey = GlobalKey<FormState>();
@@ -405,63 +404,6 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
             decoration: getInputDecoration(hintText),
             validator: validator,
           ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildLanguageDropdown(
-    String label,
-    TextEditingController controller,
-  ) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            label,
-            style: const TextStyle(
-              color: Colors.black87,
-              fontWeight: FontWeight.bold,
-              fontSize: 16,
-            ),
-          ),
-          const SizedBox(height: 8),
-          // DropdownButtonFormField<String>(
-          //   value:
-          //       _languages.contains(controller.text) ? controller.text : '선택',
-          //   items:
-          //       _languages.map((language) {
-          //         return DropdownMenuItem(
-          //           value: language,
-          //           child: Text(language),
-          //         );
-          //       }).toList(),
-          //   onChanged: (value) {
-          //     if (value != null) {
-          //       controller.text = value;
-          //     }
-          //   },
-          //   validator: (value) {
-          //     if (value == '선택') {
-          //       return '$label를 선택해 주세요';
-          //     }
-          //     return null;
-          //   },
-          //   decoration: InputDecoration(
-          //     border: const OutlineInputBorder(
-          //       borderSide: BorderSide(color: Colors.black),
-          //     ),
-          //     focusedBorder: const OutlineInputBorder(
-          //       borderSide: BorderSide(color: Colors.blueAccent),
-          //     ),
-          //     contentPadding: const EdgeInsets.symmetric(
-          //       horizontal: 12,
-          //       vertical: 12,
-          //     ),
-          //   ),
-          // ),
         ],
       ),
     );
