@@ -44,6 +44,7 @@ class FeedTab extends StatelessWidget {
                       ref.read(feedNotifierProvider.notifier).fetchOlderPosts();
                     },
                   );
+                  // 무한 스크롤
                   return NotificationListener(
                     onNotification: (notification) {
                       if (notification is ScrollUpdateNotification) {
@@ -54,37 +55,53 @@ class FeedTab extends StatelessWidget {
                       }
                       return true;
                     },
-                    child: ListView.separated(
-                      padding: const EdgeInsets.only(
-                        left: 16,
-                        right: 16,
-                        top: 5,
-                        bottom: 100,
-                      ),
-                      separatorBuilder: (context, index) {
-                        return Column(
-                          children: [
-                            SizedBox(height: 8, width: double.infinity),
-                            Divider(),
-                          ],
+                    // 당겨서 새로고침
+                    child: RefreshIndicator(
+                      onRefresh: () {
+                        final throttler = Throttler(
+                          duration: Duration(seconds: 1),
+                          callback: () {
+                            ref
+                                .read(feedNotifierProvider.notifier)
+                                .fetchLatestPosts();
+                          },
                         );
+                        throttler.run();
+                        return Future.value();
                       },
-                      itemCount: posts.length,
-                      itemBuilder: (context, index) {
-                        final post = posts[index];
-                        final content = post.content;
-                        final imageUrl = post.imageUrl;
-                        final tags = post.tags;
-                        final commentCount = post.commentCount;
 
-                        return PostItem(
-                          content: content,
-                          imageUrl: imageUrl,
-                          tags: tags,
-                          commentCount: commentCount,
-                          displayComments: true,
-                        );
-                      },
+                      child: ListView.separated(
+                        padding: const EdgeInsets.only(
+                          left: 16,
+                          right: 16,
+                          top: 5,
+                          bottom: 100,
+                        ),
+                        separatorBuilder: (context, index) {
+                          return Column(
+                            children: [
+                              SizedBox(height: 8, width: double.infinity),
+                              Divider(),
+                            ],
+                          );
+                        },
+                        itemCount: posts.length,
+                        itemBuilder: (context, index) {
+                          final post = posts[index];
+                          final content = post.content;
+                          final imageUrl = post.imageUrl;
+                          final tags = post.tags;
+                          final commentCount = post.commentCount;
+
+                          return PostItem(
+                            content: content,
+                            imageUrl: imageUrl,
+                            tags: tags,
+                            commentCount: commentCount,
+                            displayComments: true,
+                          );
+                        },
+                      ),
                     ),
                   );
                 },

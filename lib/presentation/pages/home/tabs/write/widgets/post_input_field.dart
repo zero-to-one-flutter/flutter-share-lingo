@@ -17,7 +17,7 @@ class PostInputField extends StatelessWidget {
         color: AppColors.chipGrey,
         borderRadius: BorderRadius.all(Radius.circular(12)),
       ),
-      child: TextField(
+      child: TextFormField(
         controller: controller,
         maxLines: null,
         expands: true,
@@ -31,6 +31,11 @@ class PostInputField extends StatelessWidget {
           border: InputBorder.none,
         ),
         keyboardType: TextInputType.multiline,
+        validator: (value) {
+          if (value == null || value.trim().isEmpty) return '내용을 입력하세요';
+          if (value.trim().length < 2) return '1글자 이상 입력해 주세요';
+          return null;
+        },
       ),
     );
   }

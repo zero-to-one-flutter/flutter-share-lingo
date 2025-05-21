@@ -6,6 +6,7 @@ import 'package:share_lingo/core/providers/data_providers.dart';
 import 'package:share_lingo/domain/entity/post_entity.dart';
 import 'package:share_lingo/domain/usecase/create_post_usecase.dart';
 import 'package:share_lingo/domain/usecase/upload_image_usecase.dart';
+import 'package:share_lingo/presentation/user_global_view_model.dart';
 
 class PostWriteViewModel extends StateNotifier<AsyncValue<void>> {
   final CreatePostUseCase createPostUseCase;
@@ -17,6 +18,7 @@ class PostWriteViewModel extends StateNotifier<AsyncValue<void>> {
   }) : super(const AsyncData(null));
 
   Future<void> submitPost({
+    required WidgetRef ref,
     required String uid,
     required String content,
     required List<String> tags,
@@ -25,24 +27,39 @@ class PostWriteViewModel extends StateNotifier<AsyncValue<void>> {
     state = const AsyncLoading();
 
     try {
+      // 사용자 정보 가져오기
+      final user = ref.read(userGlobalViewModelProvider);
+      if (user == null) {
+        state = AsyncError("유저 정보 없음", StackTrace.current);
+        return;
+      }
+
+      // 이미지 업로드
       final imageUrls = await Future.wait(
         imageBytesList.map(
           (imageBytes) => uploadImageUseCase(uid: uid, imageBytes: imageBytes),
         ),
       );
 
+      // PostEntity 생성
       final post = PostEntity(
         uid: uid,
+        userName: user.name,
+        userProfileImage: user.profileImage ?? '',
+        userNativeLanguage: user.nativeLanguage ?? '',
+        userTargetLanguage: user.targetLanguage ?? '',
+        userDistrict: user.district,
+        userLocation: user.location,
         content: content,
         imageUrl: imageUrls,
         tags: tags,
         createdAt: DateTime.now(),
-        // 실제 저장은 serverTimestamp로 덮어씀
         likeCount: 0,
         commentCount: 0,
         deleted: false,
       );
 
+      // 포스트 저장
       await createPostUseCase(post);
       state = const AsyncData(null);
     } catch (e, st) {
