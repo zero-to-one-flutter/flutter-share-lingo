@@ -4,6 +4,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:share_lingo/domain/usecase/fetch_initial_posts_usecase.dart';
+import 'package:share_lingo/domain/usecase/fetch_lastest_posts_usecase.dart';
 import 'package:share_lingo/domain/usecase/fetch_older_posts_usecase.dart';
 import 'package:share_lingo/domain/usecase/upload_image_usecase.dart';
 
@@ -83,4 +84,8 @@ final fetchInitialPostsUsecaseProvider = Provider(
 
 final fetchOlderPostsUsecaseProvider = Provider(
   (ref) => FetchOlderPostsUsecase(ref.read(postRepositoryProvider)),
+);
+
+final fetchLatestPostsUsecaseProvider = Provider(
+  (ref) => FetchLastestPostsUsecase(ref.read(postRepositoryProvider)),
 );
