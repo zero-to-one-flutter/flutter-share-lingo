@@ -69,11 +69,14 @@ class PostWriteViewModel extends StateNotifier<AsyncValue<void>> {
     }
   }
 
-  //  수정용 메서드 추가
-  Future<void> updatePost({required String id, required String content}) async {
+  Future<void> updatePost({
+    required String id,
+    required String content,
+    required List<String> imageUrls,
+  }) async {
     state = const AsyncLoading();
     try {
-      await updatePostUseCase(id: id, content: content);
+      await updatePostUseCase(id: id, content: content, imageUrls: imageUrls);
       state = const AsyncData(null);
     } catch (e, st) {
       state = AsyncError(e, st);

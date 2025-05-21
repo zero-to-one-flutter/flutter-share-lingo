@@ -38,7 +38,7 @@ class MyPostsSection extends ConsumerWidget {
                 physics: const NeverScrollableScrollPhysics(),
                 itemBuilder: (context, index) {
                   final post = posts[index];
-                  return PostCard(post: post, isMyPost: true);
+                  //    return PostCard(post: post, isMyPost: true);
                 },
               ),
           loading: () => const Center(child: CircularProgressIndicator()),
