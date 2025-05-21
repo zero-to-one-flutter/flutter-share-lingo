@@ -6,9 +6,12 @@ import 'package:share_lingo/core/providers/comment_providers.dart';
 import 'package:share_lingo/core/utils/format_time_ago.dart';
 import 'package:share_lingo/core/utils/general_utils.dart';
 import 'package:share_lingo/domain/entity/post_entity.dart';
+import 'package:share_lingo/presentation/pages/home/tabs/write/post_write_tab.dart';
 import 'package:share_lingo/presentation/pages/home/widgets/expandable_text.dart';
 import 'package:share_lingo/presentation/pages/post/post_detail_page.dart';
+import 'package:share_lingo/presentation/user_global_view_model.dart';
 import 'package:share_lingo/presentation/widgets/app_cached_image.dart';
+import 'package:share_lingo/presentation/pages/report/report_page.dart';
 
 import '../../../../domain/entity/app_user.dart';
 import '../../profile/profile_page.dart';
@@ -28,179 +31,264 @@ class PostItem extends ConsumerStatefulWidget {
 }
 
 class _PostItemState extends ConsumerState<PostItem> {
+  Stream<PostEntity>? _postStream;
+
   @override
-  Widget build(BuildContext context) {
-    final List<String> images =
-        widget.post.imageUrl
-            .where((url) => url.trim().isNotEmpty)
-            .take(3)
-            .toList();
-
-    return InkWell(
-      highlightColor: AppColors.lightGrey,
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => PostDetailPage(post: widget.post),
-          ),
-        );
-      },
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(height: 12),
-            _topBar(),
-            SizedBox(height: 10),
-            ExpandableText(widget.post.content, trimLines: 4),
-            if (images.isNotEmpty) SizedBox(height: 10),
-            _imageBox(images),
-            _tagBar(),
-            // comment 개수 표시
-            // detail 페이지에서는 표시 X
-            !widget.displayComments
-                ? SizedBox.shrink()
-                : Column(
-                  children: [SizedBox(height: 15), _buildCommentCount()],
-                ),
-          ],
-        ),
-      ),
-    );
+  void initState() {
+    super.initState();
+    _postStream = FirebaseFirestore.instance
+        .collection('posts')
+        .doc(widget.post.id)
+        .snapshots()
+        .map((doc) => PostEntity.fromFirestore(doc));
   }
 
-  Widget _buildCommentCount() {
-    final commentCountAsync = ref.watch(
-      postCommentCountProvider(widget.post.id),
-    );
+  void _showPostOptions(BuildContext context, PostEntity post) {
+    final user = ref.read(userGlobalViewModelProvider);
+    if (user == null) return;
 
-    return commentCountAsync.when(
-      data:
-          (count) => Row(
-            children: [
-              Icon(
-                Icons.chat_bubble_outline_outlined,
-                color: Colors.grey[500],
-                size: 20,
-              ),
-              SizedBox(width: 8),
-              Text(
-                '$count',
-                style: TextStyle(fontSize: 14, color: Colors.grey[700]),
-              ),
-            ],
-          ),
-      loading: () => const SizedBox.shrink(),
-      error: (_, __) => const SizedBox.shrink(),
-    );
-  }
+    final isOwner = user.id == post.uid;
 
-  Widget _topBar() {
-    return InkWell(
-      onTap: () {
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (context) {
-              return ProfilePage(
-                user: AppUser(
-                  id: 'u92837465',
-                  name: '박민수',
-                  createdAt: DateTime(2023, 8, 15),
-                  email: 'minsoo.park91@example.com',
-                  profileImage: 'https://picsum.photos/200/200?random=1',
-                  nativeLanguage: '한국어',
-                  targetLanguage: '스페인어',
-                  bio:
-                      '스페인어를 배우고 있는 직장인입니다. 언어뿐만 아니라 라틴 문화에도 관심이 많아요. 편하게 언어 교환하실 분 환영합니다!',
-                  birthdate: DateTime(1991, 11, 8),
-                  partnerPreference: '언어 교환에 진지한 분',
-                  languageLearningGoal: '남미 여행을 위해 자연스러운 스페인어 회화를 배우고 싶어요.',
-                  district: null,
-                  location: GeoPoint(37.4979, 127.0276),
-                ),
-              );
-            },
-          ),
-        );
-      },
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          ClipOval(
-            child: AppCachedImage(
-              imageUrl: widget.post.userProfileImage,
-              width: 50,
-              height: 50,
-              fit: BoxFit.cover,
+    showModalBottomSheet(
+      context: context,
+      builder:
+          (context) => Padding(
+            padding: const EdgeInsets.only(bottom: 16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (isOwner) ...[
+                  ListTile(
+                    leading: const Icon(Icons.edit),
+                    title: const Text('수정'),
+                    onTap: () {
+                      Navigator.pop(context);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => PostWriteTab(post: post),
+                        ),
+                      );
+                    },
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.delete, color: Colors.red),
+                    title: const Text(
+                      '삭제',
+                      style: TextStyle(color: Colors.red),
+                    ),
+                    onTap: () {
+                      Navigator.pop(context);
+                      _showDeleteConfirmation(context, post);
+                    },
+                  ),
+                ] else ...[
+                  ListTile(
+                    leading: const Icon(Icons.flag),
+                    title: const Text('신고'),
+                    onTap: () {
+                      Navigator.pop(context);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder:
+                              (context) => ReportPage(
+                                postId: post.id,
+                                postContent: post.content,
+                              ),
+                        ),
+                      );
+                    },
+                  ),
+                ],
+              ],
             ),
           ),
-          SizedBox(width: 10),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Text(
-                    widget.post.userName,
-                    style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
-                  ),
-                  SizedBox(width: 8),
-                  Text(
-                    FormatTimeAgo.formatTimeAgo(widget.post.createdAt),
-                    style: TextStyle(
-                      fontSize: 15,
-                      color: Colors.black54,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ],
+    );
+  }
+
+  void _showDeleteConfirmation(BuildContext context, PostEntity post) {
+    showDialog(
+      context: context,
+      builder:
+          (context) => AlertDialog(
+            title: const Text('게시물 삭제'),
+            content: const Text('이 게시물을 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('취소'),
               ),
-              Row(
+              TextButton(
+                onPressed: () async {
+                  Navigator.pop(context);
+                  try {
+                    await FirebaseFirestore.instance
+                        .collection('posts')
+                        .doc(post.id)
+                        .delete();
+                    if (mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('게시물이 삭제되었습니다')),
+                      );
+                    }
+                  } catch (e) {
+                    if (mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('게시물 삭제 중 오류가 발생했습니다: $e')),
+                      );
+                    }
+                  }
+                },
+                child: const Text('삭제', style: TextStyle(color: Colors.red)),
+              ),
+            ],
+          ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<PostEntity>(
+      stream: _postStream,
+      initialData: widget.post,
+      builder: (context, snapshot) {
+        final post = snapshot.data ?? widget.post;
+
+        final List<String> images =
+            post.imageUrl
+                .where((url) => url.trim().isNotEmpty)
+                .take(3)
+                .toList();
+
+        return InkWell(
+          highlightColor: AppColors.lightGrey,
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => PostDetailPage(post: post),
+              ),
+            );
+          },
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(height: 12),
+                _topBar(post),
+                SizedBox(height: 10),
+                ExpandableText(post.content, trimLines: 4),
+                if (images.isNotEmpty) SizedBox(height: 10),
+                _imageBox(images),
+                _tagBar(post),
+                !widget.displayComments
+                    ? SizedBox.shrink()
+                    : Column(
+                      children: [
+                        SizedBox(height: 15),
+                        _buildCommentCount(post.id),
+                      ],
+                    ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _topBar(PostEntity post) {
+    return Row(
+      children: [
+        GestureDetector(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder:
+                    (context) => ProfilePage(
+                      user: AppUser(
+                        id: post.uid,
+                        name: post.userName,
+                        createdAt: DateTime.now(),
+                        email: '',
+                        profileImage: post.userProfileImage,
+                        nativeLanguage: post.userNativeLanguage,
+                        targetLanguage: post.userTargetLanguage,
+                        bio: '',
+                        birthdate: DateTime.now(),
+                        partnerPreference: '',
+                        languageLearningGoal: '',
+                        district: post.userDistrict,
+                        location: post.userLocation,
+                      ),
+                    ),
+              ),
+            );
+          },
+          child: Row(
+            children: [
+              CircleAvatar(
+                backgroundImage: NetworkImage(post.userProfileImage),
+                radius: 20,
+              ),
+              const SizedBox(width: 10),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    // 'KR',
-                    GeneralUtils.getLanguageCodeByName(
-                      widget.post.userNativeLanguage,
-                    )!.toUpperCase(),
-                    style: TextStyle(
-                      fontSize: 12,
+                    post.userName,
+                    style: const TextStyle(
                       fontWeight: FontWeight.bold,
-                      color: Colors.black54,
+                      fontSize: 16,
                     ),
                   ),
-                  SizedBox(
-                    width: 30,
-                    child: Icon(
-                      Icons.sync_alt_outlined,
-                      size: 16,
-                      color: Colors.black26,
-                    ),
-                  ),
-                  Text(
-                    // 'EN',
-                    GeneralUtils.getLanguageCodeByName(
-                      widget.post.userTargetLanguage,
-                    )!.toUpperCase(),
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black54,
-                    ),
+                  Row(
+                    children: [
+                      Text(
+                        GeneralUtils.getLanguageCodeByName(
+                          post.userNativeLanguage,
+                        )!.toUpperCase(),
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black54,
+                        ),
+                      ),
+                      SizedBox(
+                        width: 30,
+                        child: Icon(
+                          Icons.sync_alt_outlined,
+                          size: 16,
+                          color: Colors.black26,
+                        ),
+                      ),
+                      Text(
+                        GeneralUtils.getLanguageCodeByName(
+                          post.userTargetLanguage,
+                        )!.toUpperCase(),
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black54,
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
             ],
           ),
-          Spacer(),
-          IconButton(
-            padding: EdgeInsets.all(0),
-            onPressed: () {},
-            icon: const Icon(Icons.keyboard_control_rounded),
-          ),
-        ],
-      ),
+        ),
+        Spacer(),
+        IconButton(
+          padding: EdgeInsets.all(0),
+          onPressed: () => _showPostOptions(context, post),
+          icon: const Icon(Icons.keyboard_control_rounded),
+        ),
+      ],
     );
   }
 
@@ -332,8 +420,8 @@ class _PostItemState extends ConsumerState<PostItem> {
     );
   }
 
-  Widget _tagBar() {
-    final tags = widget.post.tags;
+  Widget _tagBar(PostEntity post) {
+    final tags = post.tags;
     return Column(
       children: [
         tags.isEmpty ? SizedBox.shrink() : SizedBox(height: 15),
@@ -363,6 +451,30 @@ class _PostItemState extends ConsumerState<PostItem> {
               }).toList(),
         ),
       ],
+    );
+  }
+
+  Widget _buildCommentCount(String postId) {
+    final commentCountAsync = ref.watch(postCommentCountProvider(postId));
+
+    return commentCountAsync.when(
+      data:
+          (count) => Row(
+            children: [
+              Icon(
+                Icons.chat_bubble_outline_outlined,
+                color: Colors.grey[500],
+                size: 20,
+              ),
+              SizedBox(width: 8),
+              Text(
+                '$count',
+                style: TextStyle(fontSize: 14, color: Colors.grey[700]),
+              ),
+            ],
+          ),
+      loading: () => const SizedBox.shrink(),
+      error: (_, __) => const SizedBox.shrink(),
     );
   }
 }

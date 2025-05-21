@@ -5,7 +5,6 @@ import 'package:share_lingo/core/providers/comment_providers.dart';
 import 'package:share_lingo/domain/entity/comment.dart';
 import 'package:share_lingo/data/dto/comment_dto.dart';
 import 'package:share_lingo/presentation/user_global_view_model.dart';
-import 'package:share_lingo/presentation/widgets/app_cached_image.dart';
 
 class CommentSection extends ConsumerStatefulWidget {
   final String postId;

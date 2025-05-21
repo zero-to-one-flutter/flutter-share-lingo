@@ -55,6 +55,7 @@ class PostWriteViewModel extends StateNotifier<AsyncValue<void>> {
         imageUrl: imageUrls,
         tags: tags,
         createdAt: DateTime.now(),
+        updatedAt: DateTime.now(),
         likeCount: 0,
         commentCount: 0,
         deleted: false,
@@ -70,10 +71,36 @@ class PostWriteViewModel extends StateNotifier<AsyncValue<void>> {
   }
 
   //  수정용 메서드 추가
-  Future<void> updatePost({required String id, required String content}) async {
+  Future<void> updatePost({
+    required String id,
+    required String content,
+    required String uid,
+    required String userName,
+    required String userProfileImage,
+    required String userNativeLanguage,
+    required String userTargetLanguage,
+    required List<String> imageUrl,
+    required List<String> tags,
+    required DateTime createdAt,
+    required int likeCount,
+    required int commentCount,
+  }) async {
     state = const AsyncLoading();
     try {
-      await updatePostUseCase(id: id, content: content);
+      await updatePostUseCase(
+        id: id,
+        content: content,
+        uid: uid,
+        userName: userName,
+        userProfileImage: userProfileImage,
+        userNativeLanguage: userNativeLanguage,
+        userTargetLanguage: userTargetLanguage,
+        imageUrl: imageUrl,
+        tags: tags,
+        createdAt: createdAt,
+        likeCount: likeCount,
+        commentCount: commentCount,
+      );
       state = const AsyncData(null);
     } catch (e, st) {
       state = AsyncError(e, st);

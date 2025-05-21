@@ -69,11 +69,61 @@ class PostRemoteDataSource {
     return reversedList.reversed.toList();
   }
 
-  Future<void> updatePost({required String id, required String content}) async {
-    await FirebaseFirestore.instance.collection('posts').doc(id).update({
-      'content': content,
-      'updatedAt': FieldValue.serverTimestamp(),
-    });
+  Future<void> updatePost(PostDto postDto) async {
+    await firestore.collection('posts').doc(postDto.id).update(postDto.toMap());
+  }
+
+  Future<PostDto?> getPost(String id) async {
+    final doc = await firestore.collection('posts').doc(id).get();
+    if (!doc.exists) return null;
+    return PostDto.fromMap(doc.id, doc.data()!);
+  }
+
+  Stream<int> getPostLikeCount(String postId) {
+    return firestore
+        .collection('posts')
+        .doc(postId)
+        .collection('likes')
+        .snapshots()
+        .map((snapshot) => snapshot.docs.length);
+  }
+
+  Stream<List<String>> getPostLikes(String postId) {
+    return firestore
+        .collection('posts')
+        .doc(postId)
+        .collection('likes')
+        .snapshots()
+        .map((snapshot) => snapshot.docs.map((doc) => doc.id).toList());
+  }
+
+  Future<List<PostDto>> getPosts() async {
+    final snapshot =
+        await firestore
+            .collection('posts')
+            .orderBy('createdAt', descending: true)
+            .get();
+    return snapshot.docs
+        .map((doc) => PostDto.fromMap(doc.id, doc.data()))
+        .toList();
+  }
+
+  Future<void> likePost(String postId, String uid) async {
+    await firestore
+        .collection('posts')
+        .doc(postId)
+        .collection('likes')
+        .doc(uid)
+        .set({'timestamp': FieldValue.serverTimestamp()});
+  }
+
+  Future<void> unlikePost(String postId, String uid) async {
+    await firestore
+        .collection('posts')
+        .doc(postId)
+        .collection('likes')
+        .doc(uid)
+        .delete();
   }
 
   Future<List<PostDto>> fetchPostsByUid(String uid) async {
