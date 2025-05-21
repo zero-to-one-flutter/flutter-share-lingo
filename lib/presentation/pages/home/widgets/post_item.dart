@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:share_lingo/app/constants/app_colors.dart';
+import 'package:share_lingo/core/utils/format_time_ago.dart';
 import 'package:share_lingo/core/utils/general_utils.dart';
 import 'package:share_lingo/domain/entity/post_entity.dart';
 import 'package:share_lingo/presentation/pages/home/widgets/expandable_text.dart';
@@ -11,11 +12,13 @@ import '../../profile/profile_page.dart';
 
 class PostItem extends StatefulWidget {
   final PostEntity post;
+  final DateTime now;
   final bool displayComments;
 
   const PostItem({
     super.key,
     required this.post,
+    required this.now,
     required this.displayComments,
   });
 
@@ -130,7 +133,10 @@ class _PostItemState extends State<PostItem> {
                   ),
                   SizedBox(width: 8),
                   Text(
-                    '10m', // Todo: 시간 계산해서 바꾸기
+                    FormatTimeAgo.formatTimeAgo(
+                      now: widget.now,
+                      createdAt: widget.post.createdAt,
+                    ),
                     style: TextStyle(
                       fontSize: 15,
                       color: Colors.black54,
@@ -187,7 +193,9 @@ class _PostItemState extends State<PostItem> {
   }
 
   Widget _imageBox(List<String> images) {
-    if (images.isEmpty) return const SizedBox.shrink();
+    if (images.isEmpty) {
+      return const SizedBox.shrink();
+    }
 
     double sizedBoxHeight = 8;
     double sizedBoxWidth = 8;
@@ -198,9 +206,14 @@ class _PostItemState extends State<PostItem> {
 
         switch (images.length) {
           case 1:
-            content = ClipRRect(
-              borderRadius: BorderRadius.circular(10),
-              child: AppCachedImage(imageUrl: images[0], fit: BoxFit.cover),
+            content = Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                image: DecorationImage(
+                  image: NetworkImage(images[0]),
+                  fit: BoxFit.cover,
+                ),
+              ),
             );
             break;
 
@@ -208,27 +221,31 @@ class _PostItemState extends State<PostItem> {
             content = Row(
               children: [
                 Expanded(
-                  child: ClipRRect(
-                    borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(10),
-                      bottomLeft: Radius.circular(10),
-                    ),
-                    child: AppCachedImage(
-                      imageUrl: images[0],
-                      fit: BoxFit.cover,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: const BorderRadius.only(
+                        topLeft: Radius.circular(10),
+                        bottomLeft: Radius.circular(10),
+                      ),
+                      image: DecorationImage(
+                        image: NetworkImage(images[0]),
+                        fit: BoxFit.cover,
+                      ),
                     ),
                   ),
                 ),
                 SizedBox(width: sizedBoxWidth),
                 Expanded(
-                  child: ClipRRect(
-                    borderRadius: const BorderRadius.only(
-                      topRight: Radius.circular(10),
-                      bottomRight: Radius.circular(10),
-                    ),
-                    child: AppCachedImage(
-                      imageUrl: images[1],
-                      fit: BoxFit.cover,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: const BorderRadius.only(
+                        topRight: Radius.circular(10),
+                        bottomRight: Radius.circular(10),
+                      ),
+                      image: DecorationImage(
+                        image: NetworkImage(images[1]),
+                        fit: BoxFit.cover,
+                      ),
                     ),
                   ),
                 ),
@@ -241,14 +258,16 @@ class _PostItemState extends State<PostItem> {
               children: [
                 SizedBox(
                   width: (constraints.maxWidth - sizedBoxWidth) / 2,
-                  child: ClipRRect(
-                    borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(10),
-                      bottomLeft: Radius.circular(10),
-                    ),
-                    child: AppCachedImage(
-                      imageUrl: images[0],
-                      fit: BoxFit.cover,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: const BorderRadius.only(
+                        topLeft: Radius.circular(10),
+                        bottomLeft: Radius.circular(10),
+                      ),
+                      image: DecorationImage(
+                        image: NetworkImage(images[0]),
+                        fit: BoxFit.cover,
+                      ),
                     ),
                   ),
                 ),
@@ -258,25 +277,29 @@ class _PostItemState extends State<PostItem> {
                   child: Column(
                     children: [
                       Expanded(
-                        child: ClipRRect(
-                          borderRadius: const BorderRadius.only(
-                            topRight: Radius.circular(10),
-                          ),
-                          child: AppCachedImage(
-                            imageUrl: images[1],
-                            fit: BoxFit.cover,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: const BorderRadius.only(
+                              topRight: Radius.circular(10),
+                            ),
+                            image: DecorationImage(
+                              image: NetworkImage(images[1]),
+                              fit: BoxFit.cover,
+                            ),
                           ),
                         ),
                       ),
                       SizedBox(height: sizedBoxHeight),
                       Expanded(
-                        child: ClipRRect(
-                          borderRadius: const BorderRadius.only(
-                            bottomRight: Radius.circular(10),
-                          ),
-                          child: AppCachedImage(
-                            imageUrl: images[2],
-                            fit: BoxFit.cover,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: const BorderRadius.only(
+                              bottomRight: Radius.circular(10),
+                            ),
+                            image: DecorationImage(
+                              image: NetworkImage(images[2]),
+                              fit: BoxFit.cover,
+                            ),
                           ),
                         ),
                       ),
@@ -286,7 +309,6 @@ class _PostItemState extends State<PostItem> {
               ],
             );
             break;
-
           default:
             content = const SizedBox.shrink();
         }
