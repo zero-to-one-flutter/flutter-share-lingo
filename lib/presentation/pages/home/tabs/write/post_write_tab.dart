@@ -25,9 +25,10 @@ class PostWriteTab extends ConsumerStatefulWidget {
 
 class _PostWriteTabState extends ConsumerState<PostWriteTab> {
   final _formKey = GlobalKey<FormState>();
-  late TextEditingController _contentController = TextEditingController();
+  late TextEditingController _contentController;
   final List<String> _selectedTags = [];
   final List<Uint8List> _selectedImages = [];
+  late List<String> _existingImageUrls;
 
   final ImagePicker _picker = ImagePicker();
   final YoloDetection _yoloModel = YoloDetection();
@@ -38,6 +39,12 @@ class _PostWriteTabState extends ConsumerState<PostWriteTab> {
     _contentController = TextEditingController(
       text: widget.post?.content ?? '',
     );
+    _existingImageUrls = List.from(widget.post?.imageUrl ?? []);
+
+    //수정모드일 경우 기존 태그 불러오기
+    if (widget.post?.tags != null && widget.post!.tags.isNotEmpty) {
+      _selectedTags.addAll(widget.post!.tags.map((e) => '#$e'));
+    }
     Future.microtask(() async {
       try {
         if (!_yoloModel.isInitialized) {
@@ -53,7 +60,8 @@ class _PostWriteTabState extends ConsumerState<PostWriteTab> {
   }
 
   Future<void> _pickImage() async {
-    if (_selectedImages.length >= 3) {
+    final totalImages = _selectedImages.length + _existingImageUrls.length;
+    if (totalImages >= 3) {
       if (!mounted) return;
       SnackbarUtil.showSnackBar(context, '이미지는 최대 3장까지 가능합니다.');
       return;
@@ -105,18 +113,33 @@ class _PostWriteTabState extends ConsumerState<PostWriteTab> {
 
     final uid = FirebaseAuth.instance.currentUser?.uid ?? 'test-user';
 
+    final newImageUrls = await Future.wait(
+      _selectedImages.map(
+        (bytes) => ref
+            .read(uploadImageUseCaseProvider)
+            .call(uid: uid, imageBytes: bytes),
+      ),
+    );
+
+    final combinedImageUrls = [..._existingImageUrls, ...newImageUrls];
+
     if (widget.post != null) {
-      //  수정 모드
+      // 수정 모드
       await ref
-          .read(postRepositoryProvider)
-          .updatePost(id: widget.post!.id, content: content);
+          .read(postWriteViewModelProvider.notifier)
+          .updatePost(
+            id: widget.post!.id,
+            content: content,
+            imageUrls: combinedImageUrls,
+            tags: _selectedTags,
+          );
       if (!mounted) return;
       SnackbarUtil.showSnackBar(context, '수정되었습니다');
-      Navigator.of(context).pop();
+      Navigator.of(context).pop(true);
       return;
     }
 
-    //  새 글 작성 모드
+    // 새 글 작성
     final postNotifier = ref.read(postWriteViewModelProvider.notifier);
     await postNotifier.submitPost(
       ref: ref,
@@ -127,9 +150,7 @@ class _PostWriteTabState extends ConsumerState<PostWriteTab> {
     );
 
     if (!mounted) return;
-
     await ref.read(feedNotifierProvider.notifier).refresh();
-
     if (!mounted) return;
 
     _contentController.clear();
@@ -138,7 +159,7 @@ class _PostWriteTabState extends ConsumerState<PostWriteTab> {
     setState(() {});
 
     SnackbarUtil.showSnackBar(context, '게시되었습니다');
-    Navigator.of(context).pop();
+    Navigator.of(context).pop(true);
   }
 
   void _cancel() {
@@ -162,12 +183,10 @@ class _PostWriteTabState extends ConsumerState<PostWriteTab> {
           ),
         ],
       ),
-
       body: SafeArea(
         child: Form(
           key: _formKey,
           child: LayoutBuilder(
-            //반응형 대응
             builder: (context, constraints) {
               return SingleChildScrollView(
                 padding: EdgeInsets.only(
@@ -184,6 +203,42 @@ class _PostWriteTabState extends ConsumerState<PostWriteTab> {
                       children: [
                         PostInputField(controller: _contentController),
                         const SizedBox(height: 16),
+
+                        if (_existingImageUrls.isNotEmpty)
+                          SizedBox(
+                            height: 100,
+                            child: ListView.separated(
+                              scrollDirection: Axis.horizontal,
+                              itemCount: _existingImageUrls.length,
+                              separatorBuilder:
+                                  (_, __) => const SizedBox(width: 8),
+                              itemBuilder: (context, index) {
+                                return Stack(
+                                  children: [
+                                    Image.network(
+                                      _existingImageUrls[index],
+                                      height: 100,
+                                    ),
+                                    Positioned(
+                                      right: 0,
+                                      child: GestureDetector(
+                                        onTap: () {
+                                          setState(() {
+                                            _existingImageUrls.removeAt(index);
+                                          });
+                                        },
+                                        child: const Icon(
+                                          Icons.cancel,
+                                          color: Colors.red,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                );
+                              },
+                            ),
+                          ),
+
                         if (_selectedImages.isNotEmpty)
                           SizedBox(
                             height: 100,
@@ -218,6 +273,7 @@ class _PostWriteTabState extends ConsumerState<PostWriteTab> {
                               },
                             ),
                           ),
+
                         const SizedBox(height: 16),
                         TagRowButton(
                           onTagSelected: (tag) {

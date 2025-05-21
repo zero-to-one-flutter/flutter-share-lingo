@@ -6,7 +6,17 @@ class UpdatePostUseCase {
 
   UpdatePostUseCase(this.repository);
 
-  Future<void> call({required String id, required String content}) async {
-    await repository.updatePost(id: id, content: content);
+  Future<void> call({
+    required String id,
+    required String content,
+    required List<String> imageUrls,
+    List<String>? tags,
+  }) async {
+    await repository.updatePost(
+      id: id,
+      content: content,
+      imageUrls: imageUrls,
+      tags: tags ?? [],
+    );
   }
 }

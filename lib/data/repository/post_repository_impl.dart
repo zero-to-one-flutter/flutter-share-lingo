@@ -50,8 +50,18 @@ class PostRepositoryImpl implements PostRepository {
   }
 
   @override
-  Future<void> updatePost({required String id, required String content}) async {
-    await remoteDataSource.updatePost(id: id, content: content);
+  Future<void> updatePost({
+    required String id,
+    required String content,
+    required List<String> imageUrls,
+    required List<String> tags,
+  }) async {
+    await remoteDataSource.updatePost(
+      id: id,
+      content: content,
+      imageUrls: imageUrls,
+      tags: tags,
+    );
   }
 
   @override

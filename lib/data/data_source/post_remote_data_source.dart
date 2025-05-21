@@ -69,9 +69,16 @@ class PostRemoteDataSource {
     return reversedList.reversed.toList();
   }
 
-  Future<void> updatePost({required String id, required String content}) async {
+  Future<void> updatePost({
+    required String id,
+    required String content,
+    required List<String> imageUrls,
+    List<String>? tags,
+  }) async {
     await FirebaseFirestore.instance.collection('posts').doc(id).update({
       'content': content,
+      'imageUrl': imageUrls,
+      'tags': tags,
       'updatedAt': FieldValue.serverTimestamp(),
     });
   }
