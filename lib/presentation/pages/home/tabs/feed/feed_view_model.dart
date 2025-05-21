@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:share_lingo/core/providers/data_providers.dart';
 import 'package:share_lingo/domain/repository/post_repository.dart';
@@ -54,6 +52,8 @@ class FeedNotifier extends AutoDisposeAsyncNotifier<List<PostEntity>> {
         final olderPosts = await olderPostsUsecase.execute(lastPost);
         if (olderPosts.isEmpty) return [];
 
+        olderPosts.removeWhere((post) => post.uid == lastPost!.uid);
+
         state = AsyncData([...currentPosts, ...olderPosts]);
         return olderPosts;
       } catch (e, st) {
@@ -71,18 +71,12 @@ class FeedNotifier extends AutoDisposeAsyncNotifier<List<PostEntity>> {
     final currentPosts = state.asData!.value;
     firstPost = currentPosts.isNotEmpty ? currentPosts.first : null;
 
-    // TODO: log 삭제
     if (firstPost != null) {
-      log('firstPost uid : ${firstPost.uid}');
       try {
         final latestPosts = await latestPostsUsecase.execute(firstPost);
         if (latestPosts.isEmpty) return [];
-        log('latestPosts.last uid : ${latestPosts.last.uid}');
-        log('latestPosts length: ${latestPosts.length}');
 
         latestPosts.removeWhere((post) => post.uid == firstPost!.uid);
-        log('edited latestPosts length: ${latestPosts.length}');
-        log('edited latestPosts.last uid : ${latestPosts.last.uid}');
 
         state = AsyncData([...latestPosts, ...currentPosts]);
         return latestPosts;
