@@ -19,6 +19,7 @@ void main() {
     when(() => mockPostRepository!.fetchInitialPosts()).thenAnswer(
       (invocation) async => [
         PostEntity(
+          id: 'testId',
           uid: 'test123',
           userName: 'user',
           userProfileImage: 'abcd.jpg',

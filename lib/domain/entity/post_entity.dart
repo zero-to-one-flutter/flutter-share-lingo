@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class PostEntity {
+  final String id;
   final String uid;
   final String userName;
   final String userProfileImage;
@@ -17,6 +18,7 @@ class PostEntity {
   final bool deleted;
 
   PostEntity({
+    required this.id,
     required this.uid,
     required this.userName,
     required this.userProfileImage,
