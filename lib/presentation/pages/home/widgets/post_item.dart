@@ -150,9 +150,7 @@ class _PostItemState extends State<PostItem> {
   }
 
   Widget _imageBox(List<String> images) {
-    if (images.isEmpty) {
-      return const SizedBox.shrink();
-    }
+    if (images.isEmpty) return const SizedBox.shrink();
 
     double sizedBoxHeight = 8;
     double sizedBoxWidth = 8;
@@ -163,14 +161,9 @@ class _PostItemState extends State<PostItem> {
 
         switch (images.length) {
           case 1:
-            content = Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-                image: DecorationImage(
-                  image: NetworkImage(images[0]),
-                  fit: BoxFit.cover,
-                ),
-              ),
+            content = ClipRRect(
+              borderRadius: BorderRadius.circular(10),
+              child: AppCachedImage(imageUrl: images[0], fit: BoxFit.cover),
             );
             break;
 
@@ -178,31 +171,27 @@ class _PostItemState extends State<PostItem> {
             content = Row(
               children: [
                 Expanded(
-                  child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: const BorderRadius.only(
-                        topLeft: Radius.circular(10),
-                        bottomLeft: Radius.circular(10),
-                      ),
-                      image: DecorationImage(
-                        image: NetworkImage(images[0]),
-                        fit: BoxFit.cover,
-                      ),
+                  child: ClipRRect(
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(10),
+                      bottomLeft: Radius.circular(10),
+                    ),
+                    child: AppCachedImage(
+                      imageUrl: images[0],
+                      fit: BoxFit.cover,
                     ),
                   ),
                 ),
                 SizedBox(width: sizedBoxWidth),
                 Expanded(
-                  child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: const BorderRadius.only(
-                        topRight: Radius.circular(10),
-                        bottomRight: Radius.circular(10),
-                      ),
-                      image: DecorationImage(
-                        image: NetworkImage(images[1]),
-                        fit: BoxFit.cover,
-                      ),
+                  child: ClipRRect(
+                    borderRadius: const BorderRadius.only(
+                      topRight: Radius.circular(10),
+                      bottomRight: Radius.circular(10),
+                    ),
+                    child: AppCachedImage(
+                      imageUrl: images[1],
+                      fit: BoxFit.cover,
                     ),
                   ),
                 ),
@@ -215,16 +204,14 @@ class _PostItemState extends State<PostItem> {
               children: [
                 SizedBox(
                   width: (constraints.maxWidth - sizedBoxWidth) / 2,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: const BorderRadius.only(
-                        topLeft: Radius.circular(10),
-                        bottomLeft: Radius.circular(10),
-                      ),
-                      image: DecorationImage(
-                        image: NetworkImage(images[0]),
-                        fit: BoxFit.cover,
-                      ),
+                  child: ClipRRect(
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(10),
+                      bottomLeft: Radius.circular(10),
+                    ),
+                    child: AppCachedImage(
+                      imageUrl: images[0],
+                      fit: BoxFit.cover,
                     ),
                   ),
                 ),
@@ -234,29 +221,25 @@ class _PostItemState extends State<PostItem> {
                   child: Column(
                     children: [
                       Expanded(
-                        child: Container(
-                          decoration: BoxDecoration(
-                            borderRadius: const BorderRadius.only(
-                              topRight: Radius.circular(10),
-                            ),
-                            image: DecorationImage(
-                              image: NetworkImage(images[1]),
-                              fit: BoxFit.cover,
-                            ),
+                        child: ClipRRect(
+                          borderRadius: const BorderRadius.only(
+                            topRight: Radius.circular(10),
+                          ),
+                          child: AppCachedImage(
+                            imageUrl: images[1],
+                            fit: BoxFit.cover,
                           ),
                         ),
                       ),
                       SizedBox(height: sizedBoxHeight),
                       Expanded(
-                        child: Container(
-                          decoration: BoxDecoration(
-                            borderRadius: const BorderRadius.only(
-                              bottomRight: Radius.circular(10),
-                            ),
-                            image: DecorationImage(
-                              image: NetworkImage(images[2]),
-                              fit: BoxFit.cover,
-                            ),
+                        child: ClipRRect(
+                          borderRadius: const BorderRadius.only(
+                            bottomRight: Radius.circular(10),
+                          ),
+                          child: AppCachedImage(
+                            imageUrl: images[2],
+                            fit: BoxFit.cover,
                           ),
                         ),
                       ),
@@ -266,6 +249,7 @@ class _PostItemState extends State<PostItem> {
               ],
             );
             break;
+
           default:
             content = const SizedBox.shrink();
         }
