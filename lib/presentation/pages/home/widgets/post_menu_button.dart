@@ -24,7 +24,7 @@ class PostMenuButton extends ConsumerWidget {
             context,
             MaterialPageRoute(builder: (_) => PostWriteTab(post: post)),
           );
-          if (result == true) {
+          if (context.mounted && result == true) {
             ref.invalidate(feedNotifierProvider);
             ScaffoldMessenger.of(
               context,
@@ -53,7 +53,7 @@ class PostMenuButton extends ConsumerWidget {
                 ),
           );
 
-          if (confirm == true) {
+          if (context.mounted && confirm == true) {
             await ref.read(postRepositoryProvider).deletePost(post.id);
             ref.invalidate(feedNotifierProvider);
             ScaffoldMessenger.of(

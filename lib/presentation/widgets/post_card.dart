@@ -41,6 +41,12 @@ class PostCard extends ConsumerWidget {
                         height: 100,
                         width: 100,
                         fit: BoxFit.cover,
+                        errorBuilder:
+                            (context, error, stackTrace) => const Icon(
+                              Icons.broken_image,
+                              size: 100,
+                              color: Colors.grey,
+                            ),
                       ),
                     );
                   },
