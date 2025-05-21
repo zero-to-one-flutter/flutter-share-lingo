@@ -44,6 +44,7 @@ class FeedTab extends StatelessWidget {
                       ref.read(feedNotifierProvider.notifier).fetchOlderPosts();
                     },
                   );
+                  // 무한 스크롤
                   return NotificationListener(
                     onNotification: (notification) {
                       if (notification is ScrollUpdateNotification) {
@@ -54,7 +55,7 @@ class FeedTab extends StatelessWidget {
                       }
                       return true;
                     },
-
+                    // 당겨서 새로고침
                     child: RefreshIndicator(
                       onRefresh: () {
                         final throttler = Throttler(

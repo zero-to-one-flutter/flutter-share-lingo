@@ -55,7 +55,7 @@ class PostRemoteDataSource {
             .collection('posts')
             .orderBy('createdAt', descending: false)
             .startAfter([firstPost.createdAt])
-            .limit(40)
+            .limit(20)
             .get();
 
     final reversedList =
