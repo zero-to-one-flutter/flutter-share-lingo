@@ -21,12 +21,14 @@ class PostWriteTab extends ConsumerStatefulWidget {
 }
 
 class _PostWriteTabState extends ConsumerState<PostWriteTab> {
+  final _formKey = GlobalKey<FormState>();
   final TextEditingController _contentController = TextEditingController();
   final List<String> _selectedTags = [];
   final List<Uint8List> _selectedImages = [];
 
   final ImagePicker _picker = ImagePicker();
   final YoloDetection _yoloModel = YoloDetection();
+
   @override
   void initState() {
     super.initState();
@@ -90,30 +92,32 @@ class _PostWriteTabState extends ConsumerState<PostWriteTab> {
   }
 
   Future<void> _submit() async {
-    final uid = FirebaseAuth.instance.currentUser?.uid ?? 'test-user';
-    final content = _contentController.text;
-    final postNotifier = ref.read(postWriteViewModelProvider.notifier);
+    if (_formKey.currentState?.validate() == true) {
+      final uid = FirebaseAuth.instance.currentUser?.uid ?? 'test-user';
+      final content = _contentController.text;
+      final postNotifier = ref.read(postWriteViewModelProvider.notifier);
 
-    await postNotifier.submitPost(
-      uid: uid,
-      content: content,
-      tags: _selectedTags.map((tag) => tag.replaceAll('#', '')).toList(),
-      imageBytesList: _selectedImages,
-    );
+      await postNotifier.submitPost(
+        uid: uid,
+        content: content,
+        tags: _selectedTags.map((tag) => tag.replaceAll('#', '')).toList(),
+        imageBytesList: _selectedImages,
+      );
 
-    if (!mounted) return;
+      if (!mounted) return;
 
-    await ref.read(feedNotifierProvider.notifier).refresh();
+      await ref.read(feedNotifierProvider.notifier).refresh();
 
-    if (!mounted) return;
+      if (!mounted) return;
 
-    _contentController.clear();
-    _selectedImages.clear();
-    _selectedTags.clear();
-    setState(() {});
+      _contentController.clear();
+      _selectedImages.clear();
+      _selectedTags.clear();
+      setState(() {});
 
-    SnackbarUtil.showSnackBar(context, '게시되었습니다');
-    Navigator.of(context).pop();
+      SnackbarUtil.showSnackBar(context, '게시되었습니다');
+      Navigator.of(context).pop();
+    }
   }
 
   void _cancel() {
@@ -139,93 +143,96 @@ class _PostWriteTabState extends ConsumerState<PostWriteTab> {
       ),
 
       body: SafeArea(
-        child: LayoutBuilder(
-          //반응형 대응
-          builder: (context, constraints) {
-            return SingleChildScrollView(
-              padding: EdgeInsets.only(
-                left: 16,
-                right: 16,
-                bottom: MediaQuery.of(context).viewInsets.bottom + 20,
-                top: 5,
-              ),
-              child: ConstrainedBox(
-                constraints: BoxConstraints(minHeight: constraints.maxHeight),
-                child: IntrinsicHeight(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      PostInputField(controller: _contentController),
-                      const SizedBox(height: 16),
-                      if (_selectedImages.isNotEmpty)
-                        SizedBox(
-                          height: 100,
-                          child: ListView.separated(
-                            scrollDirection: Axis.horizontal,
-                            itemCount: _selectedImages.length,
-                            separatorBuilder:
-                                (_, __) => const SizedBox(width: 8),
-                            itemBuilder: (context, index) {
-                              return Stack(
-                                children: [
-                                  Image.memory(
-                                    _selectedImages[index],
-                                    height: 100,
-                                  ),
-                                  Positioned(
-                                    right: 0,
-                                    child: GestureDetector(
-                                      onTap: () {
-                                        setState(() {
-                                          _selectedImages.removeAt(index);
-                                        });
-                                      },
-                                      child: const Icon(
-                                        Icons.cancel,
-                                        color: Colors.red,
+        child: Form(
+          key: _formKey,
+          child: LayoutBuilder(
+            //반응형 대응
+            builder: (context, constraints) {
+              return SingleChildScrollView(
+                padding: EdgeInsets.only(
+                  left: 16,
+                  right: 16,
+                  bottom: MediaQuery.of(context).viewInsets.bottom + 20,
+                  top: 5,
+                ),
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                  child: IntrinsicHeight(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        PostInputField(controller: _contentController),
+                        const SizedBox(height: 16),
+                        if (_selectedImages.isNotEmpty)
+                          SizedBox(
+                            height: 100,
+                            child: ListView.separated(
+                              scrollDirection: Axis.horizontal,
+                              itemCount: _selectedImages.length,
+                              separatorBuilder:
+                                  (_, __) => const SizedBox(width: 8),
+                              itemBuilder: (context, index) {
+                                return Stack(
+                                  children: [
+                                    Image.memory(
+                                      _selectedImages[index],
+                                      height: 100,
+                                    ),
+                                    Positioned(
+                                      right: 0,
+                                      child: GestureDetector(
+                                        onTap: () {
+                                          setState(() {
+                                            _selectedImages.removeAt(index);
+                                          });
+                                        },
+                                        child: const Icon(
+                                          Icons.cancel,
+                                          color: Colors.red,
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                ],
-                              );
-                            },
+                                  ],
+                                );
+                              },
+                            ),
                           ),
+                        const SizedBox(height: 16),
+                        TagRowButton(
+                          onTagSelected: (tag) {
+                            if (!_selectedTags.contains(tag)) {
+                              setState(() => _selectedTags.add(tag));
+                            }
+                          },
+                          onPickImage: _pickImage,
                         ),
-                      const SizedBox(height: 16),
-                      TagRowButton(
-                        onTagSelected: (tag) {
-                          if (!_selectedTags.contains(tag)) {
-                            setState(() => _selectedTags.add(tag));
-                          }
-                        },
-                        onPickImage: _pickImage,
-                      ),
-                      if (_selectedTags.isNotEmpty)
-                        Padding(
-                          padding: const EdgeInsets.only(top: 12),
-                          child: Wrap(
-                            spacing: 8,
-                            runSpacing: 4,
-                            children:
-                                _selectedTags.map((tag) {
-                                  return Chip(
-                                    label: Text(tag),
-                                    onDeleted: () {
-                                      setState(() {
-                                        _selectedTags.remove(tag);
-                                      });
-                                    },
-                                  );
-                                }).toList(),
+                        if (_selectedTags.isNotEmpty)
+                          Padding(
+                            padding: const EdgeInsets.only(top: 12),
+                            child: Wrap(
+                              spacing: 8,
+                              runSpacing: 4,
+                              children:
+                                  _selectedTags.map((tag) {
+                                    return Chip(
+                                      label: Text(tag),
+                                      onDeleted: () {
+                                        setState(() {
+                                          _selectedTags.remove(tag);
+                                        });
+                                      },
+                                    );
+                                  }).toList(),
+                            ),
                           ),
-                        ),
-                      const SizedBox(height: 16),
-                    ],
+                        const SizedBox(height: 16),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            );
-          },
+              );
+            },
+          ),
         ),
       ),
     );

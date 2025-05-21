@@ -22,11 +22,6 @@ class PostWriteViewModel extends StateNotifier<AsyncValue<void>> {
     required List<String> tags,
     required List<Uint8List> imageBytesList,
   }) async {
-    if (content.trim().isEmpty) {
-      state = const AsyncError('내용을 입력해주세요', StackTrace.empty);
-      return;
-    }
-
     state = const AsyncLoading();
 
     try {
