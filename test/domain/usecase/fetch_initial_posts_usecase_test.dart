@@ -19,13 +19,19 @@ void main() {
     when(() => mockPostRepository!.fetchInitialPosts()).thenAnswer(
       (invocation) async => [
         PostEntity(
-          uid: 'a12345',
-          content: 'Nice to meet you',
-          imageUrl: ['abc.jpg'],
-          tags: ['help', 'request'],
-          createdAt: DateTime.now(),
-          likeCount: 1,
-          commentCount: 4,
+          uid: 'test123',
+          userName: 'user',
+          userProfileImage: 'abcd.jpg',
+          userNativeLanguage: 'KO',
+          userTargetLanguage: 'EN',
+          userDistrict: null,
+          userLocation: null,
+          content: '내용입니다',
+          imageUrl: [],
+          tags: ['kor'],
+          createdAt: DateTime(2023, 1, 1),
+          likeCount: 0,
+          commentCount: 0,
           deleted: false,
         ),
       ],
@@ -33,7 +39,7 @@ void main() {
     final result = await fetchInitialPostsUsecase!.execute();
 
     expect(result.length, 1);
-    expect(result.first.content, 'Nice to meet you');
+    expect(result.first.content, '내용입니다');
     expect(result.first.deleted, false);
   });
 }

@@ -17,11 +17,17 @@ void main() {
 
   test('CreatePostUseCase - 성공 케이스', () async {
     final post = PostEntity(
-      uid: 'uid123',
-      content: '테스트입니다',
+      uid: 'test123',
+      userName: 'user',
+      userProfileImage: 'abcd.jpg',
+      userNativeLanguage: 'KO',
+      userTargetLanguage: 'EN',
+      userDistrict: null,
+      userLocation: null,
+      content: '내용입니다',
       imageUrl: [],
       tags: ['kor'],
-      createdAt: DateTime.now(),
+      createdAt: DateTime(2023, 1, 1),
       likeCount: 0,
       commentCount: 0,
       deleted: false,
@@ -38,11 +44,17 @@ void main() {
 
   test('CreatePostUseCase - 예외 발생 시 throw', () async {
     final post = PostEntity(
-      uid: 'uid123',
-      content: '에러 테스트',
+      uid: 'test123',
+      userName: 'user',
+      userProfileImage: 'abcd.jpg',
+      userNativeLanguage: 'KO',
+      userTargetLanguage: 'EN',
+      userDistrict: null,
+      userLocation: null,
+      content: '내용입니다',
       imageUrl: [],
-      tags: [],
-      createdAt: DateTime.now(),
+      tags: ['kor'],
+      createdAt: DateTime(2023, 1, 1),
       likeCount: 0,
       commentCount: 0,
       deleted: false,

@@ -7,6 +7,12 @@ void main() {
   test('PostDto <-> Entity 변환 테스트', () {
     final entity = PostEntity(
       uid: 'test123',
+      userName: 'user',
+      userProfileImage: 'abcd.jpg',
+      userNativeLanguage: 'KO',
+      userTargetLanguage: 'EN',
+      userDistrict: null,
+      userLocation: null,
       content: '내용입니다',
       imageUrl: [],
       tags: ['kor'],

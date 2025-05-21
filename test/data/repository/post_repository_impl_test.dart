@@ -18,13 +18,19 @@ void main() {
   test('fetchInitialPosts test', () async {
     final mockDto = [
       PostDto(
-        uid: 'a12345',
-        content: 'Nice to meet you',
-        imageUrl: ['abc.jpg', 'def.jpg'],
-        commentCount: 5,
-        tags: ['help', 'request'],
-        createdAt: DateTime.now(),
-        likeCount: 1,
+        uid: 'test123',
+        userName: 'user',
+        userProfileImage: 'abcd.jpg',
+        userNativeLanguage: 'KO',
+        userTargetLanguage: 'EN',
+        userDistrict: null,
+        userLocation: null,
+        content: '내용입니다',
+        imageUrl: [],
+        tags: ['kor'],
+        createdAt: DateTime(2023, 1, 1),
+        likeCount: 0,
+        commentCount: 0,
         deleted: false,
       ),
     ];
@@ -36,7 +42,7 @@ void main() {
     final result = await repository!.fetchInitialPosts();
 
     expect(result.length, 1);
-    expect(result.first.uid, 'a12345');
-    expect(result.first.imageUrl[1], 'def.jpg');
+    expect(result.first.uid, 'test123');
+    expect(result.first.userLocation, null);
   });
 }
