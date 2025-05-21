@@ -112,7 +112,7 @@ class _PostItemState extends State<PostItem> {
         children: [
           ClipOval(
             child: AppCachedImage(
-              imageUrl: 'https://picsum.photos/200/200?random=1',
+              imageUrl: widget.post.userProfileImage,
               width: 50,
               height: 50,
               fit: BoxFit.cover,
