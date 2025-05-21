@@ -35,6 +35,7 @@ dependencies:
   url_launcher: ^6.3.1
   tflite_flutter: ^0.11.0
   image: ^4.5.4
+  flutter_native_splash: ^2.3.10
   yolo_helper:
     git:
       url: https://github.com/fhelper/flutter-yolo-helper.git
