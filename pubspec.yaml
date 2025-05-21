@@ -33,7 +33,12 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   url_launcher: ^6.3.1
-
+  tflite_flutter: ^0.11.0
+  image: ^4.5.4
+  yolo_helper:
+    git:
+      url: https://github.com/fhelper/flutter-yolo-helper.git
+      ref: main
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -44,6 +49,7 @@ flutter:
   uses-material-design: true
 
   assets:
+    - assets/
     - .env
     - assets/icons/
     - assets/images/

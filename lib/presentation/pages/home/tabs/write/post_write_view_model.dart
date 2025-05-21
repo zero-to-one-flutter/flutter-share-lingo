@@ -37,7 +37,6 @@ class PostWriteViewModel extends StateNotifier<AsyncValue<void>> {
         imageUrl: imageUrls,
         tags: tags,
         createdAt: DateTime.now(),
-        // 실제 저장은 serverTimestamp로 덮어씀
         likeCount: 0,
         commentCount: 0,
         deleted: false,
