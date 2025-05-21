@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -9,22 +10,21 @@ import 'package:share_lingo/domain/usecase/fetch_older_posts_usecase.dart';
 import 'package:share_lingo/domain/usecase/update_post_usecase.dart';
 import 'package:share_lingo/domain/usecase/upload_image_usecase.dart';
 
+import '../../app/constants/app_constants.dart';
 import '../../data/data_source/firebase_auth_data_source.dart';
 import '../../data/data_source/google_sign_in_data_source.dart';
+import '../../data/data_source/location_data_source.dart';
 import '../../data/data_source/user_data_source.dart';
 import '../../data/repository/auth_repository_impl.dart';
+import '../../data/repository/location_repository_impl.dart';
 import '../../domain/repository/auth_repository.dart';
+import '../../domain/repository/location_repository.dart';
 import '../../domain/repository/user_repository.dart';
 import '../../data/repository/user_repository_impl.dart';
 import '../../data/data_source/post_remote_data_source.dart';
 import '../../data/repository/post_repository_impl.dart';
 import '../../domain/repository/post_repository.dart';
 import '../../domain/usecase/create_post_usecase.dart';
-
-// final postRepositoryProvider = Provider<PostRepository>((ref) {
-//   final dataSource = ref.read(postDataSourceProvider);
-//   return PostRepositoryImpl(dataSource);
-// });
 
 final firebaseAuthProvider = Provider((ref) => FirebaseAuth.instance);
 final googleSignInProvider = Provider((ref) => GoogleSignIn());
@@ -95,3 +95,23 @@ final updatePostUseCaseProvider = Provider<UpdatePostUseCase>((ref) {
   final repository = ref.read(postRepositoryProvider);
   return UpdatePostUseCase(repository);
 });
+
+// Location
+final dioProvider = Provider<Dio>((ref) {
+  return Dio(
+    BaseOptions(
+      baseUrl: AppConstants.vworldApiBaseUrl,
+      validateStatus: (status) => status != null && status < 500,
+      connectTimeout: const Duration(seconds: 6),
+      receiveTimeout: const Duration(seconds: 6),
+    ),
+  );
+});
+
+final locationDataSourceProvider = Provider<LocationDataSource>(
+      (ref) => VworldLocationDataSource(ref.read(dioProvider)),
+);
+
+final locationRepositoryProvider = Provider<LocationRepository>(
+      (ref) => LocationRepositoryImpl(ref.read(locationDataSourceProvider)),
+);

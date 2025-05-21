@@ -35,38 +35,13 @@ class EnableLocationViewModel extends Notifier<LocationState> {
     try {
       state = state.copyWith(isLoading: true);
 
-      final (status, position) = await GeolocatorUtil.getPosition();
+      final locationResult = await GeolocatorUtil.handleLocationRequest();
 
-      switch (status) {
-        case LocationStatus.success:
-          state = state.copyWith(
-            geoPoint: GeoPoint(position!.latitude, position.longitude),
-            isLoading: false,
-          );
-          break;
-
-        case LocationStatus.deniedTemporarily:
-          state = state.copyWith(
-            isLoading: false,
-            errorMessage: '위치 권한이 거부되었습니다. 권한을 허용하거나, 위치 없이 진행해 주세요.',
-          );
-          break;
-
-        case LocationStatus.deniedForever:
-          state = state.copyWith(
-            isLoading: false,
-            errorMessage:
-                '위치 권한이 완전히 차단되었습니다.\n설정 > 앱 > ShareLingo에서 권한을 허용하거나, 위치 없이 진행해 주세요.',
-          );
-          break;
-
-        case LocationStatus.error:
-          state = state.copyWith(
-            isLoading: false,
-            errorMessage: '위치 정보를 가져오는 중 오류가 발생했습니다. 다시 시도하거나, 위치 없이 진행해 주세요.',
-          );
-          break;
-      }
+      state = state.copyWith(
+        isLoading: false,
+        geoPoint: locationResult.geoPoint,
+        errorMessage: locationResult.errorMessage,
+      );
     } catch (e) {
       state = state.copyWith(
         isLoading: false,
@@ -77,4 +52,6 @@ class EnableLocationViewModel extends Notifier<LocationState> {
 }
 
 final locationViewModelProvider =
-    NotifierProvider<EnableLocationViewModel, LocationState>(EnableLocationViewModel.new);
+    NotifierProvider<EnableLocationViewModel, LocationState>(
+      EnableLocationViewModel.new,
+    );
