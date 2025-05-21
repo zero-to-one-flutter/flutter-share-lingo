@@ -29,7 +29,7 @@ class ProfileImages extends ConsumerWidget {
       clipBehavior: Clip.none,
       children: [
         SizedBox(
-          height: 170,
+          height: 240,
           width: double.infinity,
           child: AppCachedImage(
             imageUrl: mapUrl,

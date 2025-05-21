@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../data/data_source/maps_data_source.dart';
+import '../../core/utils/map_url_util.dart';
 
 class GetStaticMapUrlUseCase {
   String execute(GeoPoint? location) {
