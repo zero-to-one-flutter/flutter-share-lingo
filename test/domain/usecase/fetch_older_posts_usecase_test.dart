@@ -78,7 +78,7 @@ void main() {
     final result = await fetchOlderPostsUsecase!.execute(lastPost);
 
     expect(result.length, 1);
-    expect(result.first.content, 'Nice to meet you');
-    expect(result.first.imageUrl[0], 'abc.jpg');
+    expect(result.first.content, '내용입니다');
+    expect(result.first.userProfileImage, 'abcd.jpg');
   });
 }
