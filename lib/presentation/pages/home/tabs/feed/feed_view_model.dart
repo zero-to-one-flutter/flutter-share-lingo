@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:share_lingo/core/providers/data_providers.dart';
 import 'package:share_lingo/domain/repository/post_repository.dart';
