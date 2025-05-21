@@ -48,4 +48,20 @@ class PostRepositoryImpl implements PostRepository {
     final dtoList = await remoteDataSource.fetchLatestPosts(firstPost);
     return dtoList.map((dto) => dto.toEntity()).toList();
   }
+
+  @override
+  Future<void> updatePost({required String id, required String content}) async {
+    await remoteDataSource.updatePost(id: id, content: content);
+  }
+
+  @override
+  Future<List<PostEntity>> fetchPostsByUid(String uid) async {
+    final dtoList = await remoteDataSource.fetchPostsByUid(uid);
+    return dtoList.map((dto) => dto.toEntity()).toList();
+  }
+
+  @override
+  Future<void> deletePost(String id) async {
+    await remoteDataSource.deletePost(id);
+  }
 }

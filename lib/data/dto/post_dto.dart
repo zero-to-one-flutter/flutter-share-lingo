@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../domain/entity/post_entity.dart';
 
 class PostDto {
+  final String id;
   final String uid;
   final String userName;
   final String userProfileImage;
@@ -18,6 +19,7 @@ class PostDto {
   final bool deleted;
 
   PostDto({
+    required this.id,
     required this.uid,
     required this.userName,
     required this.userProfileImage,
@@ -34,8 +36,9 @@ class PostDto {
     required this.deleted,
   });
 
-  factory PostDto.fromMap(Map<String, dynamic> map) {
+  factory PostDto.fromMap(String id, Map<String, dynamic> map) {
     return PostDto(
+      id: id,
       uid: map['uid'] ?? '',
       userName: map['userName'] ?? '',
       userProfileImage: map['userProfileImage'] ?? '',
@@ -43,10 +46,8 @@ class PostDto {
       userTargetLanguage: map['userTargetLanguage'] ?? '',
       userDistrict: map['userDistrict'],
       userLocation: map['userLocation'] as GeoPoint?,
-
       content: map['content'] ?? '',
       imageUrl: List<String>.from(map['imageUrl'] ?? []),
-
       tags: List<String>.from(map['tags'] ?? []),
       createdAt: (map['createdAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
       likeCount: map['likeCount'] ?? 0,
@@ -57,6 +58,7 @@ class PostDto {
 
   Map<String, dynamic> toMap() {
     return {
+      'id': id,
       'uid': uid,
       'userName': userName,
       'userProfileImage': userProfileImage,
@@ -77,6 +79,7 @@ class PostDto {
 
   PostEntity toEntity() {
     return PostEntity(
+      id: id,
       uid: uid,
       userName: userName,
       userProfileImage: userProfileImage,
@@ -97,6 +100,7 @@ class PostDto {
 
   static PostDto fromEntity(PostEntity entity) {
     return PostDto(
+      id: entity.id,
       uid: entity.uid,
       userName: entity.userName,
       userProfileImage: entity.userProfileImage,

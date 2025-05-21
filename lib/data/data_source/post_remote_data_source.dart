@@ -32,7 +32,9 @@ class PostRemoteDataSource {
             .limit(20)
             .get();
     final posts =
-        snapshot.docs.map((doc) => PostDto.fromMap(doc.data())).toList();
+        snapshot.docs
+            .map((doc) => PostDto.fromMap(doc.id, doc.data()))
+            .toList();
 
     return posts;
   }
@@ -46,7 +48,9 @@ class PostRemoteDataSource {
             .limit(20)
             .get();
 
-    return snapshot.docs.map((doc) => PostDto.fromMap(doc.data())).toList();
+    return snapshot.docs
+        .map((doc) => PostDto.fromMap(doc.id, doc.data()))
+        .toList();
   }
 
   Future<List<PostDto>> fetchLatestPosts(PostEntity firstPost) async {
@@ -59,7 +63,33 @@ class PostRemoteDataSource {
             .get();
 
     final reversedList =
-        snapshot.docs.map((doc) => PostDto.fromMap(doc.data())).toList();
+        snapshot.docs
+            .map((doc) => PostDto.fromMap(doc.id, doc.data()))
+            .toList();
     return reversedList.reversed.toList();
+  }
+
+  Future<void> updatePost({required String id, required String content}) async {
+    await FirebaseFirestore.instance.collection('posts').doc(id).update({
+      'content': content,
+      'updatedAt': FieldValue.serverTimestamp(),
+    });
+  }
+
+  Future<List<PostDto>> fetchPostsByUid(String uid) async {
+    final snapshot =
+        await firestore
+            .collection('posts')
+            .where('uid', isEqualTo: uid)
+            .orderBy('createdAt', descending: true)
+            .get();
+
+    return snapshot.docs
+        .map((doc) => PostDto.fromMap(doc.id, doc.data()))
+        .toList();
+  }
+
+  Future<void> deletePost(String id) async {
+    await firestore.collection('posts').doc(id).delete();
   }
 }

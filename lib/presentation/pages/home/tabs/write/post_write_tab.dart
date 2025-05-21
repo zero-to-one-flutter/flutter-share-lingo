@@ -4,7 +4,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:image/image.dart' as img;
 import 'package:image_picker/image_picker.dart';
+import 'package:share_lingo/core/providers/data_providers.dart';
 import 'package:share_lingo/core/utils/snackbar_util.dart';
+import 'package:share_lingo/domain/entity/post_entity.dart';
 import 'package:share_lingo/presentation/pages/home/tabs/feed/feed_view_model.dart';
 import 'package:share_lingo/presentation/pages/home/tabs/write/post_write_view_model.dart';
 import 'package:share_lingo/presentation/pages/home/tabs/write/widgets/cancel_button.dart';
@@ -14,7 +16,8 @@ import 'package:share_lingo/presentation/pages/home/tabs/write/widgets/tag_row_b
 import 'package:share_lingo/presentation/pages/home/tabs/write/yolo_detection.dart';
 
 class PostWriteTab extends ConsumerStatefulWidget {
-  const PostWriteTab({super.key});
+  const PostWriteTab({super.key, this.post});
+  final PostEntity? post;
 
   @override
   ConsumerState<PostWriteTab> createState() => _PostWriteTabState();
@@ -22,7 +25,7 @@ class PostWriteTab extends ConsumerStatefulWidget {
 
 class _PostWriteTabState extends ConsumerState<PostWriteTab> {
   final _formKey = GlobalKey<FormState>();
-  final TextEditingController _contentController = TextEditingController();
+  late TextEditingController _contentController = TextEditingController();
   final List<String> _selectedTags = [];
   final List<Uint8List> _selectedImages = [];
 
@@ -32,6 +35,9 @@ class _PostWriteTabState extends ConsumerState<PostWriteTab> {
   @override
   void initState() {
     super.initState();
+    _contentController = TextEditingController(
+      text: widget.post?.content ?? '',
+    );
     Future.microtask(() async {
       try {
         if (!_yoloModel.isInitialized) {
@@ -92,33 +98,47 @@ class _PostWriteTabState extends ConsumerState<PostWriteTab> {
   }
 
   Future<void> _submit() async {
-    if (_formKey.currentState?.validate() == true) {
-      final uid = FirebaseAuth.instance.currentUser?.uid ?? 'test-user';
-      final content = _contentController.text;
-      final postNotifier = ref.read(postWriteViewModelProvider.notifier);
+    if (_formKey.currentState?.validate() != true) return;
 
-      await postNotifier.submitPost(
-        ref: ref,
-        uid: uid,
-        content: content,
-        tags: _selectedTags.map((tag) => tag.replaceAll('#', '')).toList(),
-        imageBytesList: _selectedImages,
-      );
+    final content = _contentController.text.trim();
+    if (content.isEmpty) return;
 
+    final uid = FirebaseAuth.instance.currentUser?.uid ?? 'test-user';
+
+    if (widget.post != null) {
+      //  수정 모드
+      await ref
+          .read(postRepositoryProvider)
+          .updatePost(id: widget.post!.id, content: content);
       if (!mounted) return;
-
-      await ref.read(feedNotifierProvider.notifier).refresh();
-
-      if (!mounted) return;
-
-      _contentController.clear();
-      _selectedImages.clear();
-      _selectedTags.clear();
-      setState(() {});
-
-      SnackbarUtil.showSnackBar(context, '게시되었습니다');
+      SnackbarUtil.showSnackBar(context, '수정되었습니다');
       Navigator.of(context).pop();
+      return;
     }
+
+    //  새 글 작성 모드
+    final postNotifier = ref.read(postWriteViewModelProvider.notifier);
+    await postNotifier.submitPost(
+      ref: ref,
+      uid: uid,
+      content: content,
+      tags: _selectedTags.map((tag) => tag.replaceAll('#', '')).toList(),
+      imageBytesList: _selectedImages,
+    );
+
+    if (!mounted) return;
+
+    await ref.read(feedNotifierProvider.notifier).refresh();
+
+    if (!mounted) return;
+
+    _contentController.clear();
+    _selectedImages.clear();
+    _selectedTags.clear();
+    setState(() {});
+
+    SnackbarUtil.showSnackBar(context, '게시되었습니다');
+    Navigator.of(context).pop();
   }
 
   void _cancel() {

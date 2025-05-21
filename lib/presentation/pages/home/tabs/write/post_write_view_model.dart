@@ -6,15 +6,18 @@ import 'package:share_lingo/core/providers/data_providers.dart';
 import 'package:share_lingo/domain/entity/post_entity.dart';
 import 'package:share_lingo/domain/usecase/create_post_usecase.dart';
 import 'package:share_lingo/domain/usecase/upload_image_usecase.dart';
+import 'package:share_lingo/domain/usecase/update_post_usecase.dart';
 import 'package:share_lingo/presentation/user_global_view_model.dart';
 
 class PostWriteViewModel extends StateNotifier<AsyncValue<void>> {
   final CreatePostUseCase createPostUseCase;
   final UploadImageUseCase uploadImageUseCase;
+  final UpdatePostUseCase updatePostUseCase;
 
   PostWriteViewModel({
     required this.createPostUseCase,
     required this.uploadImageUseCase,
+    required this.updatePostUseCase,
   }) : super(const AsyncData(null));
 
   Future<void> submitPost({
@@ -27,22 +30,20 @@ class PostWriteViewModel extends StateNotifier<AsyncValue<void>> {
     state = const AsyncLoading();
 
     try {
-      // 사용자 정보 가져오기
       final user = ref.read(userGlobalViewModelProvider);
       if (user == null) {
         state = AsyncError("유저 정보 없음", StackTrace.current);
         return;
       }
 
-      // 이미지 업로드
       final imageUrls = await Future.wait(
         imageBytesList.map(
           (imageBytes) => uploadImageUseCase(uid: uid, imageBytes: imageBytes),
         ),
       );
 
-      // PostEntity 생성
       final post = PostEntity(
+        id: '',
         uid: uid,
         userName: user.name,
         userProfileImage: user.profileImage ?? '',
@@ -59,13 +60,23 @@ class PostWriteViewModel extends StateNotifier<AsyncValue<void>> {
         deleted: false,
       );
 
-      // 포스트 저장
       await createPostUseCase(post);
       state = const AsyncData(null);
     } catch (e, st) {
       if (mounted) {
         state = AsyncError(e, st);
       }
+    }
+  }
+
+  //  수정용 메서드 추가
+  Future<void> updatePost({required String id, required String content}) async {
+    state = const AsyncLoading();
+    try {
+      await updatePostUseCase(id: id, content: content);
+      state = const AsyncData(null);
+    } catch (e, st) {
+      state = AsyncError(e, st);
     }
   }
 }
@@ -76,9 +87,11 @@ final postWriteViewModelProvider =
     ) {
       final createUseCase = ref.read(createPostUseCaseProvider);
       final uploadUseCase = ref.read(uploadImageUseCaseProvider);
+      final updateUseCase = ref.read(updatePostUseCaseProvider);
       return PostWriteViewModel(
         createPostUseCase: createUseCase,
         uploadImageUseCase: uploadUseCase,
+        updatePostUseCase: updateUseCase,
       );
     });
 
@@ -88,6 +101,5 @@ final postsProvider = StreamProvider.autoDispose((ref) {
           .collection('posts')
           .orderBy('createdAt', descending: true)
           .snapshots();
-
   return snapshots;
 });

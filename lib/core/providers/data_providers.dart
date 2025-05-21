@@ -6,6 +6,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:share_lingo/domain/usecase/fetch_initial_posts_usecase.dart';
 import 'package:share_lingo/domain/usecase/fetch_lastest_posts_usecase.dart';
 import 'package:share_lingo/domain/usecase/fetch_older_posts_usecase.dart';
+import 'package:share_lingo/domain/usecase/update_post_usecase.dart';
 import 'package:share_lingo/domain/usecase/upload_image_usecase.dart';
 
 import '../../data/data_source/firebase_auth_data_source.dart';
@@ -89,3 +90,8 @@ final fetchOlderPostsUsecaseProvider = Provider(
 final fetchLatestPostsUsecaseProvider = Provider(
   (ref) => FetchLastestPostsUsecase(ref.read(postRepositoryProvider)),
 );
+
+final updatePostUseCaseProvider = Provider<UpdatePostUseCase>((ref) {
+  final repository = ref.read(postRepositoryProvider);
+  return UpdatePostUseCase(repository);
+});
