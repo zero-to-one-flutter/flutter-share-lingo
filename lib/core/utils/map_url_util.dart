@@ -11,7 +11,7 @@ class MapUrlUtil {
     final apiKey = dotenv.env['GOOGLE_MAPS_API_KEY'] ?? '';
 
     // Build query parameters based on location
-    Map<String, dynamic> queryParams = {'size': '495x373', 'key': apiKey};
+    Map<String, dynamic> queryParams = {'size': '600x330', 'key': apiKey};
 
     if (location != null) {
       // Specific location parameters

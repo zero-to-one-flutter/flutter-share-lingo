@@ -29,7 +29,7 @@ class ProfileImages extends ConsumerWidget {
       clipBehavior: Clip.none,
       children: [
         SizedBox(
-          height: 240,
+          height: 190,
           width: double.infinity,
           child: AppCachedImage(
             imageUrl: mapUrl,
@@ -39,7 +39,7 @@ class ProfileImages extends ConsumerWidget {
         ),
         Positioned(
           bottom: -50,
-          left: MediaQuery.of(context).size.width / 2 - 50,
+          left: 15,
           child: Stack(
             children: [
               ClipOval(
