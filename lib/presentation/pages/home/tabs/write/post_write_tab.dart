@@ -40,6 +40,11 @@ class _PostWriteTabState extends ConsumerState<PostWriteTab> {
       text: widget.post?.content ?? '',
     );
     _existingImageUrls = List.from(widget.post?.imageUrl ?? []);
+
+    //수정모드일 경우 기존 태그 불러오기
+    if (widget.post?.tags != null && widget.post!.tags.isNotEmpty) {
+      _selectedTags.addAll(widget.post!.tags.map((e) => '#$e'));
+    }
     Future.microtask(() async {
       try {
         if (!_yoloModel.isInitialized) {
@@ -126,6 +131,7 @@ class _PostWriteTabState extends ConsumerState<PostWriteTab> {
             id: widget.post!.id,
             content: content,
             imageUrls: combinedImageUrls,
+            tags: _selectedTags,
           );
       if (!mounted) return;
       SnackbarUtil.showSnackBar(context, '수정되었습니다');
@@ -144,10 +150,7 @@ class _PostWriteTabState extends ConsumerState<PostWriteTab> {
     );
 
     if (!mounted) return;
-
     await ref.read(feedNotifierProvider.notifier).refresh();
-
-    if (!mounted) return;
 
     _contentController.clear();
     _selectedImages.clear();

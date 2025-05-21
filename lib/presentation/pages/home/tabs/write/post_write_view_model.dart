@@ -73,13 +73,22 @@ class PostWriteViewModel extends StateNotifier<AsyncValue<void>> {
     required String id,
     required String content,
     required List<String> imageUrls,
+    required List<String> tags,
   }) async {
     state = const AsyncLoading();
     try {
-      await updatePostUseCase(id: id, content: content, imageUrls: imageUrls);
+      await updatePostUseCase(
+        id: id,
+        content: content,
+        imageUrls: imageUrls,
+        tags: tags,
+      );
+      if (!mounted) return;
       state = const AsyncData(null);
     } catch (e, st) {
-      state = AsyncError(e, st);
+      if (mounted) {
+        state = AsyncError(e, st);
+      }
     }
   }
 }

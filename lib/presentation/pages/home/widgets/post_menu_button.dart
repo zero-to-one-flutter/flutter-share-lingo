@@ -14,10 +14,11 @@ class PostMenuButton extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final isMyPost = post.uid == FirebaseAuth.instance.currentUser?.uid;
-    if (!isMyPost) return const SizedBox.shrink();
 
     return PopupMenuButton<String>(
       onSelected: (value) async {
+        if (!isMyPost) return; // 본인 글이 아니면 동작 안 함
+
         if (value == 'edit') {
           final result = await Navigator.push(
             context,
@@ -61,11 +62,17 @@ class PostMenuButton extends ConsumerWidget {
           }
         }
       },
-      itemBuilder:
-          (context) => const [
-            PopupMenuItem(value: 'edit', child: Text('수정하기')),
-            PopupMenuItem(value: 'delete', child: Text('삭제하기')),
-          ],
+
+      itemBuilder: (context) {
+        if (!isMyPost) {
+          return <PopupMenuEntry<String>>[];
+        }
+        return const [
+          PopupMenuItem(value: 'edit', child: Text('수정하기')),
+          PopupMenuItem(value: 'delete', child: Text('삭제하기')),
+        ];
+      },
+
       icon: const Icon(Icons.more_vert),
     );
   }

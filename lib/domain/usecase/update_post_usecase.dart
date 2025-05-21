@@ -10,7 +10,13 @@ class UpdatePostUseCase {
     required String id,
     required String content,
     required List<String> imageUrls,
+    List<String>? tags,
   }) async {
-    await repository.updatePost(id: id, content: content, imageUrls: imageUrls);
+    await repository.updatePost(
+      id: id,
+      content: content,
+      imageUrls: imageUrls,
+      tags: tags ?? [],
+    );
   }
 }

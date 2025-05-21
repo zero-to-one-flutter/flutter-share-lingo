@@ -12,6 +12,7 @@ abstract class PostRepository {
     required String id,
     required String content,
     required List<String> imageUrls,
+    required List<String> tags,
   });
   Future<List<PostEntity>> fetchPostsByUid(String uid);
   Future<void> deletePost(String id);
