@@ -81,13 +81,3 @@ final postWriteViewModelProvider =
         uploadImageUseCase: uploadUseCase,
       );
     });
-
-final postsProvider = StreamProvider.autoDispose((ref) {
-  final snapshots =
-      FirebaseFirestore.instance
-          .collection('posts')
-          .orderBy('createdAt', descending: true)
-          .snapshots();
-
-  return snapshots;
-});
