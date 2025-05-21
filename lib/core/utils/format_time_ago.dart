@@ -1,12 +1,13 @@
 import 'dart:developer';
 
 class FormatTimeAgo {
-  static String formatTimeAgo(DateTime createdAt) {
+  static String formatTimeAgo({
+    required DateTime now,
+    required DateTime createdAt,
+  }) {
     // 1시간 미만이면 'n분'
     // 24시간 미만이면 'n시간'
     // 24시간 이상이면 'n월 n일'
-
-    DateTime now = DateTime.now();
 
     final diffSec = now.difference(createdAt).inSeconds;
     final diffMin = now.difference(createdAt).inMinutes;
@@ -15,13 +16,15 @@ class FormatTimeAgo {
     log('$diffMin');
     log('$diffHour');
 
-    if (diffMin < 1) {
+    if (diffSec <= 0) {
+      return '0초';
+    } else if (diffSec >= 1 && diffSec < 60) {
       return '$diffSec초';
-    } else if (diffMin > 1 && diffMin < 60) {
+    } else if (diffSec >= 60 && diffSec < 60 * 60) {
       return '$diffMin분';
-    } else if (diffMin >= 60 && diffMin < 1440) {
+    } else if (diffSec >= 60 * 60 && diffSec < 60 * 60 * 24) {
       return '$diffHour시간';
-    } else if (diffMin >= 1440 && createdAt.year == now.year) {
+    } else if (diffSec >= 60 * 60 * 24 && createdAt.year == now.year) {
       return '${createdAt.month}월 ${createdAt.day}일';
     } else {
       return '${createdAt.year}년 ${createdAt.month}월 ${createdAt.day}일';
