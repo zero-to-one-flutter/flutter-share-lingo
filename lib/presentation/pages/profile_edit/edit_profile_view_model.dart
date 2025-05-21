@@ -12,36 +12,44 @@ import '../../user_global_view_model.dart';
 
 class EditProfileState {
   final bool isSaving;
+  final bool isUploadingImage;
+  final String? errorMessage;
   final String? district;
   final GeoPoint? location;
   final String? profileImageUrl;
-  final bool isUploadingImage;
-  final String? errorMessage;
+  final String? nativeLanguage;
+  final String? targetLanguage;
 
   const EditProfileState({
     this.isSaving = false,
+    this.isUploadingImage = false,
+    this.errorMessage,
     this.district,
     this.location,
     this.profileImageUrl,
-    this.isUploadingImage = false,
-    this.errorMessage,
+    this.nativeLanguage,
+    this.targetLanguage,
   });
 
   EditProfileState copyWith({
     bool? isSaving,
+    bool? isUploadingImage,
+    String? errorMessage,
     String? district,
     GeoPoint? location,
     String? profileImageUrl,
-    bool? isUploadingImage,
-    String? errorMessage,
+    String? nativeLanguage,
+    String? targetLanguage,
   }) {
     return EditProfileState(
       isSaving: isSaving ?? this.isSaving,
+      isUploadingImage: isUploadingImage ?? this.isUploadingImage,
+      errorMessage: errorMessage,
       district: district ?? this.district,
       location: location ?? this.location,
       profileImageUrl: profileImageUrl ?? this.profileImageUrl,
-      isUploadingImage: isUploadingImage ?? this.isUploadingImage,
-      errorMessage: errorMessage,
+      nativeLanguage: nativeLanguage ?? this.nativeLanguage,
+      targetLanguage: targetLanguage ?? this.targetLanguage,
     );
   }
 }
@@ -54,6 +62,8 @@ class EditProfileViewModel
       district: user.district,
       location: user.location,
       profileImageUrl: user.profileImage,
+      nativeLanguage: user.nativeLanguage,
+      targetLanguage: user.targetLanguage,
     );
   }
 
@@ -119,7 +129,18 @@ class EditProfileViewModel
     }
   }
 
+  void setNativeLanguage(String lang) {
+    state = state.copyWith(nativeLanguage: lang);
+  }
+
+  void setTargetLanguage(String lang) {
+    state = state.copyWith(targetLanguage: lang);
+  }
+
   String? validateBio(String? bio) => UserValidator.validateBio(bio);
+
+  String? validateLanguageLearningGoal(String? goal) =>
+      UserValidator.validateGoal(goal);
 }
 
 final editProfileViewModelProvider = NotifierProvider.autoDispose

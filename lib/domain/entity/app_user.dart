@@ -10,8 +10,8 @@ class AppUser {
   final String? targetLanguage;
   final String? bio;
   final DateTime? birthdate;
-  final String? partnerPreference;
   final String? languageLearningGoal;
+  final String? hobbies;
   final String? district;
   final GeoPoint? location;
 
@@ -25,7 +25,7 @@ class AppUser {
     this.targetLanguage,
     this.bio,
     this.birthdate,
-    this.partnerPreference,
+    this.hobbies,
     this.languageLearningGoal,
     this.district,
     this.location,
@@ -51,7 +51,7 @@ class AppUser {
     String? targetLanguage,
     String? bio,
     DateTime? birthdate,
-    String? partnerPreference,
+    String? hobbies,
     String? languageLearningGoal,
     String? district,
     GeoPoint? location,
@@ -66,7 +66,7 @@ class AppUser {
       targetLanguage: targetLanguage ?? this.targetLanguage,
       bio: bio ?? this.bio,
       birthdate: birthdate ?? this.birthdate,
-      partnerPreference: partnerPreference ?? this.partnerPreference,
+      hobbies: hobbies ?? this.hobbies,
       languageLearningGoal: languageLearningGoal ?? this.languageLearningGoal,
       district: district ?? this.district,
       location: location ?? this.location,

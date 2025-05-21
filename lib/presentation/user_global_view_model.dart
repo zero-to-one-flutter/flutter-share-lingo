@@ -58,12 +58,12 @@ class UserGlobalViewModel extends Notifier<AppUser?> {
     state = state!.copyWith(birthdate: birthdate);
   }
 
-  void setPartnerPreference(String partnerPreference) {
-    state = state!.copyWith(partnerPreference: partnerPreference);
-  }
-
   void setLanguageLearningGoal(String languageLearningGoal) {
     state = state!.copyWith(languageLearningGoal: languageLearningGoal);
+  }
+
+  void setHobbies(String hobbies) {
+    state = state!.copyWith(hobbies: hobbies);
   }
 
   void setDistrict(String district) {

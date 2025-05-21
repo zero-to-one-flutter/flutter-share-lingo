@@ -6,7 +6,9 @@ import 'package:share_lingo/presentation/widgets/input_decorations.dart';
 import '../../../core/utils/dialogue_util.dart';
 import '../../../core/utils/snackbar_util.dart';
 import '../../../domain/entity/app_user.dart';
+import '../../widgets/language_selection_modal.dart';
 import '../../widgets/profile_images.dart';
+import '../../widgets/selected_language_row.dart';
 import 'edit_profile_view_model.dart';
 
 class EditProfilePage extends ConsumerStatefulWidget {
@@ -24,7 +26,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
   late TextEditingController targetLanguageController;
   late TextEditingController bioController;
   late TextEditingController languageLearningGoalController;
-  late TextEditingController partnerPreferenceController;
+  late TextEditingController hobbiesController;
   late TextEditingController birthdateController;
 
   final _formKey = GlobalKey<FormState>();
@@ -41,9 +43,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
       text: widget.user.targetLanguage ?? '',
     );
     bioController = TextEditingController(text: widget.user.bio ?? '');
-    partnerPreferenceController = TextEditingController(
-      text: widget.user.partnerPreference ?? '',
-    );
+    hobbiesController = TextEditingController(text: widget.user.hobbies ?? '');
     languageLearningGoalController = TextEditingController(
       text: widget.user.languageLearningGoal ?? '',
     );
@@ -62,7 +62,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
     nativeLanguageController.dispose();
     targetLanguageController.dispose();
     bioController.dispose();
-    partnerPreferenceController.dispose();
+    hobbiesController.dispose();
     languageLearningGoalController.dispose();
     birthdateController.dispose();
     super.dispose();
@@ -118,7 +118,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
       content: '변경사항을 저장하시겠습니까?',
       showCancel: true,
     );
-    if (confirm != '확인') return;
+    if (confirm != AppDialogResult.confirm) return;
 
     final vm = ref.read(editProfileViewModelProvider(widget.user).notifier);
     final stateRead = ref.read(editProfileViewModelProvider(widget.user));
@@ -130,16 +130,17 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
       district: stateRead.district,
       location: stateRead.location,
       bio: bioController.text,
-      partnerPreference: partnerPreferenceController.text,
+      hobbies: hobbiesController.text,
       languageLearningGoal: languageLearningGoalController.text,
       birthdate: birthdate,
     );
 
     await vm.saveProfile(updatedUser);
+
+    if (!mounted) return;
     SnackbarUtil.showSnackBar(context, '프로필이 성공적으로 저장되었습니다.');
-    if (mounted) {
-      Navigator.of(context).pop();
-    }
+
+    Navigator.of(context).pop();
   }
 
   Future<void> _pickImage() async {
@@ -166,6 +167,22 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
     }
   }
 
+  Future<void> _changeLanguage({required bool isNative}) async {
+    final otherLang =
+        isNative
+            ? ref.read(editProfileViewModelProvider(widget.user)).targetLanguage
+            : ref
+                .read(editProfileViewModelProvider(widget.user))
+                .nativeLanguage;
+
+    final result = await showLanguageSelectionDialog(context, otherLang);
+    if (result == null) return;
+
+    final vm = ref.read(editProfileViewModelProvider(widget.user).notifier);
+    isNative
+        ? vm.setNativeLanguage(result.koreanName)
+        : vm.setTargetLanguage(result.koreanName);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -243,8 +260,31 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                     },
                   ),
 
-                  // _buildLanguageDropdown('모국어', nativeLanguageController),
-                  // _buildLanguageDropdown('학습 언어', targetLanguageController),
+                  // Languages
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 24,
+                      vertical: 10,
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text('모국어', style: TextStyle(fontSize: 15)),
+                        const SizedBox(height: 8),
+                        SelectedLanguageRow(
+                          language: state.nativeLanguage!,
+                          onTap: () => _changeLanguage(isNative: true),
+                        ),
+                        const SizedBox(height: 20),
+                        const Text('학습 언어', style: TextStyle(fontSize: 15)),
+                        const SizedBox(height: 8),
+                        SelectedLanguageRow(
+                          language: state.targetLanguage!,
+                          onTap: () => _changeLanguage(isNative: false),
+                        ),
+                      ],
+                    ),
+                  ),
 
                   _buildLabeledField(
                     '자기소개',
@@ -269,22 +309,16 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                       final vm = ref.read(
                         editProfileViewModelProvider(widget.user).notifier,
                       );
-                      return vm.validateBio(value);
+                      return vm.validateLanguageLearningGoal(value);
                     },
                   ),
 
                   _buildLabeledField(
                     '취미는 무엇인가요?',
-                    partnerPreferenceController,
+                    hobbiesController,
                     minLines: 5,
                     maxLines: 7,
                     maxLength: 300,
-                    validator: (value) {
-                      final vm = ref.read(
-                        editProfileViewModelProvider(widget.user).notifier,
-                      );
-                      return vm.validateBio(value);
-                    },
                   ),
 
                   _buildDateField('생년월일', birthdateController),
@@ -301,10 +335,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                       children: [
                         const Text(
                           '지역',
-                          style: TextStyle(
-                            color: Colors.black87,
-                            fontSize: 15,
-                          ),
+                          style: TextStyle(color: Colors.black87, fontSize: 15),
                         ),
                         const SizedBox(height: 8),
                         Container(
@@ -345,7 +376,8 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                                 style: IconButton.styleFrom(
                                   padding: EdgeInsets.zero,
                                   minimumSize: const Size(40, 30),
-                                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                  tapTargetSize:
+                                      MaterialTapTargetSize.shrinkWrap,
                                 ),
                                 onPressed:
                                     () =>
@@ -417,10 +449,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
         children: [
           Text(
             label,
-            style: const TextStyle(
-              color: Colors.black87,
-              fontSize: 15,
-            ),
+            style: const TextStyle(color: Colors.black87, fontSize: 15),
           ),
           const SizedBox(height: 8),
           TextFormField(
