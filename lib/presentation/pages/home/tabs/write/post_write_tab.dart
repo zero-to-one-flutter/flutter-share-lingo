@@ -98,6 +98,7 @@ class _PostWriteTabState extends ConsumerState<PostWriteTab> {
       final postNotifier = ref.read(postWriteViewModelProvider.notifier);
 
       await postNotifier.submitPost(
+        ref: ref,
         uid: uid,
         content: content,
         tags: _selectedTags.map((tag) => tag.replaceAll('#', '')).toList(),

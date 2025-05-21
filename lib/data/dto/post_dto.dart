@@ -3,6 +3,12 @@ import '../../domain/entity/post_entity.dart';
 
 class PostDto {
   final String uid;
+  final String userName;
+  final String userProfileImage;
+  final String userNativeLanguage;
+  final String userTargetLanguage;
+  final String? userDistrict;
+  final GeoPoint? userLocation;
   final String content;
   final List<String> imageUrl;
   final List<String> tags;
@@ -13,6 +19,12 @@ class PostDto {
 
   PostDto({
     required this.uid,
+    required this.userName,
+    required this.userProfileImage,
+    required this.userNativeLanguage,
+    required this.userTargetLanguage,
+    this.userDistrict,
+    this.userLocation,
     required this.content,
     required this.imageUrl,
     required this.tags,
@@ -25,6 +37,13 @@ class PostDto {
   factory PostDto.fromMap(Map<String, dynamic> map) {
     return PostDto(
       uid: map['uid'] ?? '',
+      userName: map['userName'] ?? '',
+      userProfileImage: map['userProfileImage'] ?? '',
+      userNativeLanguage: map['userNativeLanguage'] ?? '',
+      userTargetLanguage: map['userTargetLanguage'] ?? '',
+      userDistrict: map['userDistrict'],
+      userLocation: map['userLocation'] as GeoPoint?,
+
       content: map['content'] ?? '',
       imageUrl: List<String>.from(map['imageUrl'] ?? []),
 
@@ -40,6 +59,13 @@ class PostDto {
     return {
       'uid': uid,
       'authorId': uid,
+      'userName': userName,
+      'userProfileImage': userProfileImage,
+      'userNativeLanguage': userNativeLanguage,
+      'userTargetLanguage': userTargetLanguage,
+      'userDistrict': userDistrict,
+      'userLocation': userLocation,
+
       'content': content,
       'imageUrl': imageUrl,
       'tags': tags,
@@ -53,6 +79,13 @@ class PostDto {
   PostEntity toEntity() {
     return PostEntity(
       uid: uid,
+      userName: userName,
+      userProfileImage: userProfileImage,
+      userNativeLanguage: userNativeLanguage,
+      userTargetLanguage: userTargetLanguage,
+      userDistrict: userDistrict,
+      userLocation: userLocation,
+
       content: content,
       imageUrl: imageUrl,
       tags: tags,
@@ -66,6 +99,13 @@ class PostDto {
   static PostDto fromEntity(PostEntity entity) {
     return PostDto(
       uid: entity.uid,
+      userName: entity.userName,
+      userProfileImage: entity.userProfileImage,
+      userNativeLanguage: entity.userNativeLanguage,
+      userTargetLanguage: entity.userTargetLanguage,
+      userDistrict: entity.userDistrict,
+      userLocation: entity.userLocation,
+
       content: entity.content,
       imageUrl: entity.imageUrl,
       tags: entity.tags,
