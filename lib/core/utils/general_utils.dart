@@ -44,4 +44,10 @@ class GeneralUtils {
         .firstWhere((entry) => entry.koreanName == name)
         .countryCode;
   }
+
+  static String? getLanguageCodeByName(String name) {
+    return AppConstants.allLanguages
+        .firstWhere((entry) => entry.koreanName == name)
+        .languageCode;
+  }
 }

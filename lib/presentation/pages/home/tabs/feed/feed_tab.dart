@@ -88,16 +88,9 @@ class FeedTab extends StatelessWidget {
                         itemCount: posts.length,
                         itemBuilder: (context, index) {
                           final post = posts[index];
-                          final content = post.content;
-                          final imageUrl = post.imageUrl;
-                          final tags = post.tags;
-                          final commentCount = post.commentCount;
 
                           return PostItem(
-                            content: content,
-                            imageUrl: imageUrl,
-                            tags: tags,
-                            commentCount: commentCount,
+                            post: post,
                             displayComments: true,
                           );
                         },
