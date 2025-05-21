@@ -297,7 +297,7 @@ class _PostItemState extends State<PostItem> {
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Text(
-                    '# ${text}',
+                    '# $text',
                     style: const TextStyle(
                       fontSize: 14,
                       color: Colors.blueAccent,
