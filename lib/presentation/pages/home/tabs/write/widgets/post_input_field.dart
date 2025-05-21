@@ -19,8 +19,8 @@ class PostInputField extends StatelessWidget {
       ),
       child: TextFormField(
         controller: controller,
-        maxLines: null,
-        expands: true,
+        maxLines: 10,
+        expands: false,
         style: const TextStyle(
           fontSize: 15,
           color: Colors.black,
