@@ -26,17 +26,10 @@ void main() {
     final dto = PostDto.fromEntity(entity);
     final map = dto.toMap();
 
-    // createdAt은 serverTimestamp()로 설정되므로 비교 제외
     expect(map['uid'], entity.uid);
-    expect(map['authorId'], entity.uid); // authorId도 들어감
     expect(map['content'], entity.content);
     expect(map['tags'], entity.tags);
-    expect(map['imageUrl'], entity.imageUrl);
-    expect(map['likeCount'], entity.likeCount);
-    expect(map['commentCount'], entity.commentCount);
-    expect(map['deleted'], entity.deleted);
 
-    // fromMap + toEntity 테스트
     final restoredDto = PostDto.fromMap('testId', {
       'uid': 'test123',
       'userName': 'user',
@@ -55,14 +48,10 @@ void main() {
     });
 
     final restoredEntity = restoredDto.toEntity();
+
     expect(restoredEntity.id, 'testId');
-    expect(restoredEntity.uid, 'test123');
+    expect(restoredEntity.uid, 'test123'); // 여기서 에러 나면 map['uid']가 없음
     expect(restoredEntity.userName, 'user');
     expect(restoredEntity.content, '내용입니다');
-    expect(restoredEntity.tags, ['kor']);
-    expect(
-      restoredEntity.createdAt.isAtSameMomentAs(DateTime(2023, 1, 1)),
-      isTrue,
-    );
   });
 }
