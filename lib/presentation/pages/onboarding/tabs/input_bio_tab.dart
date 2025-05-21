@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:share_lingo/presentation/pages/onboarding/onboarding_view_model.dart';
-import 'package:share_lingo/presentation/pages/onboarding/widgets/onboarding_input_decoration.dart';
+import 'package:share_lingo/presentation/widgets/input_decorations.dart';
 import 'package:share_lingo/presentation/pages/onboarding/widgets/subtitle_text.dart';
 import 'package:share_lingo/presentation/pages/onboarding/widgets/title_section.dart';
 import 'package:share_lingo/presentation/user_global_view_model.dart';
@@ -92,7 +92,7 @@ class _InputBioTabState extends ConsumerState<InputBioTab> {
       maxLines: 10,
       maxLength: 300,
       controller: _textController,
-      decoration: onboardingInputDecoration(''),
+      decoration: getInputDecoration(''),
       validator: (value) {
         final vm = ref.read(onboardingViewModelProvider.notifier);
         return vm.validateBio(value);
