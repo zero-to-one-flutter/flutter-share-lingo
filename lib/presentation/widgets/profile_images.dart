@@ -1,10 +1,13 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../domain/usecase/get_static_map_image_use_case.dart';
 import 'app_cached_image.dart';
 
-class ProfileImages extends StatelessWidget {
+class ProfileImages extends ConsumerWidget {
   final String? profileImageUrl;
+  final GeoPoint? geoPoint;
   final bool isEditable;
   final VoidCallback? onImageTap;
   final bool isLoading;
@@ -12,29 +15,31 @@ class ProfileImages extends StatelessWidget {
   const ProfileImages({
     super.key,
     required this.profileImageUrl,
+    this.geoPoint,
     this.isEditable = false,
     this.onImageTap,
     this.isLoading = false,
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final mapUrl = ref.watch(getStaticMapUrlUseCaseProvider).execute(geoPoint);
+
     return Stack(
       clipBehavior: Clip.none,
       children: [
-        Container(
-          height: 170,
+        SizedBox(
+          height: 190,
           width: double.infinity,
-          decoration: BoxDecoration(
-            image: const DecorationImage(
-              image: AssetImage('assets/images/world_background.jpg'),
-              fit: BoxFit.cover,
-            ),
+          child: AppCachedImage(
+            imageUrl: mapUrl,
+            fit: BoxFit.cover,
+            errorAssetPath: 'assets/images/world_background.jpg',
           ),
         ),
         Positioned(
           bottom: -50,
-          left: MediaQuery.of(context).size.width / 2 - 50,
+          left: 15,
           child: Stack(
             children: [
               ClipOval(
@@ -53,9 +58,7 @@ class ProfileImages extends StatelessWidget {
                               child:
                                   profileImageUrl != null
                                       ? AppCachedImage(
-                                        imageUrl:
-                                            profileImageUrl ??
-                                            'https://picsum.photos/200/200?random=1',
+                                        imageUrl: profileImageUrl!,
                                         width: 92,
                                         height: 92,
                                         fit: BoxFit.cover,

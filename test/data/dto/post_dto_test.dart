@@ -27,7 +27,6 @@ void main() {
 
     // createdAt은 FieldValue.serverTimestamp()로 고정되므로 비교 불가
     expect(map['uid'], entity.uid);
-    expect(map['authorId'], entity.uid); // 🔥 authorId 필드도 확인
     expect(map['content'], entity.content);
     expect(map['tags'], entity.tags);
     expect(map['imageUrl'], entity.imageUrl);

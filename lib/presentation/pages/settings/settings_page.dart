@@ -85,7 +85,7 @@ class SettingsPage extends ConsumerWidget {
             tiles: [
               SettingsTile(
                 leading: const Icon(Icons.logout),
-                title: Text('로가웃'),
+                title: Text('로그아웃'),
                 onPressed: (context) => _logout(context, ref),
               ),
             ],

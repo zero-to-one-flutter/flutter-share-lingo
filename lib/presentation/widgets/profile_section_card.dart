@@ -18,25 +18,10 @@ class ProfileSectionCard extends StatelessWidget {
             style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
           ),
           const SizedBox(height: 8),
-          Container(
-            width: double.infinity,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(12),
-              color: Colors.white,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.3),
-                  blurRadius: 5,
-                  offset: const Offset(0, 2),
-                ),
-              ],
-            ),
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-            child: Text(
-              content,
-              style: const TextStyle(fontSize: 16, height: 1.4),
-            ),
-          ),
+          Text(
+            content,
+            style: const TextStyle(fontSize: 16, height: 1.4),
+          )
         ],
       ),
     );
