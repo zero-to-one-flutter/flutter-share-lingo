@@ -48,18 +48,4 @@ class PostRemoteDataSource {
 
     return snapshot.docs.map((doc) => PostDto.fromMap(doc.data())).toList();
   }
-
-  Future<List<PostDto>> fetchLatestPosts(PostEntity firstPost) async {
-    final snapshot =
-        await firestore
-            .collection('posts')
-            .orderBy('createdAt', descending: false)
-            .startAfter([firstPost.createdAt])
-            .limit(20)
-            .get();
-
-    final reversedList =
-        snapshot.docs.map((doc) => PostDto.fromMap(doc.data())).toList();
-    return reversedList.reversed.toList();
-  }
 }
