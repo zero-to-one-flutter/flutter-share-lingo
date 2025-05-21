@@ -17,7 +17,11 @@ class ProfileLayout extends StatelessWidget {
       child: Column(
         children: [
           // Cover and Profile Image
-          ProfileImages(profileImageUrl: user.profileImage, isEditable: false),
+          ProfileImages(
+            profileImageUrl: user.profileImage,
+            geoPoint: user.location,
+            isEditable: false,
+          ),
           const SizedBox(height: 60),
           // Name + Age
           Text(
