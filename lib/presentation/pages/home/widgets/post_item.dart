@@ -5,6 +5,7 @@ import 'package:share_lingo/core/utils/format_time_ago.dart';
 import 'package:share_lingo/core/utils/general_utils.dart';
 import 'package:share_lingo/domain/entity/post_entity.dart';
 import 'package:share_lingo/presentation/pages/home/widgets/expandable_text.dart';
+import 'package:share_lingo/presentation/pages/home/widgets/post_menu_button.dart';
 import 'package:share_lingo/presentation/widgets/app_cached_image.dart';
 
 import '../../../../domain/entity/app_user.dart';
@@ -182,11 +183,7 @@ class _PostItemState extends State<PostItem> {
             ],
           ),
           Spacer(),
-          IconButton(
-            padding: EdgeInsets.all(0),
-            onPressed: () {},
-            icon: const Icon(Icons.keyboard_control_rounded),
-          ),
+          PostMenuButton(post: widget.post),
         ],
       ),
     );
