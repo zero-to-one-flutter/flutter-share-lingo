@@ -46,6 +46,7 @@ class _PostWriteTabState extends ConsumerState<PostWriteTab> {
 
   Future<void> _pickImage() async {
     if (_selectedImages.length >= 3) {
+      if (!mounted) return;
       SnackbarUtil.showSnackBar(context, '이미지는 최대 3장까지 가능합니다.');
       return;
     }
@@ -56,6 +57,7 @@ class _PostWriteTabState extends ConsumerState<PostWriteTab> {
     final bytes = await picked.readAsBytes();
     final image = img.decodeImage(bytes);
     if (image == null) {
+      if (!mounted) return;
       SnackbarUtil.showSnackBar(context, '이미지를 불러오지 못했습니다.');
       return;
     }
@@ -66,21 +68,23 @@ class _PostWriteTabState extends ConsumerState<PostWriteTab> {
       }
 
       final objects = _yoloModel.runInference(image);
-
       final hasPerson = objects.any(
         (e) => _yoloModel.label(e.labelIndex).toLowerCase() == 'person',
       );
 
       if (hasPerson) {
+        if (!mounted) return;
         SnackbarUtil.showSnackBar(context, '사람이 감지된 이미지는 업로드할 수 없습니다.');
         return;
       }
 
+      if (!mounted) return;
       setState(() {
         _selectedImages.add(bytes);
       });
     } catch (e) {
       debugPrint('YOLO 분석 실패: $e');
+      if (!mounted) return;
       SnackbarUtil.showSnackBar(context, '이미지 분석 중 오류가 발생했습니다.');
     }
   }
