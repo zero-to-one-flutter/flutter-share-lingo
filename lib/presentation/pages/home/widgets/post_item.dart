@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:share_lingo/app/constants/app_colors.dart';
+import 'package:share_lingo/core/utils/format_time_ago.dart';
 import 'package:share_lingo/core/utils/general_utils.dart';
 import 'package:share_lingo/domain/entity/post_entity.dart';
 import 'package:share_lingo/presentation/pages/home/widgets/expandable_text.dart';
@@ -130,7 +131,7 @@ class _PostItemState extends State<PostItem> {
                   ),
                   SizedBox(width: 8),
                   Text(
-                    '10m', // Todo: 시간 계산해서 바꾸기
+                    FormatTimeAgo.formatTimeAgo(widget.post.createdAt),
                     style: TextStyle(
                       fontSize: 15,
                       color: Colors.black54,
