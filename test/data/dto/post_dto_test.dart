@@ -6,6 +6,7 @@ import 'package:share_lingo/data/dto/post_dto.dart';
 void main() {
   test('PostDto <-> Entity 변환 테스트', () {
     final entity = PostEntity(
+      id: 'testId',
       uid: 'test123',
       userName: 'user',
       userProfileImage: 'abcd.jpg',
@@ -25,8 +26,9 @@ void main() {
     final dto = PostDto.fromEntity(entity);
     final map = dto.toMap();
 
-    // createdAt은 FieldValue.serverTimestamp()로 고정되므로 비교 불가
+    // createdAt은 serverTimestamp()로 설정되므로 비교 제외
     expect(map['uid'], entity.uid);
+    expect(map['authorId'], entity.uid); // authorId도 들어감
     expect(map['content'], entity.content);
     expect(map['tags'], entity.tags);
     expect(map['imageUrl'], entity.imageUrl);
@@ -34,9 +36,15 @@ void main() {
     expect(map['commentCount'], entity.commentCount);
     expect(map['deleted'], entity.deleted);
 
-    // fromMap + toEntity 테스트 (createdAt은 실제 Timestamp 사용)
-    final restoredDto = PostDto.fromMap({
+    // fromMap + toEntity 테스트
+    final restoredDto = PostDto.fromMap('testId', {
       'uid': 'test123',
+      'userName': 'user',
+      'userProfileImage': 'abcd.jpg',
+      'userNativeLanguage': 'KO',
+      'userTargetLanguage': 'EN',
+      'userDistrict': null,
+      'userLocation': null,
       'content': '내용입니다',
       'imageUrl': [],
       'tags': ['kor'],
@@ -45,8 +53,11 @@ void main() {
       'commentCount': 0,
       'deleted': false,
     });
+
     final restoredEntity = restoredDto.toEntity();
+    expect(restoredEntity.id, 'testId');
     expect(restoredEntity.uid, 'test123');
+    expect(restoredEntity.userName, 'user');
     expect(restoredEntity.content, '내용입니다');
     expect(restoredEntity.tags, ['kor']);
     expect(

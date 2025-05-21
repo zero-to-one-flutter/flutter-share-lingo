@@ -17,6 +17,7 @@ void main() {
 
   test('CreatePostUseCase - 성공 케이스', () async {
     final post = PostEntity(
+      id: 'testId',
       uid: 'test123',
       userName: 'user',
       userProfileImage: 'abcd.jpg',
@@ -44,6 +45,7 @@ void main() {
 
   test('CreatePostUseCase - 예외 발생 시 throw', () async {
     final post = PostEntity(
+      id: 'testId',
       uid: 'test123',
       userName: 'user',
       userProfileImage: 'abcd.jpg',
