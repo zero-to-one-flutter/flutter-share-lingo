@@ -18,6 +18,7 @@ void main() {
   test('fetchInitialPosts test', () async {
     final mockDto = [
       PostDto(
+        id: 'testId',
         uid: 'test123',
         userName: 'user',
         userProfileImage: 'abcd.jpg',

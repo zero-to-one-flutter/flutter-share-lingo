@@ -19,6 +19,7 @@ void main() {
   setUpAll(() {
     registerFallbackValue(
       PostEntity(
+        id: 'testId',
         uid: 'test123',
         userName: 'user',
         userProfileImage: 'abcd.jpg',
@@ -39,6 +40,7 @@ void main() {
 
   test('FetchOlderPostsUsecase', () async {
     final lastPost = PostEntity(
+      id: 'testId',
       uid: 'test123',
       userName: 'user',
       userProfileImage: 'abcd.jpg',
@@ -58,6 +60,7 @@ void main() {
     when(() => mockPostRepository!.fetchOlderPosts(any())).thenAnswer(
       (invocation) async => [
         PostEntity(
+          id: 'testId',
           uid: 'test123',
           userName: 'user',
           userProfileImage: 'abcd.jpg',
