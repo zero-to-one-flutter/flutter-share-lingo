@@ -15,6 +15,7 @@ class ProfileLayout extends StatelessWidget {
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Cover and Profile Image
           ProfileImages(
@@ -22,87 +23,74 @@ class ProfileLayout extends StatelessWidget {
             geoPoint: user.location,
             isEditable: false,
           ),
-          const SizedBox(height: 60),
+          const SizedBox(height: 50),
           // Name + Age
-          Text(
-            user.name,
-            style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Text(
+                      user.name,
+                      style: const TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    SizedBox(width: 7),
+                    Text(
+                      '${user.age}세',
+                      style: const TextStyle(
+                        fontSize: 16,
+                        color: Colors.black54,
+                      ),
+                    ),
+                  ],
+                ),
 
-          if (user.age != null) ...[
-            const SizedBox(height: 6),
-            Text(
-              '${user.age}세',
-              style: const TextStyle(fontSize: 16, color: Colors.black54),
+                // Language Info
+                const SizedBox(height: 5),
+                Row(
+                  children: [
+                    Text(
+                      user.nativeLanguage!,
+                      style: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    const Icon(Icons.sync_alt, size: 16),
+                    const SizedBox(width: 8),
+                    Text(
+                      user.targetLanguage!,
+                      style: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                ),
+
+                SizedBox(height: 14),
+                Text(
+                  user.bio!,
+                  style: const TextStyle(fontSize: 16.2, height: 1.4),
+                ),
+              ],
             ),
-          ],
-
-          // Language Info
-          const SizedBox(height: 12),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              // TODO: Remove hardcoded language after setting OnBoarding flow
-              Text(
-                user.nativeLanguage ?? '한국어',
-                style: const TextStyle(fontSize: 16),
-              ),
-              const SizedBox(width: 8),
-              const Icon(Icons.sync_alt, size: 20),
-              const SizedBox(width: 8),
-              Text(
-                user.targetLanguage ?? '영어',
-                style: const TextStyle(fontSize: 16),
-              ),
-            ],
           ),
-
-          // Location Card
-          if (user.district != null) ...[
-            const SizedBox(height: 20),
-            Consumer(
-              builder: (BuildContext context, WidgetRef ref, Widget? child) {
-                final distance = ref
-                    .read(userGlobalViewModelProvider.notifier)
-                    .calculateDistanceFrom(user.location);
-                return _infoTile(
-                  icon: Icons.location_on_outlined,
-                  title:
-                      '${user.district}${user.id != ref.read(userGlobalViewModelProvider)?.id ? '  |  $distance' : ''}',
-                );
-              },
-            ),
-          ],
 
           Divider(height: 40, color: Colors.grey[300]),
 
-          // Bio Section
-          if (user.bio != null && user.bio!.isNotEmpty)
-            ProfileSectionCard('자기 소개', user.bio!),
-
-          if (user.partnerPreference != null &&
-              user.partnerPreference!.isNotEmpty)
-            ProfileSectionCard('제게 완벽한 언어 교환 파트너는', user.partnerPreference!),
-
-          if (user.languageLearningGoal != null &&
-              user.languageLearningGoal!.isNotEmpty)
-            ProfileSectionCard('제 언어 학습 목표는', user.languageLearningGoal!),
+          // if (user.languageLearningGoal != null &&
+          //     user.languageLearningGoal!.isNotEmpty)
+          //   ProfileSectionCard('제 언어 학습 목표는', user.languageLearningGoal!),
+          ProfileSectionCard('제 언어 학습 목표는', '저는 많은 것들을 배우고 싶고 빨리 영어 배우소 싶습니다'),
 
           const SizedBox(height: 30),
-        ],
-      ),
-    );
-  }
-
-  Widget _infoTile({required IconData icon, required String title}) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(icon, size: 22, color: Colors.black87),
-          const SizedBox(width: 8),
-          Flexible(child: Text(title, style: const TextStyle(fontSize: 16))),
         ],
       ),
     );
