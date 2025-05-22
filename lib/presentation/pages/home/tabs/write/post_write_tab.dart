@@ -37,6 +37,8 @@ class _PostWriteTabState extends ConsumerState<PostWriteTab> {
 
   final ImagePicker _picker = ImagePicker();
   final YoloDetection _yoloModel = YoloDetection();
+  String? uiPollQuestion;
+  List<String>? uiPollOptions;
 
   @override
   void initState() {
@@ -111,8 +113,6 @@ class _PostWriteTabState extends ConsumerState<PostWriteTab> {
   }
 
   Future<void> _submit() async {
-    final postNotifier = ref.read(postWriteViewModelProvider.notifier);
-
     if (_formKey.currentState?.validate() != true) return;
 
     final content = _contentController.text.trim();
@@ -144,8 +144,13 @@ class _PostWriteTabState extends ConsumerState<PostWriteTab> {
       Navigator.of(context).pop(true);
       return;
     }
-
+    if (uiPollQuestion != null && uiPollOptions != null) {
+      ref
+          .read(postWriteViewModelProvider.notifier)
+          .setPollData(question: uiPollQuestion!, options: uiPollOptions!);
+    }
     // 새 글 작성
+    final postNotifier = ref.read(postWriteViewModelProvider.notifier);
     await postNotifier.submitPost(
       ref: ref,
       uid: uid,
@@ -215,11 +220,12 @@ class _PostWriteTabState extends ConsumerState<PostWriteTab> {
                       children: [
                         PostInputField(controller: _contentController),
                         const SizedBox(height: 16),
-
-                        PollPreviewCard(
-                          question: widget.post?.pollQuestion ?? '',
-                          options: widget.post?.pollOptions ?? [],
-                        ),
+                        // 투표 미리보기 카드
+                        if (uiPollQuestion != null && uiPollOptions != null)
+                          PollPreviewCard(
+                            question: uiPollQuestion!,
+                            options: uiPollOptions!,
+                          ),
                         if (_existingImageUrls.isNotEmpty)
                           SizedBox(
                             height: 100,
@@ -298,8 +304,6 @@ class _PostWriteTabState extends ConsumerState<PostWriteTab> {
                             }
                           },
                           onPickImage: _pickImage,
-
-                          // 투표 다이얼로그 연결
                           onAddPoll: () {
                             showDialog(
                               context: context,
@@ -310,6 +314,13 @@ class _PostWriteTabState extends ConsumerState<PostWriteTab> {
                                       required option1,
                                       required option2,
                                     }) {
+                                      // UI 상태 갱신
+                                      setState(() {
+                                        uiPollQuestion = question;
+                                        uiPollOptions = [option1, option2];
+                                      });
+
+                                      // 뷰모델에도 전달
                                       ref
                                           .read(
                                             postWriteViewModelProvider.notifier,
