@@ -27,33 +27,56 @@ class _PollInputDialogState extends State<PollInputDialog> {
     super.dispose();
   }
 
+  InputDecoration _buildInputDecoration(String label) {
+    return InputDecoration(
+      labelText: label,
+      filled: true,
+      fillColor: Colors.grey.shade100,
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: const BorderSide(color: Colors.grey),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: const BorderSide(color: Colors.deepPurple),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text('투표 만들기'),
+      backgroundColor: Colors.white,
+      title: const Text(
+        '투표',
+        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           TextField(
             controller: _questionController,
-            decoration: const InputDecoration(labelText: '질문'),
+            decoration: _buildInputDecoration('질문을 입력하세요'),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 14),
           TextField(
             controller: _option1Controller,
-            decoration: const InputDecoration(labelText: '선택지 1'),
+            decoration: _buildInputDecoration('선택지 1'),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 14),
           TextField(
             controller: _option2Controller,
-            decoration: const InputDecoration(labelText: '선택지 2'),
+            decoration: _buildInputDecoration('선택지 2'),
           ),
         ],
       ),
+      actionsPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
       actions: [
         TextButton(
-          onPressed: () => Navigator.of(context).pop(), // 닫기
-          child: const Text('취소'),
+          onPressed: () => Navigator.of(context).pop(),
+          child: const Text('취소', style: TextStyle(color: Colors.grey)),
         ),
         ElevatedButton(
           onPressed: () {
@@ -63,10 +86,17 @@ class _PollInputDialogState extends State<PollInputDialog> {
 
             if (q.isNotEmpty && o1.isNotEmpty && o2.isNotEmpty) {
               widget.onConfirm(question: q, option1: o1, option2: o2);
-              Navigator.of(context).pop(); // 다이얼로그 닫기
+              Navigator.of(context).pop();
             }
           },
-          child: const Text('확인'),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.deepPurple,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+          ),
+          child: const Text('확인', style: TextStyle(color: Colors.white)),
         ),
       ],
     );
