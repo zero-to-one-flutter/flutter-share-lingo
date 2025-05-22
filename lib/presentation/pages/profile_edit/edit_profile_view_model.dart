@@ -89,12 +89,21 @@ class EditProfileViewModel
     final locationResult = await GeolocatorUtil.handleLocationRequest();
 
     if (locationResult.geoPoint != null) {
-      final district = await ref
-          .read(getDistrictByLocationUseCaseProvider)
-          .execute(
-            locationResult.geoPoint!.latitude,
-            locationResult.geoPoint!.longitude,
-          );
+      final String? district;
+      try {
+        district = await ref
+            .read(getDistrictByLocationUseCaseProvider)
+            .execute(
+          locationResult.geoPoint!.latitude,
+          locationResult.geoPoint!.longitude,
+        );
+      } catch (e) {
+        state = state.copyWith(
+          location: locationResult.geoPoint,
+          district: ''
+        );
+        return;
+      }
 
       state = state.copyWith(
         district: district,

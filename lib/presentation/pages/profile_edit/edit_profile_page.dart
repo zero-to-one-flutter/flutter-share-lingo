@@ -364,7 +364,11 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                               const SizedBox(width: 8),
                               Expanded(
                                 child: Text(
-                                  state.district ?? '위치 새로고침 버튼을 누르세요',
+                                  state.district == null
+                                      ? '위치 새로고침 버튼을 누르세요'
+                                      : state.district!.isEmpty
+                                      ? '현재는 대한민국의 지역만 지원됩니다'
+                                      : state.district!,
                                   style: const TextStyle(
                                     fontSize: 15,
                                     color: Colors.black87,
