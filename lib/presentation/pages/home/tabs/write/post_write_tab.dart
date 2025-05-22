@@ -9,6 +9,7 @@ import 'package:share_lingo/core/utils/snackbar_util.dart';
 import 'package:share_lingo/domain/entity/post_entity.dart';
 import 'package:share_lingo/presentation/pages/home/tabs/feed/feed_view_model.dart';
 import 'package:share_lingo/presentation/pages/home/tabs/write/post_write_view_model.dart';
+import 'package:share_lingo/presentation/pages/home/tabs/write/vote_state.dart';
 import 'package:share_lingo/presentation/pages/home/tabs/write/widgets/cancel_button.dart';
 import 'package:share_lingo/presentation/pages/home/tabs/write/widgets/poll_input_dialog.dart';
 import 'package:share_lingo/presentation/pages/home/tabs/write/widgets/poll_preview_card.dart';
@@ -139,6 +140,24 @@ class _PostWriteTabState extends ConsumerState<PostWriteTab> {
           .setPollData(question: uiPollQuestion!, options: uiPollOptions!);
     }
     if (widget.post != null) {
+      // 기존 투표 정보 무효화
+      if (uiPollQuestion != null && uiPollOptions != null) {
+        final postId = widget.post!.id;
+
+        // 상태 리셋
+        ref.read(voteStateProvider.notifier).reset(postId);
+
+        // 빈 값으로 다시 설정 (선택도 초기화)
+        ref
+            .read(voteStateProvider.notifier)
+            .set(
+              postId,
+              VoteState(
+                pollVotes: {}, // 새로운 투표니까 초기화
+                selectedIndex: null,
+              ),
+            );
+      }
       // 수정 모드
       await ref
           .read(postWriteViewModelProvider.notifier)
