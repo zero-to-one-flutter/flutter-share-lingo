@@ -17,12 +17,14 @@ class PostItem extends StatefulWidget {
   final PostEntity post;
   final DateTime now;
   final bool displayComments;
+  final List<ImageProvider> cachedImages;
 
   const PostItem({
     super.key,
     required this.post,
     required this.now,
     required this.displayComments,
+    required this.cachedImages,
   });
 
   @override
@@ -96,12 +98,6 @@ class _PostItemState extends State<PostItem> {
 
   @override
   Widget build(BuildContext context) {
-    final List<String> images =
-        widget.post.imageUrl
-            .where((url) => url.trim().isNotEmpty)
-            .take(3)
-            .toList();
-
     return InkWell(
       highlightColor: AppColors.lightGrey,
       onTap: () {
@@ -125,8 +121,8 @@ class _PostItemState extends State<PostItem> {
             _topBar(),
             SizedBox(height: 10),
             ExpandableText(widget.post.content, trimLines: 4),
-            if (images.isNotEmpty) SizedBox(height: 10),
-            _imageBox(images),
+            if (widget.cachedImages.isNotEmpty) SizedBox(height: 10),
+            _imageBox(widget.cachedImages),
             _tagBar(),
             // comment 개수 표시
             // detail 페이지에서는 표시 X
@@ -266,8 +262,8 @@ class _PostItemState extends State<PostItem> {
     );
   }
 
-  Widget _imageBox(List<String> images) {
-    if (images.isEmpty) {
+  Widget _imageBox(List<ImageProvider> cachedImages) {
+    if (cachedImages.isEmpty) {
       return const SizedBox.shrink();
     }
 
@@ -278,13 +274,13 @@ class _PostItemState extends State<PostItem> {
       builder: (context, constraints) {
         Widget content;
 
-        switch (images.length) {
+        switch (cachedImages.length) {
           case 1:
             content = GestureDetector(
               onTap:
                   () => showImageViewer(
                     context,
-                    NetworkImage(images[0]),
+                    cachedImages[0],
                     swipeDismissible: true,
                     doubleTapZoomable: true,
                   ),
@@ -292,7 +288,7 @@ class _PostItemState extends State<PostItem> {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(10),
                   image: DecorationImage(
-                    image: NetworkImage(images[0]),
+                    image: cachedImages[0],
                     fit: BoxFit.cover,
                   ),
                 ),
@@ -301,9 +297,9 @@ class _PostItemState extends State<PostItem> {
             break;
 
           case 2:
-            List<NetworkImage> case2Images = [
-              NetworkImage(images[0]),
-              NetworkImage(images[1]),
+            List<ImageProvider> case2Images = [
+              cachedImages[0],
+              cachedImages[1],
             ];
             content = Row(
               children: [
@@ -326,7 +322,7 @@ class _PostItemState extends State<PostItem> {
                           bottomLeft: Radius.circular(10),
                         ),
                         image: DecorationImage(
-                          image: NetworkImage(images[0]),
+                          image: cachedImages[0],
                           fit: BoxFit.cover,
                         ),
                       ),
@@ -353,7 +349,7 @@ class _PostItemState extends State<PostItem> {
                           bottomRight: Radius.circular(10),
                         ),
                         image: DecorationImage(
-                          image: NetworkImage(images[1]),
+                          image: cachedImages[1],
                           fit: BoxFit.cover,
                         ),
                       ),
@@ -365,10 +361,10 @@ class _PostItemState extends State<PostItem> {
             break;
 
           case 3:
-            List<NetworkImage> case3Images = [
-              NetworkImage(images[0]),
-              NetworkImage(images[1]),
-              NetworkImage(images[2]),
+            List<ImageProvider> case3Images = [
+              cachedImages[0],
+              cachedImages[1],
+              cachedImages[2],
             ];
             content = Row(
               children: [
@@ -392,7 +388,7 @@ class _PostItemState extends State<PostItem> {
                           bottomLeft: Radius.circular(10),
                         ),
                         image: DecorationImage(
-                          image: NetworkImage(images[0]),
+                          image: cachedImages[0],
                           fit: BoxFit.cover,
                         ),
                       ),
@@ -425,7 +421,7 @@ class _PostItemState extends State<PostItem> {
                                 topRight: Radius.circular(10),
                               ),
                               image: DecorationImage(
-                                image: NetworkImage(images[1]),
+                                image: cachedImages[1],
                                 fit: BoxFit.cover,
                               ),
                             ),
@@ -454,7 +450,7 @@ class _PostItemState extends State<PostItem> {
                                 bottomRight: Radius.circular(10),
                               ),
                               image: DecorationImage(
-                                image: NetworkImage(images[2]),
+                                image: cachedImages[2],
                                 fit: BoxFit.cover,
                               ),
                             ),

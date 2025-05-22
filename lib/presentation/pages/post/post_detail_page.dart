@@ -24,6 +24,9 @@ class PostDetailPage extends ConsumerWidget {
               post: post,
               displayComments: false,
               now: ref.watch(timeAgoNotifierProvider),
+              cachedImages: ref
+                  .read(feedNotifierProvider.notifier)
+                  .getCachedImageProviders(post),
             ),
             const Divider(),
             CommentSection(postId: post.id),
