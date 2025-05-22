@@ -10,6 +10,7 @@ import 'package:share_lingo/domain/entity/post_entity.dart';
 import 'package:share_lingo/presentation/pages/home/tabs/feed/feed_view_model.dart';
 import 'package:share_lingo/presentation/pages/home/tabs/write/post_write_view_model.dart';
 import 'package:share_lingo/presentation/pages/home/tabs/write/widgets/cancel_button.dart';
+import 'package:share_lingo/presentation/pages/home/tabs/write/widgets/poll_input_dialog.dart';
 import 'package:share_lingo/presentation/pages/home/tabs/write/widgets/post_input_field.dart';
 import 'package:share_lingo/presentation/pages/home/tabs/write/widgets/submit_button.dart';
 import 'package:share_lingo/presentation/pages/home/tabs/write/widgets/tag_row_button.dart';
@@ -292,6 +293,30 @@ class _PostWriteTabState extends ConsumerState<PostWriteTab> {
                             }
                           },
                           onPickImage: _pickImage,
+
+                          // 투표 다이얼로그 연결
+                          onAddPoll: () {
+                            showDialog(
+                              context: context,
+                              builder:
+                                  (context) => PollInputDialog(
+                                    onConfirm: ({
+                                      required question,
+                                      required option1,
+                                      required option2,
+                                    }) {
+                                      ref
+                                          .read(
+                                            postWriteViewModelProvider.notifier,
+                                          )
+                                          .setPollData(
+                                            question: question,
+                                            options: [option1, option2],
+                                          );
+                                    },
+                                  ),
+                            );
+                          },
                         ),
                         if (_selectedTags.isNotEmpty)
                           Padding(
