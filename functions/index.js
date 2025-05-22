@@ -23,6 +23,7 @@ exports.syncUserUpdates = functions.firestore
       userBirthdate: newData.birthdate,
       userHobbies: newData.hobbies,
       userLanguageLearningGoal: newData.languageLearningGoal,
+      updatedAt: admin.firestore.FieldValue.serverTimestamp(),
     };
 
     // Update posts
@@ -82,6 +83,19 @@ exports.cleanupPostSubcollections = functions.firestore
 
     return Promise.all(deleteComments);
   });
+
+
+exports.updateUpdatedAtOnCommentChange = functions.firestore
+  .document("posts/{postId}/comments/{commentId}")
+  .onWrite(async (change, context) => {
+    const postId = context.params.postId;
+    const postRef = db.collection("posts").doc(postId);
+
+    return postRef.update({
+      updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+    });
+  });
+
 
 /////////////////////////
 // 4. Comment Count Management

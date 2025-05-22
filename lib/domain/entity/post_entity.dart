@@ -17,7 +17,7 @@ class PostEntity {
   final List<String> imageUrl;
   final List<String> tags;
   final DateTime createdAt;
-  // final DateTime updatedAt;
+  final DateTime? updatedAt;
   final int likeCount;
   final int commentCount;
   final bool deleted;
@@ -39,7 +39,7 @@ class PostEntity {
     required this.imageUrl,
     required this.tags,
     required this.createdAt,
-    // required this.updatedAt,
+    this.updatedAt,
     required this.likeCount,
     required this.commentCount,
     required this.deleted,
@@ -56,7 +56,7 @@ class PostEntity {
     List<String>? imageUrl,
     List<String>? tags,
     DateTime? createdAt,
-    // DateTime? updatedAt,
+    DateTime? updatedAt,
     int? likeCount,
     int? commentCount,
     bool? deleted,
@@ -78,7 +78,7 @@ class PostEntity {
       imageUrl: imageUrl ?? this.imageUrl,
       tags: tags ?? this.tags,
       createdAt: createdAt ?? this.createdAt,
-      // updatedAt: updatedAt ?? this.updatedAt,
+      updatedAt: updatedAt ?? this.updatedAt,
       likeCount: likeCount ?? this.likeCount,
       commentCount: commentCount ?? this.commentCount,
       deleted: deleted ?? this.deleted,
