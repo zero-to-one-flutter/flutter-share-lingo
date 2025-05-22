@@ -2,25 +2,30 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/utils/geolocator_util.dart';
+import '../../../../domain/usecase/get_district_by_location_use_case.dart';
 
 class LocationState {
-  final GeoPoint? geoPoint;
+  final GeoPoint? location;
+  final String? district;
   final bool isLoading;
   final String? errorMessage;
 
   const LocationState({
-    this.geoPoint,
+    this.location,
+    this.district,
     this.isLoading = false,
     this.errorMessage,
   });
 
   LocationState copyWith({
-    GeoPoint? geoPoint,
+    GeoPoint? location,
+    String? district,
     bool? isLoading,
     String? errorMessage,
   }) {
     return LocationState(
-      geoPoint: geoPoint ?? this.geoPoint,
+      location: location ?? this.location,
+      district: district ?? this.district,
       isLoading: isLoading ?? this.isLoading,
       errorMessage: errorMessage,
     );
@@ -32,20 +37,36 @@ class EnableLocationViewModel extends Notifier<LocationState> {
   LocationState build() => const LocationState();
 
   Future<void> fetchLocation() async {
-    try {
-      state = state.copyWith(isLoading: true);
+    state = state.copyWith(isLoading: true);
+    final locationResult = await GeolocatorUtil.handleLocationRequest();
 
-      final locationResult = await GeolocatorUtil.handleLocationRequest();
+    if (locationResult.geoPoint != null) {
+      final String? district;
+      try {
+        district = await ref
+            .read(getDistrictByLocationUseCaseProvider)
+            .execute(
+              locationResult.geoPoint!.latitude,
+              locationResult.geoPoint!.longitude,
+            );
+      } catch (e) {
+        state = state.copyWith(
+          isLoading: false,
+          location: locationResult.geoPoint,
+          district: '',
+        );
+        return;
+      }
 
       state = state.copyWith(
         isLoading: false,
-        geoPoint: locationResult.geoPoint,
-        errorMessage: locationResult.errorMessage,
+        district: district,
+        location: locationResult.geoPoint,
       );
-    } catch (e) {
+    } else {
       state = state.copyWith(
         isLoading: false,
-        errorMessage: '위치 정보를 가져오는 중 오류가 발생했습니다. 다시 시도하거나, 위치 없이 진행해 주세요.',
+        errorMessage: locationResult.errorMessage,
       );
     }
   }

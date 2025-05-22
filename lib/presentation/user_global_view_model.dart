@@ -66,7 +66,7 @@ class UserGlobalViewModel extends Notifier<AppUser?> {
     state = state!.copyWith(hobbies: hobbies);
   }
 
-  void setDistrict(String district) {
+  void setDistrict(String? district) {
     state = state!.copyWith(district: district);
   }
 
