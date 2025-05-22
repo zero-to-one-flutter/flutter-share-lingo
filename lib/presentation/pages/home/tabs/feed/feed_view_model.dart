@@ -11,8 +11,10 @@ import 'package:share_lingo/domain/usecase/fetch_initial_posts_usecase.dart';
 import 'package:share_lingo/domain/entity/post_entity.dart';
 import 'package:share_lingo/domain/usecase/fetch_lastest_posts_usecase.dart';
 import 'package:share_lingo/domain/usecase/fetch_older_posts_usecase.dart';
+import 'package:share_lingo/domain/usecase/fetch_posts_by_uid_usecase.dart';
 
-class FeedNotifier extends AutoDisposeAsyncNotifier<List<PostEntity>> {
+class FeedNotifier
+    extends AutoDisposeFamilyAsyncNotifier<List<PostEntity>, String?> {
   late final FetchInitialPostsUsecase initialPostsUsecase;
   late final FetchOlderPostsUsecase olderPostsUsecase;
   late final FetchLastestPostsUsecase latestPostsUsecase;
@@ -22,7 +24,11 @@ class FeedNotifier extends AutoDisposeAsyncNotifier<List<PostEntity>> {
   bool _isInitialized = false;
 
   @override
-  Future<List<PostEntity>> build() async {
+  Future<List<PostEntity>> build(String? uid) async {
+    if (uid != null) {
+      return await ref.read(fetchPostsByUidUsecaseProvider).execute(uid);
+    }
+
     // 중복 초기화 방지
     if (!_isInitialized) {
       initialPostsUsecase = ref.read(fetchInitialPostsUsecaseProvider);
@@ -48,6 +54,9 @@ class FeedNotifier extends AutoDisposeAsyncNotifier<List<PostEntity>> {
 
   Future<List<PostEntity>> _fetchInitialPosts() async {
     try {
+      if (arg != null) {
+        return await ref.read(fetchPostsByUidUsecaseProvider).execute(arg!);
+      }
       final posts = await initialPostsUsecase.execute();
       return posts;
     } catch (e, st) {
@@ -154,10 +163,8 @@ class FeedNotifier extends AutoDisposeAsyncNotifier<List<PostEntity>> {
           .toList();
 }
 
-final feedNotifierProvider =
-    AsyncNotifierProvider.autoDispose<FeedNotifier, List<PostEntity>>(
-      () => FeedNotifier(),
-    );
+final feedNotifierProvider = AsyncNotifierProvider.autoDispose
+    .family<FeedNotifier, List<PostEntity>, String?>(FeedNotifier.new);
 
 class TimeAgoNotifier extends AutoDisposeNotifier<DateTime> {
   @override

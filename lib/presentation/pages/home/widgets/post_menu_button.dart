@@ -55,9 +55,6 @@ class PostMenuButton extends ConsumerWidget {
                     );
                     if (result == true) {
                       ref.invalidate(feedNotifierProvider);
-                      scaffoldMessenger.showSnackBar(
-                        const SnackBar(content: Text('게시글이 수정되었습니다')),
-                      );
                     }
                   },
                 ),

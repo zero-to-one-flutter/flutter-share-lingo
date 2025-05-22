@@ -15,8 +15,11 @@ import 'package:share_lingo/presentation/pages/home/tabs/write/widgets/submit_bu
 import 'package:share_lingo/presentation/pages/home/tabs/write/widgets/tag_row_button.dart';
 import 'package:share_lingo/presentation/pages/home/tabs/write/yolo_detection.dart';
 
+import '../../../../user_global_view_model.dart';
+
 class PostWriteTab extends ConsumerStatefulWidget {
   const PostWriteTab({super.key, this.post});
+
   final PostEntity? post;
 
   @override
@@ -85,7 +88,7 @@ class _PostWriteTabState extends ConsumerState<PostWriteTab> {
 
       final objects = _yoloModel.runInference(image);
       final hasPerson = objects.any(
-            (e) => _yoloModel.label(e.labelIndex).toLowerCase() == 'person',
+        (e) => _yoloModel.label(e.labelIndex).toLowerCase() == 'person',
       );
 
       if (hasPerson) {
@@ -115,7 +118,7 @@ class _PostWriteTabState extends ConsumerState<PostWriteTab> {
 
     final newImageUrls = await Future.wait(
       _selectedImages.map(
-            (bytes) => ref
+        (bytes) => ref
             .read(uploadImageUseCaseProvider)
             .call(uid: uid, imageBytes: bytes),
       ),
@@ -128,11 +131,11 @@ class _PostWriteTabState extends ConsumerState<PostWriteTab> {
       await ref
           .read(postWriteViewModelProvider.notifier)
           .updatePost(
-        id: widget.post!.id,
-        content: content,
-        imageUrls: combinedImageUrls,
-        tags: _selectedTags,
-      );
+            id: widget.post!.id,
+            content: content,
+            imageUrls: combinedImageUrls,
+            tags: _selectedTags,
+          );
       if (!mounted) return;
       SnackbarUtil.showSnackBar(context, '수정되었습니다');
       Navigator.of(context).pop(true);
@@ -150,7 +153,14 @@ class _PostWriteTabState extends ConsumerState<PostWriteTab> {
     );
 
     if (!mounted) return;
-    await ref.read(feedNotifierProvider.notifier).refresh();
+    await ref.read(feedNotifierProvider(null).notifier).refresh();
+    await ref
+        .read(
+          feedNotifierProvider(
+            ref.read(userGlobalViewModelProvider)!.id,
+          ).notifier,
+        )
+        .refresh();
     if (!mounted) return;
 
     _contentController.clear();
@@ -290,16 +300,16 @@ class _PostWriteTabState extends ConsumerState<PostWriteTab> {
                               spacing: 8,
                               runSpacing: 4,
                               children:
-                              _selectedTags.map((tag) {
-                                return Chip(
-                                  label: Text(tag),
-                                  onDeleted: () {
-                                    setState(() {
-                                      _selectedTags.remove(tag);
-                                    });
-                                  },
-                                );
-                              }).toList(),
+                                  _selectedTags.map((tag) {
+                                    return Chip(
+                                      label: Text(tag),
+                                      onDeleted: () {
+                                        setState(() {
+                                          _selectedTags.remove(tag);
+                                        });
+                                      },
+                                    );
+                                  }).toList(),
                             ),
                           ),
                         const SizedBox(height: 16),
