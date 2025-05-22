@@ -31,7 +31,7 @@ void main() {
           imageUrl: [],
           tags: ['kor'],
           createdAt: DateTime(2023, 1, 1),
-          updatedAt: DateTime(2023, 1, 1),
+          // updatedAt: DateTime(2023, 1, 1),
           likeCount: 0,
           commentCount: 0,
           deleted: false,
