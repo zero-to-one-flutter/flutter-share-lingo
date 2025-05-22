@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
@@ -152,13 +151,12 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
 
     if (pickedFile != null) {
       try {
-        // ViewModel을 통해 이미지 업로드 처리
         await ref
             .read(editProfileViewModelProvider(widget.user).notifier)
             .updateProfileImage(pickedFile);
-
         // SnackbarUtil.showSnackBar(context, '이미지가 성공적으로 업로드되었습니다.');
       } catch (e) {
+        if (!mounted) return;
         SnackbarUtil.showSnackBar(
           context,
           '이미지 업로드 중 오류가 발생했습니다: ${e.toString()}',
@@ -246,7 +244,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                   ),
                   InkWell(
                     onTap: !state.isUploadingImage ? _pickImage : null,
-                    child: const SizedBox(height: 60, width: 100),
+                    child: const SizedBox(height: 60, width: double.infinity),
                   ),
 
                   _buildLabeledField(

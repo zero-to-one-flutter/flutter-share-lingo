@@ -1,9 +1,9 @@
 import 'dart:io';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:share_lingo/domain/usecase/save_user_to_database_usecase.dart';
+import 'package:share_lingo/domain/usecase/upload_image_use_case.dart';
 import '../../../core/ui_validators/user_validator.dart';
 import '../../../core/utils/geolocator_util.dart';
 import '../../../domain/entity/app_user.dart';
@@ -94,14 +94,11 @@ class EditProfileViewModel
         district = await ref
             .read(getDistrictByLocationUseCaseProvider)
             .execute(
-          locationResult.geoPoint!.latitude,
-          locationResult.geoPoint!.longitude,
-        );
+              locationResult.geoPoint!.latitude,
+              locationResult.geoPoint!.longitude,
+            );
       } catch (e) {
-        state = state.copyWith(
-          location: locationResult.geoPoint,
-          district: ''
-        );
+        state = state.copyWith(location: locationResult.geoPoint, district: '');
         return;
       }
 
@@ -119,18 +116,13 @@ class EditProfileViewModel
     try {
       state = state.copyWith(isUploadingImage: true);
 
-      final storage = FirebaseStorage.instance;
-      final storageRef = storage.ref();
-      final imageRef = storageRef.child(
-        'profile_images/${DateTime.now().millisecondsSinceEpoch}_${imageFile.name}',
-      );
-
-      await imageRef.putFile(File(imageFile.path));
-      final imageUrl = await imageRef.getDownloadURL();
+      final imageUrl = await ref
+          .read(uploadImageFileUseCaseProvider)
+          .execute(File(imageFile.path), arg.id, 'profile_images');
 
       state = state.copyWith(
-        profileImageUrl: imageUrl,
         isUploadingImage: false,
+        profileImageUrl: imageUrl,
       );
     } catch (e) {
       state = state.copyWith(isUploadingImage: false);

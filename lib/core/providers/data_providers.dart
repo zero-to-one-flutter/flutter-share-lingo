@@ -13,11 +13,14 @@ import 'package:share_lingo/domain/usecase/upload_image_usecase.dart';
 import '../../app/constants/app_constants.dart';
 import '../../data/data_source/firebase_auth_data_source.dart';
 import '../../data/data_source/google_sign_in_data_source.dart';
+import '../../data/data_source/image_storage_data_source.dart';
 import '../../data/data_source/location_data_source.dart';
 import '../../data/data_source/user_data_source.dart';
 import '../../data/repository/auth_repository_impl.dart';
+import '../../data/repository/image_repository_impl.dart';
 import '../../data/repository/location_repository_impl.dart';
 import '../../domain/repository/auth_repository.dart';
+import '../../domain/repository/image_repository.dart';
 import '../../domain/repository/location_repository.dart';
 import '../../domain/repository/user_repository.dart';
 import '../../data/repository/user_repository_impl.dart';
@@ -114,4 +117,13 @@ final locationDataSourceProvider = Provider<LocationDataSource>(
 
 final locationRepositoryProvider = Provider<LocationRepository>(
       (ref) => LocationRepositoryImpl(ref.read(locationDataSourceProvider)),
+);
+
+// Image
+final imageStorageDataSourceProvider = Provider<ImageStorageDataSource>(
+      (ref) => FirebaseImageStorageDataSource(FirebaseStorage.instance),
+);
+
+final imageRepositoryProvider = Provider<ImageRepository>(
+      (ref) => ImageRepositoryImpl(ref.read(imageStorageDataSourceProvider)),
 );
