@@ -303,12 +303,12 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                     minLines: 5,
                     maxLines: 7,
                     maxLength: 300,
-                    validator: (value) {
-                      final vm = ref.read(
-                        editProfileViewModelProvider(widget.user).notifier,
-                      );
-                      return vm.validateLanguageLearningGoal(value);
-                    },
+                    // validator: (value) {
+                    //   final vm = ref.read(
+                    //     editProfileViewModelProvider(widget.user).notifier,
+                    //   );
+                    //   return vm.validateLanguageLearningGoal(value);
+                    // },
                   ),
 
                   _buildLabeledField(
