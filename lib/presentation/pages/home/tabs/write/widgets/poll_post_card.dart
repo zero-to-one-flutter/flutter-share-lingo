@@ -42,8 +42,7 @@ class _PollPostCardState extends ConsumerState<PollPostCard> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const SizedBox(height: 12),
-          _topBar(),
-          const SizedBox(height: 10),
+
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -100,84 +99,6 @@ class _PollPostCardState extends ConsumerState<PollPostCard> {
     );
   }
 
-  Widget _topBar() {
-    final post = widget.post;
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        ClipOval(
-          child: AppCachedImage(
-            imageUrl: post.userProfileImage,
-            width: 50,
-            height: 50,
-            fit: BoxFit.cover,
-          ),
-        ),
-        const SizedBox(width: 10),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Text(
-                  post.userName,
-                  style: const TextStyle(
-                    fontSize: 17,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  FormatTimeAgo.formatTimeAgo(
-                    now: widget.now,
-                    createdAt: post.createdAt,
-                  ),
-                  style: const TextStyle(
-                    fontSize: 15,
-                    color: Colors.black54,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ],
-            ),
-            Row(
-              children: [
-                Text(
-                  GeneralUtils.getLanguageCodeByName(
-                    post.userNativeLanguage,
-                  )!.toUpperCase(),
-                  style: const TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black54,
-                  ),
-                ),
-                const SizedBox(
-                  width: 30,
-                  child: Icon(
-                    Icons.sync_alt_outlined,
-                    size: 16,
-                    color: Colors.black26,
-                  ),
-                ),
-                Text(
-                  GeneralUtils.getLanguageCodeByName(
-                    post.userTargetLanguage,
-                  )!.toUpperCase(),
-                  style: const TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black54,
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-
   Widget _buildOption(
     int index,
     String label,
@@ -186,9 +107,10 @@ class _PollPostCardState extends ConsumerState<PollPostCard> {
     int? selectedIndex,
   ) {
     final alreadyVoted = selectedIndex != null;
+    final isSelected = selectedIndex == index;
     final percent = total == 0 ? 0 : ((count / total) * 100).round();
 
-    return InkWell(
+    return GestureDetector(
       onTap:
           alreadyVoted
               ? null
@@ -228,27 +150,43 @@ class _PollPostCardState extends ConsumerState<PollPostCard> {
                   }
                 }
               },
-      child: Container(
-        margin: const EdgeInsets.only(bottom: 8),
-        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 300),
+        margin: const EdgeInsets.only(bottom: 10),
+        padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
         decoration: BoxDecoration(
-          color: alreadyVoted ? Colors.grey.shade200 : Colors.blue.shade50,
-          borderRadius: BorderRadius.circular(8),
+          color: isSelected ? Colors.blueAccent : Colors.grey.shade50,
+          borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: selectedIndex == index ? Colors.blue : Colors.grey.shade300,
-            width: 1,
+            color: isSelected ? Colors.blueAccent : Colors.grey.shade300,
+            width: 1.2,
           ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.shade200,
+              blurRadius: 6,
+              offset: const Offset(0, 2),
+            ),
+          ],
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(label, style: const TextStyle(fontSize: 15)),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 15,
+                fontWeight: FontWeight.w500,
+                color: isSelected ? Colors.white : Colors.black87,
+              ),
+            ),
             if (alreadyVoted)
               Text(
                 '$percent%',
-                style: const TextStyle(
+                style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 14,
+                  color: isSelected ? Colors.white : Colors.black54,
                 ),
               ),
           ],
