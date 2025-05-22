@@ -12,10 +12,18 @@ class PostDetailPage extends ConsumerStatefulWidget {
   const PostDetailPage({super.key, required this.post});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    currentPostId = post.id;
+  ConsumerState<PostDetailPage> createState() => _PostDetailPageState();
+}
+
+class _PostDetailPageState extends ConsumerState<PostDetailPage> {
+  @override
+  Widget build(BuildContext context) {
+    final post = widget.post;
+    final ref = this.ref;
+    PostDetailPage.currentPostId = post.id;
+
     return GestureDetector(
-      onTap: FocusScope.of(context).unfocus,
+      onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
         appBar: AppBar(title: const Text('Post'), elevation: 0),
         body: SingleChildScrollView(
