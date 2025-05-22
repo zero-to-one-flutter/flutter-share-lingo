@@ -30,69 +30,41 @@ class PostItem extends StatefulWidget {
 }
 
 class _PostItemState extends State<PostItem> {
-  // void _showPostOptions(BuildContext context, PostEntity post) {
-  //   final user = ref.read(userGlobalViewModelProvider);
-  //   if (user == null) return;
-  //
-  //   final isOwner = user.id == post.uid;
-  //
-  //   showModalBottomSheet(
-  //     context: context,
-  //     builder:
-  //         (context) => Padding(
-  //       padding: const EdgeInsets.only(bottom: 16),
-  //       child: Column(
-  //         mainAxisSize: MainAxisSize.min,
-  //         children: [
-  //           if (isOwner) ...[
-  //             ListTile(
-  //               leading: const Icon(Icons.edit),
-  //               title: const Text('수정'),
-  //               onTap: () {
-  //                 Navigator.pop(context);
-  //                 Navigator.push(
-  //                   context,
-  //                   MaterialPageRoute(
-  //                     builder: (context) => PostWriteTab(post: post),
-  //                   ),
-  //                 );
-  //               },
-  //             ),
-  //             ListTile(
-  //               leading: const Icon(Icons.delete, color: Colors.red),
-  //               title: const Text(
-  //                 '삭제',
-  //                 style: TextStyle(color: Colors.red),
-  //               ),
-  //               onTap: () {
-  //                 Navigator.pop(context);
-  //                 _showDeleteConfirmation(context, post);
-  //               },
-  //             ),
-  //           ] else ...[
-  //             ListTile(
-  //               leading: const Icon(Icons.flag),
-  //               title: const Text('신고'),
-  //               onTap: () {
-  //                 Navigator.pop(context);
-  //                 Navigator.push(
-  //                   context,
-  //                   MaterialPageRoute(
-  //                     builder:
-  //                         (context) => ReportPage(
-  //                       postId: post.id,
-  //                       postContent: post.content,
-  //                     ),
-  //                   ),
-  //                 );
-  //               },
-  //             ),
-  //           ],
-  //         ],
-  //       ),
-  //     ),
-  //   );
-  // }
+  Future<AppUser?> _fetchUserData(String userId) async {
+    try {
+      final userDoc =
+          await FirebaseFirestore.instance
+              .collection('users')
+              .doc(userId)
+              .get();
+
+      if (userDoc.exists) {
+        final userData = userDoc.data()!;
+        return AppUser(
+          id: userDoc.id,
+          name: userData['name'] ?? '',
+          createdAt: (userData['createdAt'] as Timestamp).toDate(),
+          email: userData['email'] ?? '',
+          profileImage: userData['profileImage'] ?? '',
+          nativeLanguage: userData['nativeLanguage'] ?? '',
+          targetLanguage: userData['targetLanguage'] ?? '',
+          bio: userData['bio'] ?? '',
+          birthdate:
+              userData['birthdate'] != null
+                  ? (userData['birthdate'] as Timestamp).toDate()
+                  : null,
+          hobbies: userData['hobbies'] ?? '',
+          languageLearningGoal: userData['languageLearningGoal'] ?? '',
+          district: userData['district'],
+          location: userData['location'] as GeoPoint?,
+        );
+      }
+      return null;
+    } catch (e) {
+      print('Error fetching user data: $e');
+      return null;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -162,31 +134,15 @@ class _PostItemState extends State<PostItem> {
 
   Widget _topBar() {
     return InkWell(
-      onTap: () {
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (context) {
-              return ProfilePage(
-                user: AppUser(
-                  id: 'u92837465',
-                  name: '박민수',
-                  createdAt: DateTime(2023, 8, 15),
-                  email: 'minsoo.park91@example.com',
-                  profileImage: 'https://picsum.photos/200/200?random=1',
-                  nativeLanguage: '한국어',
-                  targetLanguage: '스페인어',
-                  bio:
-                      '스페인어를 배우고 있는 직장인입니다. 언어뿐만 아니라 라틴 문화에도 관심이 많아요. 편하게 언어 교환하실 분 환영합니다!',
-                  birthdate: DateTime(1991, 11, 8),
-                  hobbies: '언어 교환에 진지한 분',
-                  languageLearningGoal: '남미 여행을 위해 자연스러운 스페인어 회화를 배우고 싶어요.',
-                  district: null,
-                  location: GeoPoint(37.4979, 127.0276),
-                ),
-              );
-            },
-          ),
-        );
+      onTap: () async {
+        final userData = await _fetchUserData(widget.post.uid);
+        if (userData != null && mounted) {
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => ProfilePage(user: userData),
+            ),
+          );
+        }
       },
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -226,7 +182,6 @@ class _PostItemState extends State<PostItem> {
               Row(
                 children: [
                   Text(
-                    // 'KR',
                     GeneralUtils.getLanguageCodeByName(
                       widget.post.userNativeLanguage,
                     )!.toUpperCase(),
@@ -245,7 +200,6 @@ class _PostItemState extends State<PostItem> {
                     ),
                   ),
                   Text(
-                    // 'EN',
                     GeneralUtils.getLanguageCodeByName(
                       widget.post.userTargetLanguage,
                     )!.toUpperCase(),

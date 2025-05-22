@@ -1,11 +1,11 @@
 flutter_native_splash:
-  color: "#F5F5F5"  # Light gray background
-  image: assets/icons/app_logo_rounded.png
+  color: "#99D9EA"  # New background color
+  image: assets/icons/app_icon_rounded.png
   android_12:
-    image: assets/icons/app_logo_rounded.png
-    icon_background_color: "#F5F5F5"
-    image_dark: assets/icons/app_logo_rounded.png
-    icon_background_color_dark: "#F5F5F5"
+    image: assets/icons/app_icon_rounded.png
+    icon_background_color: "#99D9EA"
+    image_dark: assets/icons/app_icon_rounded.png
+    icon_background_color_dark: "#99D9EA"
   web: false
   android: true
   ios: true
