@@ -47,10 +47,14 @@ class _PostWriteTabState extends ConsumerState<PostWriteTab> {
       text: widget.post?.content ?? '',
     );
     _existingImageUrls = List.from(widget.post?.imageUrl ?? []);
-
+    //투표 미리보기용 상태 초기화
+    if (widget.post?.isPoll == true) {
+      uiPollQuestion = widget.post?.pollQuestion;
+      uiPollOptions = widget.post?.pollOptions;
+    }
     //수정모드일 경우 기존 태그 불러오기
     if (widget.post?.tags != null && widget.post!.tags.isNotEmpty) {
-      _selectedTags.addAll(widget.post!.tags.map((e) => '#$e'));
+      _selectedTags.addAll(widget.post!.tags);
     }
     Future.microtask(() async {
       try {
@@ -129,7 +133,11 @@ class _PostWriteTabState extends ConsumerState<PostWriteTab> {
     );
 
     final combinedImageUrls = [..._existingImageUrls, ...newImageUrls];
-
+    if (uiPollQuestion != null && uiPollOptions != null) {
+      ref
+          .read(postWriteViewModelProvider.notifier)
+          .setPollData(question: uiPollQuestion!, options: uiPollOptions!);
+    }
     if (widget.post != null) {
       // 수정 모드
       await ref
@@ -140,15 +148,13 @@ class _PostWriteTabState extends ConsumerState<PostWriteTab> {
             imageUrls: combinedImageUrls,
             tags: _selectedTags,
           );
+      // 피드 데이터 무효화해서 새로 불러오게 함
+      ref.invalidate(feedNotifierProvider);
       if (!mounted) return;
-      Navigator.of(context).pop(true);
+      Navigator.of(context).popUntil((route) => route.isFirst);
       return;
     }
-    if (uiPollQuestion != null && uiPollOptions != null) {
-      ref
-          .read(postWriteViewModelProvider.notifier)
-          .setPollData(question: uiPollQuestion!, options: uiPollOptions!);
-    }
+
     // 새 글 작성
     final postNotifier = ref.read(postWriteViewModelProvider.notifier);
     await postNotifier.submitPost(
@@ -225,6 +231,16 @@ class _PostWriteTabState extends ConsumerState<PostWriteTab> {
                           PollPreviewCard(
                             question: uiPollQuestion!,
                             options: uiPollOptions!,
+                            onDelete: () {
+                              setState(() {
+                                uiPollQuestion = null;
+                                uiPollOptions = null;
+                              });
+
+                              ref
+                                  .read(postWriteViewModelProvider.notifier)
+                                  .setPollData(question: '', options: []);
+                            },
                           ),
                         if (_existingImageUrls.isNotEmpty)
                           SizedBox(
