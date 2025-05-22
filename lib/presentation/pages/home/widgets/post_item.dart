@@ -1,10 +1,11 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_image_viewer/easy_image_viewer.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:share_lingo/app/constants/app_colors.dart';
 import 'package:share_lingo/core/utils/format_time_ago.dart';
 import 'package:share_lingo/core/utils/general_utils.dart';
 import 'package:share_lingo/domain/entity/post_entity.dart';
+import 'package:share_lingo/presentation/pages/home/tabs/feed/feed_view_model.dart';
 import 'package:share_lingo/presentation/pages/home/widgets/expandable_text.dart';
 import 'package:share_lingo/presentation/pages/home/widgets/post_menu_button.dart';
 import 'package:share_lingo/presentation/widgets/app_cached_image.dart';
@@ -13,67 +14,99 @@ import '../../../../domain/entity/app_user.dart';
 import '../../post/post_detail_page.dart';
 import '../../profile/profile_page.dart';
 
-class PostItem extends StatefulWidget {
+class PostItem extends ConsumerStatefulWidget {
   final PostEntity post;
-  final DateTime now;
+  // final DateTime now;
   final bool displayComments;
+  // final List<ImageProvider> cachedImages;
 
   const PostItem({
     super.key,
     required this.post,
-    required this.now,
+    // required this.now,
     required this.displayComments,
+    // required this.cachedImages,
   });
 
   @override
-  State<PostItem> createState() => _PostItemState();
+  ConsumerState<PostItem> createState() => _PostItemState();
+
+  // @override
+  // State<PostItem> createState() => _PostItemState();
 }
 
-class _PostItemState extends State<PostItem> {
-  Future<AppUser?> _fetchUserData(String userId) async {
-    try {
-      final userDoc =
-          await FirebaseFirestore.instance
-              .collection('users')
-              .doc(userId)
-              .get();
-
-      if (userDoc.exists) {
-        final userData = userDoc.data()!;
-        return AppUser(
-          id: userDoc.id,
-          name: userData['name'] ?? '',
-          createdAt: (userData['createdAt'] as Timestamp).toDate(),
-          email: userData['email'] ?? '',
-          profileImage: userData['profileImage'] ?? '',
-          nativeLanguage: userData['nativeLanguage'] ?? '',
-          targetLanguage: userData['targetLanguage'] ?? '',
-          bio: userData['bio'] ?? '',
-          birthdate:
-              userData['birthdate'] != null
-                  ? (userData['birthdate'] as Timestamp).toDate()
-                  : null,
-          hobbies: userData['hobbies'] ?? '',
-          languageLearningGoal: userData['languageLearningGoal'] ?? '',
-          district: userData['district'],
-          location: userData['location'] as GeoPoint?,
-        );
-      }
-      return null;
-    } catch (e) {
-      print('Error fetching user data: $e');
-      return null;
-    }
-  }
+class _PostItemState extends ConsumerState<PostItem> {
+  // void _showPostOptions(BuildContext context, PostEntity post) {
+  //   final user = ref.read(userGlobalViewModelProvider);
+  //   if (user == null) return;
+  //
+  //   final isOwner = user.id == post.uid;
+  //
+  //   showModalBottomSheet(
+  //     context: context,
+  //     builder:
+  //         (context) => Padding(
+  //       padding: const EdgeInsets.only(bottom: 16),
+  //       child: Column(
+  //         mainAxisSize: MainAxisSize.min,
+  //         children: [
+  //           if (isOwner) ...[
+  //             ListTile(
+  //               leading: const Icon(Icons.edit),
+  //               title: const Text('수정'),
+  //               onTap: () {
+  //                 Navigator.pop(context);
+  //                 Navigator.push(
+  //                   context,
+  //                   MaterialPageRoute(
+  //                     builder: (context) => PostWriteTab(post: post),
+  //                   ),
+  //                 );
+  //               },
+  //             ),
+  //             ListTile(
+  //               leading: const Icon(Icons.delete, color: Colors.red),
+  //               title: const Text(
+  //                 '삭제',
+  //                 style: TextStyle(color: Colors.red),
+  //               ),
+  //               onTap: () {
+  //                 Navigator.pop(context);
+  //                 _showDeleteConfirmation(context, post);
+  //               },
+  //             ),
+  //           ] else ...[
+  //             ListTile(
+  //               leading: const Icon(Icons.flag),
+  //               title: const Text('신고'),
+  //               onTap: () {
+  //                 Navigator.pop(context);
+  //                 Navigator.push(
+  //                   context,
+  //                   MaterialPageRoute(
+  //                     builder:
+  //                         (context) => ReportPage(
+  //                       postId: post.id,
+  //                       postContent: post.content,
+  //                     ),
+  //                   ),
+  //                 );
+  //               },
+  //             ),
+  //           ],
+  //         ],
+  //       ),
+  //     ),
+  //   );
+  // }
 
   @override
   Widget build(BuildContext context) {
-    final List<String> images =
-        widget.post.imageUrl
-            .where((url) => url.trim().isNotEmpty)
-            .take(3)
-            .toList();
+    final List<ImageProvider> cachedImages = ref
+        .read(feedNotifierProvider.notifier)
+        .getCachedImageProviders(widget.post);
 
+    final DateTime now = ref.watch(timeAgoNotifierProvider);
     return InkWell(
       highlightColor: AppColors.lightGrey,
       onTap: () {
@@ -94,11 +127,11 @@ class _PostItemState extends State<PostItem> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SizedBox(height: 12),
-            _topBar(),
+            _topBar(now),
             SizedBox(height: 10),
             ExpandableText(widget.post.content, trimLines: 4),
-            if (images.isNotEmpty) SizedBox(height: 10),
-            _imageBox(images),
+            if (cachedImages.isNotEmpty) SizedBox(height: 10),
+            _imageBox(cachedImages),
             _tagBar(),
             // comment 개수 표시
             // detail 페이지에서는 표시 X
@@ -132,17 +165,30 @@ class _PostItemState extends State<PostItem> {
     );
   }
 
-  Widget _topBar() {
+  Widget _topBar(DateTime now) {
     return InkWell(
-      onTap: () async {
-        final userData = await _fetchUserData(widget.post.uid);
-        if (userData != null && mounted) {
-          Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (context) => ProfilePage(user: userData),
-            ),
-          );
-        }
+      onTap: () {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) {
+              return ProfilePage(
+                user: AppUser(
+                  id: widget.post.uid,
+                  name: widget.post.userName,
+                  profileImage: widget.post.userProfileImage,
+                  nativeLanguage: widget.post.userNativeLanguage,
+                  targetLanguage: widget.post.userTargetLanguage,
+                  bio: widget.post.userBio,
+                  birthdate: widget.post.userBirthdate,
+                  hobbies: widget.post.userHobbies,
+                  languageLearningGoal: widget.post.userLanguageLearningGoal,
+                  district: widget.post.userDistrict,
+                  location: widget.post.userLocation,
+                ),
+              );
+            },
+          ),
+        );
       },
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -168,7 +214,7 @@ class _PostItemState extends State<PostItem> {
                   SizedBox(width: 8),
                   Text(
                     FormatTimeAgo.formatTimeAgo(
-                      now: widget.now,
+                      now: now,
                       createdAt: widget.post.createdAt,
                     ),
                     style: TextStyle(
@@ -182,6 +228,7 @@ class _PostItemState extends State<PostItem> {
               Row(
                 children: [
                   Text(
+                    // 'KR',
                     GeneralUtils.getLanguageCodeByName(
                       widget.post.userNativeLanguage,
                     )!.toUpperCase(),
@@ -200,6 +247,7 @@ class _PostItemState extends State<PostItem> {
                     ),
                   ),
                   Text(
+                    // 'EN',
                     GeneralUtils.getLanguageCodeByName(
                       widget.post.userTargetLanguage,
                     )!.toUpperCase(),
@@ -220,8 +268,8 @@ class _PostItemState extends State<PostItem> {
     );
   }
 
-  Widget _imageBox(List<String> images) {
-    if (images.isEmpty) {
+  Widget _imageBox(List<ImageProvider> cachedImages) {
+    if (cachedImages.isEmpty) {
       return const SizedBox.shrink();
     }
 
@@ -232,13 +280,13 @@ class _PostItemState extends State<PostItem> {
       builder: (context, constraints) {
         Widget content;
 
-        switch (images.length) {
+        switch (cachedImages.length) {
           case 1:
             content = GestureDetector(
               onTap:
                   () => showImageViewer(
                     context,
-                    NetworkImage(images[0]),
+                    cachedImages[0],
                     swipeDismissible: true,
                     doubleTapZoomable: true,
                   ),
@@ -246,7 +294,7 @@ class _PostItemState extends State<PostItem> {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(10),
                   image: DecorationImage(
-                    image: NetworkImage(images[0]),
+                    image: cachedImages[0],
                     fit: BoxFit.cover,
                   ),
                 ),
@@ -255,9 +303,9 @@ class _PostItemState extends State<PostItem> {
             break;
 
           case 2:
-            List<NetworkImage> case2Images = [
-              NetworkImage(images[0]),
-              NetworkImage(images[1]),
+            List<ImageProvider> case2Images = [
+              cachedImages[0],
+              cachedImages[1],
             ];
             content = Row(
               children: [
@@ -280,7 +328,7 @@ class _PostItemState extends State<PostItem> {
                           bottomLeft: Radius.circular(10),
                         ),
                         image: DecorationImage(
-                          image: NetworkImage(images[0]),
+                          image: cachedImages[0],
                           fit: BoxFit.cover,
                         ),
                       ),
@@ -307,7 +355,7 @@ class _PostItemState extends State<PostItem> {
                           bottomRight: Radius.circular(10),
                         ),
                         image: DecorationImage(
-                          image: NetworkImage(images[1]),
+                          image: cachedImages[1],
                           fit: BoxFit.cover,
                         ),
                       ),
@@ -319,10 +367,10 @@ class _PostItemState extends State<PostItem> {
             break;
 
           case 3:
-            List<NetworkImage> case3Images = [
-              NetworkImage(images[0]),
-              NetworkImage(images[1]),
-              NetworkImage(images[2]),
+            List<ImageProvider> case3Images = [
+              cachedImages[0],
+              cachedImages[1],
+              cachedImages[2],
             ];
             content = Row(
               children: [
@@ -346,7 +394,7 @@ class _PostItemState extends State<PostItem> {
                           bottomLeft: Radius.circular(10),
                         ),
                         image: DecorationImage(
-                          image: NetworkImage(images[0]),
+                          image: cachedImages[0],
                           fit: BoxFit.cover,
                         ),
                       ),
@@ -379,7 +427,7 @@ class _PostItemState extends State<PostItem> {
                                 topRight: Radius.circular(10),
                               ),
                               image: DecorationImage(
-                                image: NetworkImage(images[1]),
+                                image: cachedImages[1],
                                 fit: BoxFit.cover,
                               ),
                             ),
@@ -408,7 +456,7 @@ class _PostItemState extends State<PostItem> {
                                 bottomRight: Radius.circular(10),
                               ),
                               image: DecorationImage(
-                                image: NetworkImage(images[2]),
+                                image: cachedImages[2],
                                 fit: BoxFit.cover,
                               ),
                             ),

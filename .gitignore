@@ -107,6 +107,7 @@ com_crashlytics_export_strings.xml
 lib/firebase_options.dart
 android/app/google-services.json
 ios/Runner/GoogleService-Info.plist
+functions/node_modules/
 
 
 # VSCode launch configs (optional to ignore)

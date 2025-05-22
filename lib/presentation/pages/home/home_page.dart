@@ -28,6 +28,10 @@ class HomePage extends ConsumerWidget {
                 backgroundColor: Colors.black,
                 foregroundColor: Colors.white,
                 onPressed: () {
+                  // removeDebugUsers(context);
+                  // addDebugUsersFromJson(context);
+                  // addDebugPostsFromJson(context);
+                  // removeDebugPosts(context);
                   Navigator.of(context).push(
                     MaterialPageRoute(
                       builder:

@@ -1,1 +1,43 @@
-{"flutter":{"platforms":{"android":{"default":{"projectId":"share-lingo-app","appId":"1:497492641943:android:b17b9472b94391764e81d2","fileOutput":"android/app/google-services.json"}},"ios":{"default":{"projectId":"share-lingo-app","appId":"1:497492641943:ios:5341848e8d7fb5c74e81d2","uploadDebugSymbols":true,"fileOutput":"ios/Runner/GoogleService-Info.plist"}},"dart":{"lib/firebase_options.dart":{"projectId":"share-lingo-app","configurations":{"android":"1:497492641943:android:b17b9472b94391764e81d2","ios":"1:497492641943:ios:5341848e8d7fb5c74e81d2"}}}}}}
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "share-lingo-app",
+          "appId": "1:497492641943:android:b17b9472b94391764e81d2",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "ios": {
+        "default": {
+          "projectId": "share-lingo-app",
+          "appId": "1:497492641943:ios:5341848e8d7fb5c74e81d2",
+          "uploadDebugSymbols": true,
+          "fileOutput": "ios/Runner/GoogleService-Info.plist"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "share-lingo-app",
+          "configurations": {
+            "android": "1:497492641943:android:b17b9472b94391764e81d2",
+            "ios": "1:497492641943:ios:5341848e8d7fb5c74e81d2"
+          }
+        }
+      }
+    }
+  },
+  "functions": [
+    {
+      "source": "functions",
+      "codebase": "default",
+      "ignore": [
+        "node_modules",
+        ".git",
+        "firebase-debug.log",
+        "firebase-debug.*.log",
+        "*.local"
+      ]
+    }
+  ]
+}

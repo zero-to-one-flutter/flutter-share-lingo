@@ -10,6 +10,10 @@ class PostDto {
   final String userTargetLanguage;
   final String? userDistrict;
   final GeoPoint? userLocation;
+  final String? userBio;
+  final Timestamp? userBirthdate;
+  final String? userHobbies;
+  final String? userLanguageLearningGoal;
   final String content;
   final List<String> imageUrl;
   final List<String> tags;
@@ -28,6 +32,10 @@ class PostDto {
     required this.userTargetLanguage,
     this.userDistrict,
     this.userLocation,
+    this.userBio,
+    this.userBirthdate,
+    this.userHobbies,
+    this.userLanguageLearningGoal,
     required this.content,
     required this.imageUrl,
     required this.tags,
@@ -48,6 +56,10 @@ class PostDto {
       userTargetLanguage: map['userTargetLanguage'] ?? '',
       userDistrict: map['userDistrict'],
       userLocation: map['userLocation'] as GeoPoint?,
+      userBio: map['userBio'],
+      userBirthdate: map['userBirthdate'],
+      userHobbies: map['userHobbies'],
+      userLanguageLearningGoal: map['userLanguageLearningGoal'],
       content: map['content'] ?? '',
       imageUrl: List<String>.from(map['imageUrl'] ?? []),
       tags: List<String>.from(map['tags'] ?? []),
@@ -68,6 +80,10 @@ class PostDto {
       'userTargetLanguage': userTargetLanguage,
       'userDistrict': userDistrict,
       'userLocation': userLocation,
+      'userBio': userBio,
+      'userBirthdate': userBirthdate,
+      'userHobbies': userHobbies,
+      'userLanguageLearningGoal': userLanguageLearningGoal,
       'content': content,
       'imageUrl': imageUrl,
       'tags': tags,
@@ -89,6 +105,10 @@ class PostDto {
       userTargetLanguage: userTargetLanguage,
       userDistrict: userDistrict,
       userLocation: userLocation,
+      userBio: userBio,
+      userBirthdate: userBirthdate?.toDate(),
+      userHobbies: userHobbies,
+      userLanguageLearningGoal: userLanguageLearningGoal,
       content: content,
       imageUrl: imageUrl,
       tags: tags,
@@ -110,6 +130,12 @@ class PostDto {
       userTargetLanguage: entity.userTargetLanguage,
       userDistrict: entity.userDistrict,
       userLocation: entity.userLocation,
+      userBio: entity.userBio,
+      userBirthdate: entity.userBirthdate != null
+          ? Timestamp.fromDate(entity.userBirthdate!)
+          : null,
+      userHobbies: entity.userHobbies,
+      userLanguageLearningGoal: entity.userLanguageLearningGoal,
       content: entity.content,
       imageUrl: entity.imageUrl,
       tags: entity.tags,
