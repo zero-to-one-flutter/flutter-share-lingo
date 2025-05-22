@@ -6,11 +6,15 @@ import '../../../../../../app/constants/app_colors.dart';
 class TagRowButton extends StatelessWidget {
   final void Function(String tag) onTagSelected;
   final VoidCallback onPickImage;
+  final VoidCallback onAddPoll;
+
+  ///투표 버튼 콜백
 
   const TagRowButton({
     super.key,
     required this.onTagSelected,
     required this.onPickImage,
+    required this.onAddPoll,
   });
 
   @override
@@ -52,7 +56,19 @@ class TagRowButton extends StatelessWidget {
               materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
             ),
           ),
-
+          GestureDetector(
+            onTap: onAddPoll,
+            child: Container(
+              width: 48,
+              height: 48,
+              decoration: const BoxDecoration(
+                color: Colors.deepPurple,
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(Icons.poll, color: Colors.white),
+            ),
+          ),
+          const SizedBox(width: 8), // 왼쪽 여백
           // 오른쪽: 카메라 버튼
           GestureDetector(
             onTap: () {
