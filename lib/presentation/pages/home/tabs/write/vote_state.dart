@@ -22,6 +22,9 @@ class VoteStateNotifier extends StateNotifier<Map<String, VoteState>> {
   }
 
   VoteState? get(String postId) => state[postId];
+  void reset(String postId) {
+    state = {...state, postId: VoteState(pollVotes: {}, selectedIndex: null)};
+  }
 }
 
 final voteStateProvider =
