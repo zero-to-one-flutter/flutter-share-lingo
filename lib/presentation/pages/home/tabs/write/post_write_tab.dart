@@ -11,6 +11,7 @@ import 'package:share_lingo/presentation/pages/home/tabs/feed/feed_view_model.da
 import 'package:share_lingo/presentation/pages/home/tabs/write/post_write_view_model.dart';
 import 'package:share_lingo/presentation/pages/home/tabs/write/widgets/cancel_button.dart';
 import 'package:share_lingo/presentation/pages/home/tabs/write/widgets/poll_input_dialog.dart';
+import 'package:share_lingo/presentation/pages/home/tabs/write/widgets/poll_preview_card.dart';
 import 'package:share_lingo/presentation/pages/home/tabs/write/widgets/post_input_field.dart';
 import 'package:share_lingo/presentation/pages/home/tabs/write/widgets/submit_button.dart';
 import 'package:share_lingo/presentation/pages/home/tabs/write/widgets/tag_row_button.dart';
@@ -110,6 +111,8 @@ class _PostWriteTabState extends ConsumerState<PostWriteTab> {
   }
 
   Future<void> _submit() async {
+    final postNotifier = ref.read(postWriteViewModelProvider.notifier);
+
     if (_formKey.currentState?.validate() != true) return;
 
     final content = _contentController.text.trim();
@@ -138,13 +141,11 @@ class _PostWriteTabState extends ConsumerState<PostWriteTab> {
             tags: _selectedTags,
           );
       if (!mounted) return;
-      SnackbarUtil.showSnackBar(context, '수정되었습니다');
       Navigator.of(context).pop(true);
       return;
     }
 
     // 새 글 작성
-    final postNotifier = ref.read(postWriteViewModelProvider.notifier);
     await postNotifier.submitPost(
       ref: ref,
       uid: uid,
@@ -215,6 +216,10 @@ class _PostWriteTabState extends ConsumerState<PostWriteTab> {
                         PostInputField(controller: _contentController),
                         const SizedBox(height: 16),
 
+                        PollPreviewCard(
+                          question: widget.post?.pollQuestion ?? '',
+                          options: widget.post?.pollOptions ?? [],
+                        ),
                         if (_existingImageUrls.isNotEmpty)
                           SizedBox(
                             height: 100,
