@@ -5,6 +5,8 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:share_lingo/data/dto/post_dto.dart';
 import 'package:share_lingo/domain/entity/post_entity.dart';
 
+import '../../domain/entity/app_user.dart';
+
 class PostRemoteDataSource {
   final FirebaseFirestore firestore;
   final FirebaseStorage storage;
@@ -24,49 +26,79 @@ class PostRemoteDataSource {
     return await uploadTask.ref.getDownloadURL();
   }
 
-  Future<List<PostDto>> fetchInitialPosts() async {
-    final snapshot =
-        await firestore
-            .collection('posts')
-            .orderBy('createdAt', descending: true)
-            .limit(20)
-            .get();
-    final posts =
-        snapshot.docs
-            .map((doc) => PostDto.fromMap(doc.id, doc.data()))
-            .toList();
+  Future<List<PostDto>> fetchInitialPosts({
+    String? filter,
+    AppUser? user,
+  }) async {
+    Query<Map<String, dynamic>> base = firestore
+        .collection('posts')
+        .orderBy('createdAt', descending: true)
+        .limit(20);
 
-    return posts;
-  }
-
-  Future<List<PostDto>> fetchOlderPosts(PostEntity lastPost) async {
-    final snapshot =
-        await firestore
-            .collection('posts')
-            .orderBy('createdAt', descending: true)
-            .startAfter([lastPost.createdAt])
-            .limit(20)
-            .get();
+    final query = _applyFilter(base, filter, user);
+    final snapshot = await query.get();
 
     return snapshot.docs
         .map((doc) => PostDto.fromMap(doc.id, doc.data()))
         .toList();
   }
 
-  Future<List<PostDto>> fetchLatestPosts(PostEntity firstPost) async {
-    final snapshot =
-        await firestore
-            .collection('posts')
-            .orderBy('createdAt', descending: false)
-            .startAfter([firstPost.createdAt])
-            .limit(20)
-            .get();
+  Future<List<PostDto>> fetchOlderPosts(
+    PostEntity lastPost, {
+    String? filter,
+    AppUser? user,
+  }) async {
+    Query<Map<String, dynamic>> base = firestore
+        .collection('posts')
+        .orderBy('createdAt', descending: true)
+        .startAfter([lastPost.createdAt])
+        .limit(20);
+
+    final query = _applyFilter(base, filter, user);
+    final snapshot = await query.get();
+
+    return snapshot.docs
+        .map((doc) => PostDto.fromMap(doc.id, doc.data()))
+        .toList();
+  }
+
+  Future<List<PostDto>> fetchLatestPosts(
+    PostEntity firstPost, {
+    String? filter,
+    AppUser? user,
+  }) async {
+    Query<Map<String, dynamic>> base = firestore
+        .collection('posts')
+        .orderBy('createdAt', descending: false)
+        .startAfter([firstPost.createdAt])
+        .limit(20);
+
+    final query = _applyFilter(base, filter, user);
+    final snapshot = await query.get();
 
     final reversedList =
         snapshot.docs
             .map((doc) => PostDto.fromMap(doc.id, doc.data()))
             .toList();
     return reversedList.reversed.toList();
+  }
+
+  Query<Map<String, dynamic>> _applyFilter(Query<Map<String, dynamic>> base, String? filter, AppUser? user) {
+    if (filter == 'recommended' && user != null) {
+      return base
+          .where('userNativeLanguage', isEqualTo: user.targetLanguage)
+          .where('userTargetLanguage', isEqualTo: user.nativeLanguage);
+    } else if (filter == 'peers' && user != null) {
+      return base
+          .where('userNativeLanguage', isEqualTo: user.nativeLanguage)
+          .where('userTargetLanguage', isEqualTo: user.targetLanguage);
+    } else if (filter == 'nearby' &&
+        user != null &&
+        user.district != null &&
+        user.district != '') {
+      return base.where('userDistrict', isEqualTo: user.district);
+    }
+    return base;
   }
 
   Future<void> updatePost({

@@ -1,13 +1,14 @@
 import 'dart:typed_data';
 
+import '../entity/app_user.dart';
 import '../entity/post_entity.dart';
 
 abstract class PostRepository {
   Future<void> createPost(PostEntity post);
   Future<String> uploadImage(String uid, Uint8List imageBytes);
-  Future<List<PostEntity>> fetchInitialPosts();
-  Future<List<PostEntity>> fetchOlderPosts(PostEntity lastPost);
-  Future<List<PostEntity>> fetchLatestPosts(PostEntity firstPost);
+  Future<List<PostEntity>> fetchInitialPosts({String? filter, AppUser? user});
+  Future<List<PostEntity>> fetchOlderPosts(PostEntity lastPost, {String? filter, AppUser? user});
+  Future<List<PostEntity>> fetchLatestPosts(PostEntity firstPost, {String? filter, AppUser? user});
   Future<void> updatePost({
     required String id,
     required String content,
