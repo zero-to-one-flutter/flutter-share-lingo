@@ -29,19 +29,14 @@ exports.syncUserUpdates = functions.firestore
     const postsSnapshot = await db.collection("posts").where("uid", "==", userId).get();
     const postUpdates = postsSnapshot.docs.map(doc => doc.ref.update(updates));
 
-    // Update comments
-    const postsWithComments = await db.collection("posts").get();
-    const commentUpdates = [];
-
-    for (const postDoc of postsWithComments.docs) {
-      const commentsSnapshot = await postDoc.ref.collection("comments").where("uid", "==", userId).get();
-      commentsSnapshot.forEach(commentDoc => {
-        commentUpdates.push(commentDoc.ref.update({
-          userName: newData.name,
-          userProfileImage: newData.profileImage
-        }));
-      });
-    }
+    //  Update comments using collectionGroup
+    const commentsSnapshot = await db.collectionGroup("comments").where("uid", "==", userId).get();
+    const commentUpdates = commentsSnapshot.docs.map(doc =>
+      doc.ref.update({
+        userName: newData.name,
+        userProfileImage: newData.profileImage,
+      })
+    );
 
     return Promise.all([...postUpdates, ...commentUpdates]);
   });
@@ -59,19 +54,12 @@ exports.cleanupUserData = functions.firestore
     const postsSnapshot = await db.collection("posts").where("uid", "==", userId).get();
     const deletePosts = postsSnapshot.docs.map(doc => doc.ref.delete());
 
-    // Delete user's comments
-    const postsWithComments = await db.collection("posts").get();
-    const deleteComments = [];
-
-    for (const postDoc of postsWithComments.docs) {
-      const commentsSnapshot = await postDoc.ref.collection("comments").where("uid", "==", userId).get();
-      commentsSnapshot.forEach(commentDoc => {
-        deleteComments.push(commentDoc.ref.delete());
-      });
-    }
+    //  Delete user's comments using collectionGroup
+    const commentsSnapshot = await db.collectionGroup("comments").where("uid", "==", userId).get();
+    const deleteComments = commentsSnapshot.docs.map(doc => doc.ref.delete());
 
     // TODO: Best practice is to anonymize comments instead of deleting
-    // TODO: Also consider deleting likes (not critical now)
+    // TODO: Should also consider deleting likes (not critical now)
 
     return Promise.all([...deletePosts, ...deleteComments]);
   });
@@ -90,50 +78,81 @@ exports.cleanupPostSubcollections = functions.firestore
     const commentsSnapshot = await postRef.collection("comments").get();
     const deleteComments = commentsSnapshot.docs.map(doc => doc.ref.delete());
 
-    // TODO: Could also delete likes if needed
+    // TODO: Could also delete likes later
 
     return Promise.all(deleteComments);
   });
 
 /////////////////////////
-// 5. Report Created Notification
+// 4. Comment Count Management
 /////////////////////////
 
-//exports.notifyAdminOnReport = functions.firestore
-//  .document("reports/{reportId}")
-//  .onCreate(async (snap, context) => {
-//    const report = snap.data();
+exports.updateCommentCount = functions.firestore
+  .document("posts/{postId}/comments/{commentId}")
+  .onWrite(async (change, context) => {
+    const postId = context.params.postId;
+    const postRef = db.collection("posts").doc(postId);
+
+    const commentsSnapshot = await postRef.collection("comments").get();
+    const commentCount = commentsSnapshot.size;
+
+    return postRef.update({ commentCount });
+  });
+
+/////////////////////////
+// 5. Like Count Management
+/////////////////////////
+
+//exports.updateLikeCount = functions.firestore
+//  .document("posts/{postId}/likes/{userId}")
+//  .onWrite(async (change, context) => {
+//    const postId = context.params.postId;
+//    const postRef = db.collection("posts").doc(postId);
 //
-//    const mailOptions = {
-//      from: `"ShareLingo Reports" <noreply@firebase.com>`,
-//      to: "penjan.eng@gmail.com",
-//      subject: `🚨 New Report Submitted`,
-//      text: `
-//        A new report was submitted:
+//    const likesSnapshot = await postRef.collection("likes").get();
+//    const likeCount = likesSnapshot.size;
 //
-//        Reporter: ${report.reporterName}
-//        Post ID: ${report.postId}
-//        Reason: ${report.reason}
-//        Description: ${report.description}
-//      `
-//    };
-//
-//    // Setup nodemailer using Gmail
-//    const nodemailer = require("nodemailer");
-//    const transporter = nodemailer.createTransport({
-//      service: "gmail",
-//      auth: {
-//        user: "penjan.eng@gmail.com",
-//        pass: ""
-//      }
-//    });
-//
-//    try {
-//      await transporter.sendMail(mailOptions);
-//      console.log("Report notification email sent.");
-//    } catch (err) {
-//      console.error("Error sending email:", err);
-//    }
-//
-//    return null;
+//    return postRef.update({ likeCount });
 //  });
+
+/////////////////////////
+// 6. Report Created Notification (commented out)
+/////////////////////////
+
+// exports.notifyAdminOnReport = functions.firestore
+//   .document("reports/{reportId}")
+//   .onCreate(async (snap, context) => {
+//     const report = snap.data();
+//
+//     const mailOptions = {
+//       from: `"ShareLingo Reports" <noreply@firebase.com>`,
+//       to: "penjan.eng@gmail.com",
+//       subject: `🚨 New Report Submitted`,
+//       text: `
+//         A new report was submitted:
+//
+//         Reporter: ${report.reporterName}
+//         Post ID: ${report.postId}
+//         Reason: ${report.reason}
+//         Description: ${report.description}
+//       `
+//     };
+//
+//     const nodemailer = require("nodemailer");
+//     const transporter = nodemailer.createTransport({
+//       service: "gmail",
+//       auth: {
+//         user: "penjan.eng@gmail.com",
+//         pass: ""
+//       }
+//     });
+//
+//     try {
+//       await transporter.sendMail(mailOptions);
+//       console.log("Report notification email sent.");
+//     } catch (err) {
+//       console.error("Error sending email:", err);
+//     }
+//
+//     return null;
+//   });
