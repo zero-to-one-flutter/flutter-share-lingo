@@ -18,7 +18,7 @@ class PostDto {
   final List<String> imageUrl;
   final List<String> tags;
   final DateTime createdAt;
-  // final DateTime updatedAt;
+  final Timestamp? updatedAt;
   final int likeCount;
   final int commentCount;
   final bool deleted;
@@ -40,7 +40,7 @@ class PostDto {
     required this.imageUrl,
     required this.tags,
     required this.createdAt,
-    // required this.updatedAt,
+    this.updatedAt,
     required this.likeCount,
     required this.commentCount,
     required this.deleted,
@@ -64,7 +64,7 @@ class PostDto {
       imageUrl: List<String>.from(map['imageUrl'] ?? []),
       tags: List<String>.from(map['tags'] ?? []),
       createdAt: (map['createdAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
-      // updatedAt: (map['updatedAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
+      updatedAt: map['updatedAt'] as Timestamp?,
       likeCount: map['likeCount'] ?? 0,
       commentCount: map['commentCount'] ?? 0,
       deleted: map['deleted'] ?? false,
@@ -88,7 +88,7 @@ class PostDto {
       'imageUrl': imageUrl,
       'tags': tags,
       'createdAt': FieldValue.serverTimestamp(),
-      // 'updatedAt': FieldValue.serverTimestamp(),
+      'updatedAt': updatedAt,
       'likeCount': likeCount,
       'commentCount': commentCount,
       'deleted': deleted,
@@ -113,7 +113,7 @@ class PostDto {
       imageUrl: imageUrl,
       tags: tags,
       createdAt: createdAt,
-      // updatedAt: updatedAt,
+      updatedAt: updatedAt?.toDate(),
       likeCount: likeCount,
       commentCount: commentCount,
       deleted: deleted,
@@ -140,7 +140,9 @@ class PostDto {
       imageUrl: entity.imageUrl,
       tags: entity.tags,
       createdAt: entity.createdAt,
-      // updatedAt: entity.updatedAt,
+      updatedAt: entity.updatedAt != null
+          ? Timestamp.fromDate(entity.updatedAt!)
+          : null,
       likeCount: entity.likeCount,
       commentCount: entity.commentCount,
       deleted: entity.deleted,
