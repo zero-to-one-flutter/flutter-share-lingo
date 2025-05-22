@@ -19,7 +19,7 @@ class PostMenuButton extends ConsumerWidget {
       icon: const Icon(Icons.more_vert),
       itemBuilder: (context) {
         if (!isMyPost) {
-          return <PopupMenuEntry<String>>[];
+          return <PopupMenuEntry<String>>[]; // TODO: 신고
         }
         return const [
           PopupMenuItem(value: 'edit', child: Text('수정하기')),
