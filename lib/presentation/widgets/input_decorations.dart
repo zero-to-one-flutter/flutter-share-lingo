@@ -1,9 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import '../../../../app/constants/app_colors.dart';
+import '../../app/constants/app_colors.dart';
 
-InputDecoration onboardingInputDecoration(String hint, {bool isDate = false}) {
+InputDecoration getInputDecoration(String? hint, {bool isDate = false}) {
   return InputDecoration(
     hintText: hint,
     suffixIcon: !isDate ? null : const Icon(CupertinoIcons.calendar),

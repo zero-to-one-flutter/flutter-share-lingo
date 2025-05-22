@@ -2,6 +2,7 @@ import '../../domain/entity/language_entry.dart';
 
 abstract class AppConstants {
   static const appTitle = 'ShareLingo';
+  static const vworldApiBaseUrl = 'https://api.vworld.kr/req';
 
   static const tags = [
     '어떻게 고쳐야 하나요?',

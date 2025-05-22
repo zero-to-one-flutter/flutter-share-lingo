@@ -18,7 +18,13 @@ class UserValidator {
 
   static String? validateBio(String? bio) {
     if (bio == null || bio.trim().isEmpty) return '자기소개를 입력해 주세요';
-    if (bio.trim().length < 15) return '15글자 이상 입력해야 해요';
+    if (bio.trim().length < 15) return '15글자 이상 입력해야 합니다';
+    return null;
+  }
+
+  static String? validateGoal(String? bio) {
+    if (bio == null || bio.trim().isEmpty) return '언어 학습 목표를 입력해 주세요';
+    if (bio.trim().length < 2) return '2글자 이상 입력해야 합니다';
     return null;
   }
 }

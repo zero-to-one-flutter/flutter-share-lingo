@@ -20,7 +20,7 @@ void main() {
         'targetLanguage': 'Korean',
         'bio': 'Test bio',
         'birthdate': testTimestamp,
-        'partnerPreference': 'Casual',
+        'hobbies': 'Casual',
         'languageLearningGoal': 'Fluency'
       };
 
@@ -37,7 +37,7 @@ void main() {
       expect(userDto.targetLanguage, equals('Korean'));
       expect(userDto.bio, equals('Test bio'));
       expect(userDto.birthdate, equals(testTimestamp));
-      expect(userDto.partnerPreference, equals('Casual'));
+      expect(userDto.hobbies, equals('Casual'));
       expect(userDto.languageLearningGoal, equals('Fluency'));
     });
 
@@ -62,7 +62,7 @@ void main() {
       expect(userDto.targetLanguage, isNull);
       expect(userDto.bio, isNull);
       expect(userDto.birthdate, isNull);
-      expect(userDto.partnerPreference, isNull);
+      expect(userDto.hobbies, isNull);
       expect(userDto.languageLearningGoal, isNull);
     });
 
@@ -78,7 +78,7 @@ void main() {
         targetLanguage: 'Korean',
         bio: 'Test bio',
         birthdate: testDate,
-        partnerPreference: 'Casual',
+        hobbies: 'Casual',
         languageLearningGoal: 'Fluency',
       );
 
@@ -95,7 +95,7 @@ void main() {
       expect(userDto.targetLanguage, equals(appUser.targetLanguage));
       expect(userDto.bio, equals(appUser.bio));
       expect(userDto.birthdate, equals(Timestamp.fromDate(appUser.birthdate!)));
-      expect(userDto.partnerPreference, equals(appUser.partnerPreference));
+      expect(userDto.hobbies, equals(appUser.hobbies));
       expect(userDto.languageLearningGoal, equals(appUser.languageLearningGoal));
     });
 
@@ -111,7 +111,7 @@ void main() {
         targetLanguage: 'Korean',
         bio: 'Test bio',
         birthdate: testTimestamp,
-        partnerPreference: 'Casual',
+        hobbies: 'Casual',
         languageLearningGoal: 'Fluency',
       );
 
@@ -127,7 +127,7 @@ void main() {
       expect(map['targetLanguage'], equals('Korean'));
       expect(map['bio'], equals('Test bio'));
       expect(map['birthdate'], equals(testTimestamp));
-      expect(map['partnerPreference'], equals('Casual'));
+      expect(map['hobbies'], equals('Casual'));
       expect(map['languageLearningGoal'], equals('Fluency'));
       // id should not be in the map as it's the document ID
       expect(map.containsKey('id'), isFalse);
@@ -145,7 +145,7 @@ void main() {
         targetLanguage: 'Korean',
         bio: 'Test bio',
         birthdate: testTimestamp,
-        partnerPreference: 'Casual',
+        hobbies: 'Casual',
         languageLearningGoal: 'Fluency',
       );
 
@@ -162,7 +162,7 @@ void main() {
       expect(appUser.targetLanguage, equals(userDto.targetLanguage));
       expect(appUser.bio, equals(userDto.bio));
       expect(appUser.birthdate, equals(userDto.birthdate?.toDate()));
-      expect(appUser.partnerPreference, equals(userDto.partnerPreference));
+      expect(appUser.hobbies, equals(userDto.hobbies));
       expect(appUser.languageLearningGoal, equals(userDto.languageLearningGoal));
     });
   });

@@ -175,7 +175,7 @@ class _PostItemState extends State<PostItem> {
                   bio:
                   '스페인어를 배우고 있는 직장인입니다. 언어뿐만 아니라 라틴 문화에도 관심이 많아요. 편하게 언어 교환하실 분 환영합니다!',
                   birthdate: DateTime(1991, 11, 8),
-                  partnerPreference: '언어 교환에 진지한 분',
+                  hobbies: '언어 교환에 진지한 분',
                   languageLearningGoal: '남미 여행을 위해 자연스러운 스페인어 회화를 배우고 싶어요.',
                   district: null,
                   location: GeoPoint(37.4979, 127.0276),

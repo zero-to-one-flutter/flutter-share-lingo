@@ -1,6 +1,5 @@
 import 'dart:typed_data';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:share_lingo/core/providers/data_providers.dart';
 import 'package:share_lingo/domain/entity/post_entity.dart';
@@ -106,12 +105,3 @@ final postWriteViewModelProvider =
         updatePostUseCase: updateUseCase,
       );
     });
-
-final postsProvider = StreamProvider.autoDispose((ref) {
-  final snapshots =
-      FirebaseFirestore.instance
-          .collection('posts')
-          .orderBy('createdAt', descending: true)
-          .snapshots();
-  return snapshots;
-});

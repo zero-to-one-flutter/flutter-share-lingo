@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 class FormatTimeAgo {
   static String formatTimeAgo({
     required DateTime now,
@@ -13,8 +11,8 @@ class FormatTimeAgo {
     final diffMin = now.difference(createdAt).inMinutes;
     final diffHour = now.difference(createdAt).inHours;
 
-    log('$diffMin');
-    log('$diffHour');
+    // log('$diffMin');
+    // log('$diffHour');
 
     if (diffSec <= 0) {
       return '0초';

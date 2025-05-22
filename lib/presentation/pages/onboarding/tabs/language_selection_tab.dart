@@ -1,11 +1,10 @@
-import 'package:country_flags/country_flags.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:share_lingo/core/utils/snackbar_util.dart';
-import 'package:share_lingo/core/utils/general_utils.dart';
 import 'package:share_lingo/presentation/pages/onboarding/widgets/title_section.dart';
 import 'package:share_lingo/presentation/pages/onboarding/widgets/subtitle_text.dart';
 import 'package:share_lingo/presentation/user_global_view_model.dart';
+import 'package:share_lingo/presentation/widgets/selected_language_row.dart';
 import '../../../../app/constants/app_colors.dart';
 import '../../../../core/utils/dialogue_util.dart';
 import '../onboarding_view_model.dart';
@@ -44,7 +43,10 @@ class LanguageSelectionTab extends ConsumerWidget {
             if (selectedLang == null || selectedLang.isEmpty)
               _buildLangSelectButton(context: context, ref: ref)
             else ...[
-              _buildSelectedLanguageRow(selectedLang, context, ref),
+              SelectedLanguageRow(
+                language: selectedLang,
+                onTap: () => _selectLanguage(context, ref),
+              ),
               const SizedBox(height: 20),
               _buildLangSelectButton(
                 context: context,
@@ -56,58 +58,6 @@ class LanguageSelectionTab extends ConsumerWidget {
             const Spacer(),
             _buildNextButton(selectedLang, context, ref),
             const SizedBox(height: 24),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildSelectedLanguageRow(
-    String selectedLang,
-    BuildContext context,
-    WidgetRef ref,
-  ) {
-    final userGlobalViewModel = ref.read(userGlobalViewModelProvider.notifier);
-    final countryCode = GeneralUtils.getCountryCodeByName(selectedLang);
-
-    return GestureDetector(
-      onTap: () {
-        _selectLanguage(context, ref);
-      },
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 5),
-        decoration: BoxDecoration(
-          color: Colors.transparent,
-          border: Border.all(color: AppColors.borderGrey),
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            if (countryCode != null)
-              Row(
-                children: [
-                  const SizedBox(width: 3),
-                  CountryFlag.fromCountryCode(
-                    countryCode,
-                    height: 24,
-                    width: 24,
-                    shape: const Circle(),
-                  ),
-                  const SizedBox(width: 14),
-                  Text(selectedLang),
-                ],
-              )
-            else
-              Text(selectedLang),
-            IconButton(
-              icon: const Icon(Icons.close),
-              onPressed: () {
-                isNative
-                    ? userGlobalViewModel.setNativeLanguage('')
-                    : userGlobalViewModel.setTargetLanguage('');
-              },
-            ),
           ],
         ),
       ),

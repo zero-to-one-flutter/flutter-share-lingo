@@ -22,9 +22,10 @@ class _EnableLocationTabState extends ConsumerState<EnableLocationTab> {
     await vm.fetchLocation();
 
     final state = ref.read(locationViewModelProvider);
-    if (state.geoPoint != null) {
+    if (state.location != null) {
       final userVM = ref.read(userGlobalViewModelProvider.notifier);
-      userVM.setLocation(state.geoPoint!);
+      userVM.setLocation(state.location!);
+      userVM.setDistrict(state.district);
 
       if (context.mounted) {
         await _saveUserAndNavigate(context);
@@ -112,7 +113,7 @@ class _EnableLocationTabState extends ConsumerState<EnableLocationTab> {
                     state.isLoading ? null : _onEnableLocationPressed(context),
             child:
                 state.isLoading
-                    ? const CupertinoActivityIndicator()
+                    ? const CupertinoActivityIndicator(color: Colors.white)
                     : const Text('위치 사용하기'),
           ),
         ),

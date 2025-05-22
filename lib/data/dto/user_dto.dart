@@ -12,7 +12,7 @@ class UserDto {
   final String? targetLanguage;
   final String? bio;
   final Timestamp? birthdate;
-  final String? partnerPreference;
+  final String? hobbies;
   final String? languageLearningGoal;
   final String? district;
   final GeoPoint? location;
@@ -27,7 +27,7 @@ class UserDto {
     this.targetLanguage,
     this.bio,
     this.birthdate,
-    this.partnerPreference,
+    this.hobbies,
     this.languageLearningGoal,
     this.district,
     this.location,
@@ -44,7 +44,7 @@ class UserDto {
       targetLanguage: map['targetLanguage'],
       bio: map['bio'],
       birthdate: map['birthdate'],
-      partnerPreference: map['partnerPreference'],
+      hobbies: map['hobbies'],
       languageLearningGoal: map['languageLearningGoal'],
       district: map['district'],
       location: map['location'],
@@ -63,7 +63,7 @@ class UserDto {
       targetLanguage: user.targetLanguage,
       bio: user.bio,
       birthdate: user.birthdate != null ? Timestamp.fromDate(user.birthdate!) : null,
-      partnerPreference: user.partnerPreference,
+      hobbies: user.hobbies,
       languageLearningGoal: user.languageLearningGoal,
       district: user.district,
       location: user.location,
@@ -81,7 +81,7 @@ class UserDto {
       'targetLanguage': targetLanguage,
       'bio': bio,
       'birthdate': birthdate,
-      'partnerPreference': partnerPreference,
+      'hobbies': hobbies,
       'languageLearningGoal': languageLearningGoal,
       'district': district,
       'location': location,
@@ -99,7 +99,7 @@ class UserDto {
       targetLanguage: targetLanguage,
       bio: bio,
       birthdate: birthdate?.toDate(),
-      partnerPreference: partnerPreference,
+      hobbies: hobbies,
       languageLearningGoal: languageLearningGoal,
       district: district,
       location: location,

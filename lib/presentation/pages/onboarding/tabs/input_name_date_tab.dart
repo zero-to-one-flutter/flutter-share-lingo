@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:share_lingo/core/utils/general_utils.dart';
 import 'package:share_lingo/presentation/pages/onboarding/onboarding_view_model.dart';
-import 'package:share_lingo/presentation/pages/onboarding/widgets/onboarding_input_decoration.dart';
+import 'package:share_lingo/presentation/widgets/input_decorations.dart';
 import 'package:share_lingo/presentation/pages/onboarding/widgets/subtitle_text.dart';
 import 'package:share_lingo/presentation/pages/onboarding/widgets/title_section.dart';
 import 'package:share_lingo/presentation/user_global_view_model.dart';
@@ -92,7 +92,7 @@ class _InputNameTabState extends ConsumerState<InputNameDateTab> {
     return TextFormField(
       maxLength: 28,
       controller: _nameController,
-      decoration: onboardingInputDecoration('이름을 입력해 주세요'),
+      decoration: getInputDecoration('이름을 입력해 주세요'),
       validator: (value) {
         final vm = ref.read(onboardingViewModelProvider.notifier);
         return vm.validateName(value);
@@ -103,7 +103,7 @@ class _InputNameTabState extends ConsumerState<InputNameDateTab> {
   Widget _buildDateInputField() {
     return TextFormField(
       controller: _birthdateController,
-      decoration: onboardingInputDecoration('생년월일을 선택하세요', isDate: true),
+      decoration: getInputDecoration('생년월일을 선택하세요', isDate: true),
       readOnly: true,
       onTap: () async {
         birthdate = await GeneralUtils.pickBirthdate(context: context);

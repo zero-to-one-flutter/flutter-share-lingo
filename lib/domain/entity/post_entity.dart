@@ -48,7 +48,7 @@ class PostEntity {
     List<String>? imageUrl,
     List<String>? tags,
     DateTime? createdAt,
-    DateTime? updatedAt,
+    // DateTime? updatedAt,
     int? likeCount,
     int? commentCount,
     bool? deleted,
