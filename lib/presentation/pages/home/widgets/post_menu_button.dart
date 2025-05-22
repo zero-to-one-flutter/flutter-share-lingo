@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -112,9 +113,14 @@ class PostMenuButton extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return IconButton(
-      icon: const Icon(Icons.more_vert),
-      onPressed: () => _showPostOptions(context, ref),
+    return SizedBox(
+      height: 30,
+      width: 30,
+      child: IconButton(
+        padding: EdgeInsets.all(0.0),
+        icon: Icon(CupertinoIcons.ellipsis),
+        onPressed: () => _showPostOptions(context, ref),
+      ),
     );
   }
 }
