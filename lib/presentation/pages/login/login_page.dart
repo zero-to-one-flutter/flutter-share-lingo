@@ -35,7 +35,7 @@ class LoginPage extends ConsumerWidget {
             children: [
               ClipRRect(
                 borderRadius: BorderRadius.circular(18),
-                child: Image.asset('assets/icons/app_icon.png', height: 150),
+                child: Image.asset('assets/icons/app_icon.png', height: 130),
               ),
               const SizedBox(height: 15),
 
