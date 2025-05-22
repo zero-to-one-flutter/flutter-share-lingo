@@ -1,10 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_image_viewer/easy_image_viewer.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:share_lingo/app/constants/app_colors.dart';
 import 'package:share_lingo/core/utils/format_time_ago.dart';
 import 'package:share_lingo/core/utils/general_utils.dart';
 import 'package:share_lingo/domain/entity/post_entity.dart';
+import 'package:share_lingo/presentation/pages/home/tabs/feed/feed_view_model.dart';
 import 'package:share_lingo/presentation/pages/home/widgets/expandable_text.dart';
 import 'package:share_lingo/presentation/pages/home/widgets/post_menu_button.dart';
 import 'package:share_lingo/presentation/widgets/app_cached_image.dart';
@@ -13,25 +15,28 @@ import '../../../../domain/entity/app_user.dart';
 import '../../post/post_detail_page.dart';
 import '../../profile/profile_page.dart';
 
-class PostItem extends StatefulWidget {
+class PostItem extends ConsumerStatefulWidget {
   final PostEntity post;
-  final DateTime now;
+  // final DateTime now;
   final bool displayComments;
-  final List<ImageProvider> cachedImages;
+  // final List<ImageProvider> cachedImages;
 
   const PostItem({
     super.key,
     required this.post,
-    required this.now,
+    // required this.now,
     required this.displayComments,
-    required this.cachedImages,
+    // required this.cachedImages,
   });
 
   @override
-  State<PostItem> createState() => _PostItemState();
+  ConsumerState<PostItem> createState() => _PostItemState();
+
+  // @override
+  // State<PostItem> createState() => _PostItemState();
 }
 
-class _PostItemState extends State<PostItem> {
+class _PostItemState extends ConsumerState<PostItem> {
   // void _showPostOptions(BuildContext context, PostEntity post) {
   //   final user = ref.read(userGlobalViewModelProvider);
   //   if (user == null) return;
@@ -98,6 +103,11 @@ class _PostItemState extends State<PostItem> {
 
   @override
   Widget build(BuildContext context) {
+    final List<ImageProvider> cachedImages = ref
+        .read(feedNotifierProvider.notifier)
+        .getCachedImageProviders(widget.post);
+
+    final DateTime now = ref.watch(timeAgoNotifierProvider);
     return InkWell(
       highlightColor: AppColors.lightGrey,
       onTap: () {
@@ -118,11 +128,11 @@ class _PostItemState extends State<PostItem> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SizedBox(height: 12),
-            _topBar(),
+            _topBar(now),
             SizedBox(height: 10),
             ExpandableText(widget.post.content, trimLines: 4),
-            if (widget.cachedImages.isNotEmpty) SizedBox(height: 10),
-            _imageBox(widget.cachedImages),
+            if (cachedImages.isNotEmpty) SizedBox(height: 10),
+            _imageBox(cachedImages),
             _tagBar(),
             // comment 개수 표시
             // detail 페이지에서는 표시 X
@@ -156,7 +166,7 @@ class _PostItemState extends State<PostItem> {
     );
   }
 
-  Widget _topBar() {
+  Widget _topBar(DateTime now) {
     return InkWell(
       onTap: () {
         Navigator.of(context).push(
@@ -208,7 +218,7 @@ class _PostItemState extends State<PostItem> {
                   SizedBox(width: 8),
                   Text(
                     FormatTimeAgo.formatTimeAgo(
-                      now: widget.now,
+                      now: now,
                       createdAt: widget.post.createdAt,
                     ),
                     style: TextStyle(
