@@ -8,7 +8,21 @@ abstract class PostRepository {
   Future<List<PostEntity>> fetchInitialPosts();
   Future<List<PostEntity>> fetchOlderPosts(PostEntity lastPost);
   Future<List<PostEntity>> fetchLatestPosts(PostEntity firstPost);
-  Future<void> updatePost({required String id, required String content});
+  Future<void> updatePost({
+    required String id,
+    required String content,
+    required List<String> imageUrls,
+    required List<String> tags,
+  });
   Future<List<PostEntity>> fetchPostsByUid(String uid);
   Future<void> deletePost(String id);
+
+  /// Fetch post for detail page
+  Future<PostEntity> getPost(String id);
+
+  Future<void> likePost(String postId, String userId);
+  Future<void> unlikePost(String postId, String userId);
+  Future<bool> isPostLiked(String postId, String userId);
+  Stream<int> getPostLikeCount(String postId);
+  Stream<List<String>> getPostLikes(String postId);
 }

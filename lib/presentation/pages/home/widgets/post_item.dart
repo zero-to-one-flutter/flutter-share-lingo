@@ -5,9 +5,11 @@ import 'package:share_lingo/core/utils/format_time_ago.dart';
 import 'package:share_lingo/core/utils/general_utils.dart';
 import 'package:share_lingo/domain/entity/post_entity.dart';
 import 'package:share_lingo/presentation/pages/home/widgets/expandable_text.dart';
+import 'package:share_lingo/presentation/pages/home/widgets/post_menu_button.dart';
 import 'package:share_lingo/presentation/widgets/app_cached_image.dart';
 
 import '../../../../domain/entity/app_user.dart';
+import '../../post/post_detail_page.dart';
 import '../../profile/profile_page.dart';
 
 class PostItem extends StatefulWidget {
@@ -27,17 +29,90 @@ class PostItem extends StatefulWidget {
 }
 
 class _PostItemState extends State<PostItem> {
+
+  // void _showPostOptions(BuildContext context, PostEntity post) {
+  //   final user = ref.read(userGlobalViewModelProvider);
+  //   if (user == null) return;
+  //
+  //   final isOwner = user.id == post.uid;
+  //
+  //   showModalBottomSheet(
+  //     context: context,
+  //     builder:
+  //         (context) => Padding(
+  //       padding: const EdgeInsets.only(bottom: 16),
+  //       child: Column(
+  //         mainAxisSize: MainAxisSize.min,
+  //         children: [
+  //           if (isOwner) ...[
+  //             ListTile(
+  //               leading: const Icon(Icons.edit),
+  //               title: const Text('수정'),
+  //               onTap: () {
+  //                 Navigator.pop(context);
+  //                 Navigator.push(
+  //                   context,
+  //                   MaterialPageRoute(
+  //                     builder: (context) => PostWriteTab(post: post),
+  //                   ),
+  //                 );
+  //               },
+  //             ),
+  //             ListTile(
+  //               leading: const Icon(Icons.delete, color: Colors.red),
+  //               title: const Text(
+  //                 '삭제',
+  //                 style: TextStyle(color: Colors.red),
+  //               ),
+  //               onTap: () {
+  //                 Navigator.pop(context);
+  //                 _showDeleteConfirmation(context, post);
+  //               },
+  //             ),
+  //           ] else ...[
+  //             ListTile(
+  //               leading: const Icon(Icons.flag),
+  //               title: const Text('신고'),
+  //               onTap: () {
+  //                 Navigator.pop(context);
+  //                 Navigator.push(
+  //                   context,
+  //                   MaterialPageRoute(
+  //                     builder:
+  //                         (context) => ReportPage(
+  //                       postId: post.id,
+  //                       postContent: post.content,
+  //                     ),
+  //                   ),
+  //                 );
+  //               },
+  //             ),
+  //           ],
+  //         ],
+  //       ),
+  //     ),
+  //   );
+  // }
+
+
   @override
   Widget build(BuildContext context) {
     final List<String> images =
-        widget.post.imageUrl
-            .where((url) => url.trim().isNotEmpty)
-            .take(3)
-            .toList();
+    widget.post.imageUrl
+        .where((url) => url.trim().isNotEmpty)
+        .take(3)
+        .toList();
 
     return InkWell(
       highlightColor: AppColors.lightGrey,
-      onTap: () {},
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => PostDetailPage(post: widget.post),
+            ),
+          );
+        },
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10),
         child: Column(
@@ -55,27 +130,27 @@ class _PostItemState extends State<PostItem> {
             !widget.displayComments
                 ? SizedBox.shrink()
                 : Column(
+              children: [
+                SizedBox(height: 15),
+                Row(
                   children: [
-                    SizedBox(height: 15),
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.chat_bubble_outline_outlined,
-                          color: Colors.grey[500],
-                          size: 20,
-                        ),
-                        SizedBox(width: 8),
-                        Text(
-                          '${widget.post.commentCount}',
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: Colors.grey[700],
-                          ),
-                        ),
-                      ],
+                    Icon(
+                      Icons.chat_bubble_outline_outlined,
+                      color: Colors.grey[500],
+                      size: 20,
+                    ),
+                    SizedBox(width: 8),
+                    Text(
+                      '${widget.post.commentCount}',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.grey[700],
+                      ),
                     ),
                   ],
                 ),
+              ],
+            ),
           ],
         ),
       ),
@@ -98,7 +173,7 @@ class _PostItemState extends State<PostItem> {
                   nativeLanguage: '한국어',
                   targetLanguage: '스페인어',
                   bio:
-                      '스페인어를 배우고 있는 직장인입니다. 언어뿐만 아니라 라틴 문화에도 관심이 많아요. 편하게 언어 교환하실 분 환영합니다!',
+                  '스페인어를 배우고 있는 직장인입니다. 언어뿐만 아니라 라틴 문화에도 관심이 많아요. 편하게 언어 교환하실 분 환영합니다!',
                   birthdate: DateTime(1991, 11, 8),
                   hobbies: '언어 교환에 진지한 분',
                   languageLearningGoal: '남미 여행을 위해 자연스러운 스페인어 회화를 배우고 싶어요.',
@@ -182,11 +257,7 @@ class _PostItemState extends State<PostItem> {
             ],
           ),
           Spacer(),
-          IconButton(
-            padding: EdgeInsets.all(0),
-            onPressed: () {},
-            icon: const Icon(Icons.keyboard_control_rounded),
-          ),
+          PostMenuButton(post: widget.post),
         ],
       ),
     );
@@ -329,26 +400,26 @@ class _PostItemState extends State<PostItem> {
           spacing: 8,
           runSpacing: 8,
           children:
-              tags.map((text) {
-                return Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 20,
-                    vertical: 8,
-                  ),
-                  decoration: BoxDecoration(
-                    color: AppColors.widgetBackgroundBlue,
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Text(
-                    '# $text',
-                    style: const TextStyle(
-                      fontSize: 14,
-                      color: Colors.blueAccent,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                );
-              }).toList(),
+          tags.map((text) {
+            return Container(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 20,
+                vertical: 8,
+              ),
+              decoration: BoxDecoration(
+                color: AppColors.widgetBackgroundBlue,
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Text(
+                '# $text',
+                style: const TextStyle(
+                  fontSize: 14,
+                  color: Colors.blueAccent,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            );
+          }).toList(),
         ),
       ],
     );

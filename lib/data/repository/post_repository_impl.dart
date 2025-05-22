@@ -50,8 +50,18 @@ class PostRepositoryImpl implements PostRepository {
   }
 
   @override
-  Future<void> updatePost({required String id, required String content}) async {
-    await remoteDataSource.updatePost(id: id, content: content);
+  Future<void> updatePost({
+    required String id,
+    required String content,
+    required List<String> imageUrls,
+    required List<String> tags,
+  }) async {
+    await remoteDataSource.updatePost(
+      id: id,
+      content: content,
+      imageUrls: imageUrls,
+      tags: tags,
+    );
   }
 
   @override
@@ -63,5 +73,40 @@ class PostRepositoryImpl implements PostRepository {
   @override
   Future<void> deletePost(String id) async {
     await remoteDataSource.deletePost(id);
+  }
+
+  /// For Detail page
+  @override
+  Future<PostEntity> getPost(String id) async {
+    final dto = await remoteDataSource.getPost(id);
+    if (dto == null) throw Exception('Post not found');
+    return dto.toEntity();
+  }
+
+  // likes
+  @override
+  Future<void> likePost(String postId, String userId) async {
+    await remoteDataSource.likePost(postId, userId);
+  }
+
+  @override
+  Future<void> unlikePost(String postId, String userId) async {
+    await remoteDataSource.unlikePost(postId, userId);
+  }
+
+  @override
+  Future<bool> isPostLiked(String postId, String userId) async {
+    final likes = await remoteDataSource.getPostLikes(postId).first;
+    return likes.contains(userId);
+  }
+
+  @override
+  Stream<int> getPostLikeCount(String postId) {
+    return remoteDataSource.getPostLikeCount(postId);
+  }
+
+  @override
+  Stream<List<String>> getPostLikes(String postId) {
+    return remoteDataSource.getPostLikes(postId);
   }
 }
