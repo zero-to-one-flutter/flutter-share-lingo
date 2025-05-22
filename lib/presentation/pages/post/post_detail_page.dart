@@ -8,11 +8,13 @@ import '../home/tabs/feed/feed_view_model.dart';
 
 class PostDetailPage extends ConsumerWidget {
   final PostEntity post;
+  static String? currentPostId;
 
   const PostDetailPage({super.key, required this.post});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    currentPostId = post.id;
     return Scaffold(
       appBar: AppBar(title: const Text('Post'), elevation: 0),
       body: SingleChildScrollView(
