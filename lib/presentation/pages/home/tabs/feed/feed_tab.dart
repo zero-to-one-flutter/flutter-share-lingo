@@ -14,7 +14,6 @@ class FeedTab extends StatelessWidget {
     return Consumer(
       builder: (context, ref, child) {
         final feedAsync = ref.watch(feedNotifierProvider);
-        final now = ref.watch(timeAgoNotifierProvider);
 
         return Column(
           children: [
@@ -90,11 +89,7 @@ class FeedTab extends StatelessWidget {
                         itemBuilder: (context, index) {
                           final post = posts[index];
 
-                          return PostItem(
-                            post: post,
-                            now: now,
-                            displayComments: true,
-                          );
+                          return PostItem(post: post, displayComments: true);
                         },
                       ),
                     ),
