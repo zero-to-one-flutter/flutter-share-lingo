@@ -21,8 +21,6 @@ class EditProfilePage extends ConsumerStatefulWidget {
 
 class _EditProfilePageState extends ConsumerState<EditProfilePage> {
   late TextEditingController nameController;
-  late TextEditingController nativeLanguageController;
-  late TextEditingController targetLanguageController;
   late TextEditingController bioController;
   late TextEditingController languageLearningGoalController;
   late TextEditingController hobbiesController;
@@ -35,12 +33,6 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
   void initState() {
     super.initState();
     nameController = TextEditingController(text: widget.user.name);
-    nativeLanguageController = TextEditingController(
-      text: widget.user.nativeLanguage ?? '',
-    );
-    targetLanguageController = TextEditingController(
-      text: widget.user.targetLanguage ?? '',
-    );
     bioController = TextEditingController(text: widget.user.bio ?? '');
     hobbiesController = TextEditingController(text: widget.user.hobbies ?? '');
     languageLearningGoalController = TextEditingController(
@@ -58,8 +50,6 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
   @override
   void dispose() {
     nameController.dispose();
-    nativeLanguageController.dispose();
-    targetLanguageController.dispose();
     bioController.dispose();
     hobbiesController.dispose();
     languageLearningGoalController.dispose();
@@ -124,8 +114,8 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
 
     final updatedUser = widget.user.copyWith(
       name: nameController.text,
-      nativeLanguage: nativeLanguageController.text,
-      targetLanguage: targetLanguageController.text,
+      nativeLanguage: stateRead.nativeLanguage,
+      targetLanguage: stateRead.targetLanguage,
       district: stateRead.district,
       location: stateRead.location,
       bio: bioController.text,
