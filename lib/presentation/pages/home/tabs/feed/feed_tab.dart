@@ -97,7 +97,17 @@ class FeedTab extends StatelessWidget {
                         itemBuilder: (context, index) {
                           final post = posts[index];
 
-                          return PostItem(post: post, displayComments: true);
+                          if (post.isPoll) {
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                PollPostCard(post: post, now: DateTime.now()),
+                                PostItem(post: post, displayComments: true),
+                              ],
+                            );
+                          } else {
+                            return PostItem(post: post, displayComments: true);
+                          }
                         },
                       ),
                     ),
