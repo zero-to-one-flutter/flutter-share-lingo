@@ -105,12 +105,16 @@ class _PostItemState extends State<PostItem> {
     return InkWell(
       highlightColor: AppColors.lightGrey,
       onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => PostDetailPage(post: widget.post),
-          ),
-        );
+        if (PostDetailPage.currentPostId != widget.post.id) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => PostDetailPage(post: widget.post),
+            ),
+          ).then((value) {
+            PostDetailPage.currentPostId = null;
+          });
+        }
       },
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -276,24 +280,42 @@ class _PostItemState extends State<PostItem> {
 
         switch (images.length) {
           case 1:
-            content = Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-                image: DecorationImage(
-                  image: NetworkImage(images[0]),
-                  fit: BoxFit.cover,
+            content = GestureDetector(
+              onTap:
+                  () => showImageViewer(
+                    context,
+                    NetworkImage(images[0]),
+                    swipeDismissible: true,
+                  ),
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  image: DecorationImage(
+                    image: NetworkImage(images[0]),
+                    fit: BoxFit.cover,
+                  ),
                 ),
               ),
             );
             break;
 
           case 2:
+            List<NetworkImage> case2Images = [
+              NetworkImage(images[0]),
+              NetworkImage(images[1]),
+            ];
             content = Row(
               children: [
                 Expanded(
                   child: GestureDetector(
                     onTap: () {
-                      showImageViewer(context, NetworkImage(images[0]));
+                      MultiImageProvider multiImageProvider =
+                          MultiImageProvider(case2Images, initialIndex: 0);
+                      showImageViewerPager(
+                        context,
+                        multiImageProvider,
+                        swipeDismissible: true,
+                      );
                     },
                     child: Container(
                       decoration: BoxDecoration(
@@ -311,15 +333,26 @@ class _PostItemState extends State<PostItem> {
                 ),
                 SizedBox(width: sizedBoxWidth),
                 Expanded(
-                  child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: const BorderRadius.only(
-                        topRight: Radius.circular(10),
-                        bottomRight: Radius.circular(10),
-                      ),
-                      image: DecorationImage(
-                        image: NetworkImage(images[1]),
-                        fit: BoxFit.cover,
+                  child: GestureDetector(
+                    onTap: () {
+                      MultiImageProvider multiImageProvider =
+                          MultiImageProvider(case2Images, initialIndex: 1);
+                      showImageViewerPager(
+                        context,
+                        multiImageProvider,
+                        swipeDismissible: true,
+                      );
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: const BorderRadius.only(
+                          topRight: Radius.circular(10),
+                          bottomRight: Radius.circular(10),
+                        ),
+                        image: DecorationImage(
+                          image: NetworkImage(images[1]),
+                          fit: BoxFit.cover,
+                        ),
                       ),
                     ),
                   ),
@@ -329,19 +362,35 @@ class _PostItemState extends State<PostItem> {
             break;
 
           case 3:
+            List<NetworkImage> case3Images = [
+              NetworkImage(images[0]),
+              NetworkImage(images[1]),
+              NetworkImage(images[2]),
+            ];
             content = Row(
               children: [
                 SizedBox(
                   width: (constraints.maxWidth - sizedBoxWidth) / 2,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: const BorderRadius.only(
-                        topLeft: Radius.circular(10),
-                        bottomLeft: Radius.circular(10),
-                      ),
-                      image: DecorationImage(
-                        image: NetworkImage(images[0]),
-                        fit: BoxFit.cover,
+                  child: GestureDetector(
+                    onTap: () {
+                      MultiImageProvider multiImageProvider =
+                          MultiImageProvider(case3Images, initialIndex: 0);
+                      showImageViewerPager(
+                        context,
+                        multiImageProvider,
+                        swipeDismissible: true,
+                      );
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: const BorderRadius.only(
+                          topLeft: Radius.circular(10),
+                          bottomLeft: Radius.circular(10),
+                        ),
+                        image: DecorationImage(
+                          image: NetworkImage(images[0]),
+                          fit: BoxFit.cover,
+                        ),
                       ),
                     ),
                   ),
@@ -352,28 +401,56 @@ class _PostItemState extends State<PostItem> {
                   child: Column(
                     children: [
                       Expanded(
-                        child: Container(
-                          decoration: BoxDecoration(
-                            borderRadius: const BorderRadius.only(
-                              topRight: Radius.circular(10),
-                            ),
-                            image: DecorationImage(
-                              image: NetworkImage(images[1]),
-                              fit: BoxFit.cover,
+                        child: GestureDetector(
+                          onTap: () {
+                            MultiImageProvider multiImageProvider =
+                                MultiImageProvider(
+                                  case3Images,
+                                  initialIndex: 1,
+                                );
+                            showImageViewerPager(
+                              context,
+                              multiImageProvider,
+                              swipeDismissible: true,
+                            );
+                          },
+                          child: Container(
+                            decoration: BoxDecoration(
+                              borderRadius: const BorderRadius.only(
+                                topRight: Radius.circular(10),
+                              ),
+                              image: DecorationImage(
+                                image: NetworkImage(images[1]),
+                                fit: BoxFit.cover,
+                              ),
                             ),
                           ),
                         ),
                       ),
                       SizedBox(height: sizedBoxHeight),
                       Expanded(
-                        child: Container(
-                          decoration: BoxDecoration(
-                            borderRadius: const BorderRadius.only(
-                              bottomRight: Radius.circular(10),
-                            ),
-                            image: DecorationImage(
-                              image: NetworkImage(images[2]),
-                              fit: BoxFit.cover,
+                        child: GestureDetector(
+                          onTap: () {
+                            MultiImageProvider multiImageProvider =
+                                MultiImageProvider(
+                                  case3Images,
+                                  initialIndex: 2,
+                                );
+                            showImageViewerPager(
+                              context,
+                              multiImageProvider,
+                              swipeDismissible: true,
+                            );
+                          },
+                          child: Container(
+                            decoration: BoxDecoration(
+                              borderRadius: const BorderRadius.only(
+                                bottomRight: Radius.circular(10),
+                              ),
+                              image: DecorationImage(
+                                image: NetworkImage(images[2]),
+                                fit: BoxFit.cover,
+                              ),
                             ),
                           ),
                         ),
