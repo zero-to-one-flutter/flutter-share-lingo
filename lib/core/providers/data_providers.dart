@@ -10,6 +10,7 @@ import 'package:share_lingo/domain/usecase/fetch_lastest_posts_usecase.dart';
 import 'package:share_lingo/domain/usecase/fetch_older_posts_usecase.dart';
 import 'package:share_lingo/domain/usecase/update_post_usecase.dart';
 import 'package:share_lingo/domain/usecase/upload_image_usecase.dart';
+import 'package:share_lingo/domain/usecase/vote_post_usecase.dart';
 
 import '../../app/constants/app_constants.dart';
 import '../../data/data_source/firebase_auth_data_source.dart';
@@ -131,4 +132,8 @@ final imageStorageDataSourceProvider = Provider<ImageStorageDataSource>(
 
 final imageRepositoryProvider = Provider<ImageRepository>(
   (ref) => ImageRepositoryImpl(ref.read(imageStorageDataSourceProvider)),
+);
+
+final votePostUseCaseProvider = Provider(
+  (ref) => VotePostUseCase(ref.read(postRepositoryProvider)),
 );
