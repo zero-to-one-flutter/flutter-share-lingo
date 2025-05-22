@@ -14,6 +14,7 @@ class PostDto {
   final List<String> imageUrl;
   final List<String> tags;
   final DateTime createdAt;
+  // final DateTime updatedAt;
   final int likeCount;
   final int commentCount;
   final bool deleted;
@@ -31,6 +32,7 @@ class PostDto {
     required this.imageUrl,
     required this.tags,
     required this.createdAt,
+    // required this.updatedAt,
     required this.likeCount,
     required this.commentCount,
     required this.deleted,
@@ -50,6 +52,7 @@ class PostDto {
       imageUrl: List<String>.from(map['imageUrl'] ?? []),
       tags: List<String>.from(map['tags'] ?? []),
       createdAt: (map['createdAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
+      // updatedAt: (map['updatedAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
       likeCount: map['likeCount'] ?? 0,
       commentCount: map['commentCount'] ?? 0,
       deleted: map['deleted'] ?? false,
@@ -65,11 +68,11 @@ class PostDto {
       'userTargetLanguage': userTargetLanguage,
       'userDistrict': userDistrict,
       'userLocation': userLocation,
-
       'content': content,
       'imageUrl': imageUrl,
       'tags': tags,
-      'createdAt': FieldValue.serverTimestamp(), // 업로드 시점 기준
+      'createdAt': FieldValue.serverTimestamp(),
+      // 'updatedAt': FieldValue.serverTimestamp(),
       'likeCount': likeCount,
       'commentCount': commentCount,
       'deleted': deleted,
@@ -86,11 +89,11 @@ class PostDto {
       userTargetLanguage: userTargetLanguage,
       userDistrict: userDistrict,
       userLocation: userLocation,
-
       content: content,
       imageUrl: imageUrl,
       tags: tags,
       createdAt: createdAt,
+      // updatedAt: updatedAt,
       likeCount: likeCount,
       commentCount: commentCount,
       deleted: deleted,
@@ -107,11 +110,11 @@ class PostDto {
       userTargetLanguage: entity.userTargetLanguage,
       userDistrict: entity.userDistrict,
       userLocation: entity.userLocation,
-
       content: entity.content,
       imageUrl: entity.imageUrl,
       tags: entity.tags,
       createdAt: entity.createdAt,
+      // updatedAt: entity.updatedAt,
       likeCount: entity.likeCount,
       commentCount: entity.commentCount,
       deleted: entity.deleted,

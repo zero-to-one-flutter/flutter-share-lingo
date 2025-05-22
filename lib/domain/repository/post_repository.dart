@@ -16,4 +16,13 @@ abstract class PostRepository {
   });
   Future<List<PostEntity>> fetchPostsByUid(String uid);
   Future<void> deletePost(String id);
+
+  /// Fetch post for detail page
+  Future<PostEntity> getPost(String id);
+
+  Future<void> likePost(String postId, String userId);
+  Future<void> unlikePost(String postId, String userId);
+  Future<bool> isPostLiked(String postId, String userId);
+  Stream<int> getPostLikeCount(String postId);
+  Stream<List<String>> getPostLikes(String postId);
 }

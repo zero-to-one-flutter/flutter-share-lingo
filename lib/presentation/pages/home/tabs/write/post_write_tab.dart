@@ -85,7 +85,7 @@ class _PostWriteTabState extends ConsumerState<PostWriteTab> {
 
       final objects = _yoloModel.runInference(image);
       final hasPerson = objects.any(
-        (e) => _yoloModel.label(e.labelIndex).toLowerCase() == 'person',
+            (e) => _yoloModel.label(e.labelIndex).toLowerCase() == 'person',
       );
 
       if (hasPerson) {
@@ -115,7 +115,7 @@ class _PostWriteTabState extends ConsumerState<PostWriteTab> {
 
     final newImageUrls = await Future.wait(
       _selectedImages.map(
-        (bytes) => ref
+            (bytes) => ref
             .read(uploadImageUseCaseProvider)
             .call(uid: uid, imageBytes: bytes),
       ),
@@ -128,11 +128,11 @@ class _PostWriteTabState extends ConsumerState<PostWriteTab> {
       await ref
           .read(postWriteViewModelProvider.notifier)
           .updatePost(
-            id: widget.post!.id,
-            content: content,
-            imageUrls: combinedImageUrls,
-            tags: _selectedTags,
-          );
+        id: widget.post!.id,
+        content: content,
+        imageUrls: combinedImageUrls,
+        tags: _selectedTags,
+      );
       if (!mounted) return;
       SnackbarUtil.showSnackBar(context, '수정되었습니다');
       Navigator.of(context).pop(true);
@@ -290,16 +290,16 @@ class _PostWriteTabState extends ConsumerState<PostWriteTab> {
                               spacing: 8,
                               runSpacing: 4,
                               children:
-                                  _selectedTags.map((tag) {
-                                    return Chip(
-                                      label: Text(tag),
-                                      onDeleted: () {
-                                        setState(() {
-                                          _selectedTags.remove(tag);
-                                        });
-                                      },
-                                    );
-                                  }).toList(),
+                              _selectedTags.map((tag) {
+                                return Chip(
+                                  label: Text(tag),
+                                  onDeleted: () {
+                                    setState(() {
+                                      _selectedTags.remove(tag);
+                                    });
+                                  },
+                                );
+                              }).toList(),
                             ),
                           ),
                         const SizedBox(height: 16),
