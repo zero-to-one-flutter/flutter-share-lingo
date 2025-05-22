@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:share_lingo/core/providers/data_providers.dart';
 import 'package:share_lingo/domain/repository/post_repository.dart';
@@ -98,6 +100,13 @@ class FeedNotifier extends AutoDisposeAsyncNotifier<List<PostEntity>> {
     }
     return [];
   }
+
+  List<ImageProvider> getCachedImageProviders(PostEntity post) =>
+      post.imageUrl
+          .where((e) => e.trim().isNotEmpty)
+          .take(3)
+          .map((e) => CachedNetworkImageProvider(e))
+          .toList();
 }
 
 final feedNotifierProvider =

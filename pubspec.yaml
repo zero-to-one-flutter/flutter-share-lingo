@@ -39,6 +39,8 @@ dependencies:
     git:
       url: https://github.com/fhelper/flutter-yolo-helper.git
       ref: main
+  easy_image_viewer: ^1.5.1
+
 dev_dependencies:
   flutter_native_splash: ^2.3.10
   flutter_test:
