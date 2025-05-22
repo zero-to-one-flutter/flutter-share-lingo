@@ -50,6 +50,15 @@ class PostRepositoryImpl implements PostRepository {
   }
 
   @override
+  Future<List<PostEntity>> fetchCurrentUpdatedPosts(
+    PostEntity firstPost,
+  ) async {
+    final dtoList = await remoteDataSource.fetchCurrentPosts(firstPost)
+      ..where((p) => p.updatedAt != null).toList();
+    return dtoList.map((dto) => dto.toEntity()).toList();
+  }
+
+  @override
   Future<void> updatePost({
     required String id,
     required String content,

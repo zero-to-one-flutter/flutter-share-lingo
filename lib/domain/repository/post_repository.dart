@@ -8,6 +8,7 @@ abstract class PostRepository {
   Future<List<PostEntity>> fetchInitialPosts();
   Future<List<PostEntity>> fetchOlderPosts(PostEntity lastPost);
   Future<List<PostEntity>> fetchLatestPosts(PostEntity firstPost);
+  Future<List<PostEntity>> fetchCurrentUpdatedPosts(PostEntity firstPost);
   Future<void> updatePost({
     required String id,
     required String content,
