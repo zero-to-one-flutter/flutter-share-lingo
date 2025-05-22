@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:share_lingo/domain/entity/post_entity.dart';
@@ -27,11 +28,16 @@ class _PostDetailPageState extends ConsumerState<PostDetailPage> {
 
     // 투표 상태 초기화
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      final uid = FirebaseAuth.instance.currentUser?.uid;
+      final selected = _post.userVotes?[uid]; //사용자 투표 선택 불러오기
       ref
           .read(voteStateProvider.notifier)
           .set(
             _post.id,
-            VoteState(pollVotes: _post.pollVotes ?? {}, selectedIndex: null),
+            VoteState(
+              pollVotes: _post.pollVotes ?? {},
+              selectedIndex: selected,
+            ),
           );
     });
   }
