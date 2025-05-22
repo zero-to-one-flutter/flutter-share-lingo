@@ -104,6 +104,8 @@ class PostWriteViewModel extends StateNotifier<AsyncValue<void>> {
           'isPoll': true,
           if (_pollQuestion != null) 'pollQuestion': _pollQuestion!,
           if (_pollOptions != null) 'pollOptions': _pollOptions!,
+          'pollVotes': <String, int>{},
+          'userVotes': <String, int>{},
         });
       } else {
         updateData.addAll({
