@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_image_viewer/easy_image_viewer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -174,20 +173,17 @@ class _PostItemState extends ConsumerState<PostItem> {
             builder: (context) {
               return ProfilePage(
                 user: AppUser(
-                  id: 'u92837465',
-                  name: '박민수',
-                  createdAt: DateTime(2023, 8, 15),
-                  email: 'minsoo.park91@example.com',
-                  profileImage: 'https://picsum.photos/200/200?random=1',
-                  nativeLanguage: '한국어',
-                  targetLanguage: '스페인어',
-                  bio:
-                      '스페인어를 배우고 있는 직장인입니다. 언어뿐만 아니라 라틴 문화에도 관심이 많아요. 편하게 언어 교환하실 분 환영합니다!',
-                  birthdate: DateTime(1991, 11, 8),
-                  hobbies: '언어 교환에 진지한 분',
-                  languageLearningGoal: '남미 여행을 위해 자연스러운 스페인어 회화를 배우고 싶어요.',
-                  district: null,
-                  location: GeoPoint(37.4979, 127.0276),
+                  id: widget.post.uid,
+                  name: widget.post.userName,
+                  profileImage: widget.post.userProfileImage,
+                  nativeLanguage: widget.post.userNativeLanguage,
+                  targetLanguage: widget.post.userTargetLanguage,
+                  bio: widget.post.userBio,
+                  birthdate: widget.post.userBirthdate,
+                  hobbies: widget.post.userHobbies,
+                  languageLearningGoal: widget.post.userLanguageLearningGoal,
+                  district: widget.post.userDistrict,
+                  location: widget.post.userLocation,
                 ),
               );
             },

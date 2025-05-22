@@ -95,7 +95,15 @@ class ProfileLayout extends StatelessWidget {
             ),
           ];
         },
-        body: const TabBarView(children: [ProfileDetailsTab(), PostListView()]),
+        body: TabBarView(
+          children: [
+            ProfileDetailsTab(
+              languageLearningGoal: user.languageLearningGoal,
+              hobbies: user.hobbies,
+            ),
+            const PostListView(),
+          ],
+        ),
       ),
     );
   }
@@ -158,7 +166,14 @@ class PostListView extends StatelessWidget {
 }
 
 class ProfileDetailsTab extends StatelessWidget {
-  const ProfileDetailsTab({super.key});
+  final String? languageLearningGoal;
+  final String? hobbies;
+
+  const ProfileDetailsTab({
+    super.key,
+    required this.languageLearningGoal,
+    required this.hobbies,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -166,24 +181,25 @@ class ProfileDetailsTab extends StatelessWidget {
       padding: const EdgeInsets.all(24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: const [
-          // SizedBox(height: 24),
-          Text(
-            '제 언어 학습 목표는',
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-          ),
-          SizedBox(height: 8),
-          Text(
-            '저는 외국인 친구들과 자연스럽게 대화할 수 있을 정도로 유창한 영어 실력을 갖추고 싶습니다. 특히 여행이나 일상적인 상황에서도 막힘없이 말할 수 있도록 회화 능력을 키우는 것이 목표입니다.',
-          ),
-
-          SizedBox(height: 24),
-          Text(
-            '제 취미는',
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-          ),
-          SizedBox(height: 8),
-          Text('제 취미는 여행과 사진 촬영, 그리고 외국 드라마 감상입니다.'),
+        children: [
+          if (languageLearningGoal != null &&
+              languageLearningGoal!.trim().isNotEmpty) ...[
+            const Text(
+              '제 언어 학습 목표는',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 8),
+            Text(languageLearningGoal!),
+            const SizedBox(height: 24),
+          ],
+          if (hobbies != null && hobbies!.trim().isNotEmpty) ...[
+            const Text(
+              '제 취미는',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 8),
+            Text(hobbies!),
+          ],
         ],
       ),
     );
