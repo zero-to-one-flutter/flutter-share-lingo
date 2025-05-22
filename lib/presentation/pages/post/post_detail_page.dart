@@ -13,15 +13,18 @@ class PostDetailPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     currentPostId = post.id;
-    return Scaffold(
-      appBar: AppBar(title: const Text('Post'), elevation: 0),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            PostItem(post: post, displayComments: false),
-            const Divider(),
-            CommentSection(postId: post.id),
-          ],
+    return GestureDetector(
+      onTap: FocusScope.of(context).unfocus,
+      child: Scaffold(
+        appBar: AppBar(title: const Text('Post'), elevation: 0),
+        body: SingleChildScrollView(
+          child: Column(
+            children: [
+              PostItem(post: post, displayComments: false),
+              const Divider(),
+              CommentSection(postId: post.id),
+            ],
+          ),
         ),
       ),
     );
