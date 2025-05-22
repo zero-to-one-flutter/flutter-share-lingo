@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:share_lingo/domain/entity/post_entity.dart';
+import 'package:share_lingo/presentation/pages/home/tabs/write/widgets/poll_post_card.dart';
 import 'package:share_lingo/presentation/pages/home/widgets/post_item.dart';
 import 'package:share_lingo/presentation/widgets/comment_section.dart';
 
-class PostDetailPage extends ConsumerWidget {
+class PostDetailPage extends ConsumerStatefulWidget {
   final PostEntity post;
   static String? currentPostId;
 
@@ -21,6 +22,11 @@ class PostDetailPage extends ConsumerWidget {
           child: Column(
             children: [
               PostItem(post: post, displayComments: false),
+              if (post.isPoll)
+                Padding(
+                  padding: const EdgeInsets.only(top: 16.0),
+                  child: PollPostCard(post: post, now: DateTime.now()),
+                ),
               const Divider(),
               CommentSection(postId: post.id),
             ],
