@@ -45,8 +45,38 @@ dev_dependencies:
   flutter_native_splash: ^2.3.10
   flutter_test:
     sdk: flutter
-
+  flutter_launcher_icons: ^0.13.1
   flutter_lints: ^5.0.0
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/icons/app_icon.png"  # Square icon for iOS
+  adaptive_icon_foreground: "assets/icons/app_icon_rounded.png"  # Rounded icon for Android adaptive icons
+  adaptive_icon_background: "#40E0D0"  # Turquoise color
+  min_sdk_android: 21
+  remove_alpha_ios: true
+  web:
+    generate: false
+  windows:
+    generate: false
+  macos:
+    generate: false
+
+flutter_native_splash:
+  color: "#40E0D0"  # Turquoise color
+  image: assets/icons/app_icon_rounded.png  # Use rounded icon for splash screen
+  android_12:
+    image: assets/icons/app_icon_rounded.png
+    icon_background_color: "#40E0D0"
+    image_dark: assets/icons/app_icon_rounded.png
+    icon_background_color_dark: "#40E0D0"
+  color_dark: "#40E0D0"
+  image_dark: assets/icons/app_icon_rounded.png
+  web: false
+  android: true
+  ios: true
+  fullscreen: true
 
 flutter:
   uses-material-design: true

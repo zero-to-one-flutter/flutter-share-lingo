@@ -33,8 +33,11 @@ class LoginPage extends ConsumerWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Image.asset('assets/icons/app_logo_rounded.png', height: 120),
-              const SizedBox(height: 10),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(18),
+                child: Image.asset('assets/icons/app_icon.png', height: 130),
+              ),
+              const SizedBox(height: 15),
 
               const Text(
                 AppConstants.appTitle,
@@ -82,6 +85,7 @@ class LoginPage extends ConsumerWidget {
                   ),
                 ),
               ),
+              SizedBox(height: 30),
             ],
           ),
         ),
