@@ -93,6 +93,7 @@ class _PollPostCardState extends ConsumerState<PollPostCard> {
               pollVotes['$i'] ?? 0,
               totalVotes,
               selectedIndex,
+              voteState,
             ),
         ],
       ),
@@ -105,8 +106,10 @@ class _PollPostCardState extends ConsumerState<PollPostCard> {
     int count,
     int total,
     int? selectedIndex,
+    VoteState? voteState,
   ) {
-    final alreadyVoted = selectedIndex != null;
+    final alreadyVoted = voteState != null && voteState.selectedIndex != null;
+
     final isSelected = selectedIndex == index;
     final percent = total == 0 ? 0 : ((count / total) * 100).round();
 
@@ -143,7 +146,7 @@ class _PollPostCardState extends ConsumerState<PollPostCard> {
                         ),
                       );
                 } catch (e) {
-                  if (mounted) {
+                  if (mounted && voteState?.selectedIndex != null) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(content: Text('이미 투표하셨습니다.')),
                     );
