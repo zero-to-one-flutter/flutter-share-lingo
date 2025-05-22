@@ -39,7 +39,7 @@ class _PostItemState extends ConsumerState<PostItem> {
   @override
   Widget build(BuildContext context) {
     final List<ImageProvider> cachedImages = ref
-        .read(feedNotifierProvider.notifier)
+        .read(feedNotifierProvider(null).notifier)
         .getCachedImageProviders(widget.post);
 
     final DateTime now = ref.watch(timeAgoNotifierProvider);

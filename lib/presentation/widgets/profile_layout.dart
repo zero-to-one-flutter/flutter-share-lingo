@@ -3,6 +3,7 @@ import 'package:share_lingo/app/constants/app_colors.dart';
 import 'package:share_lingo/presentation/widgets/profile_images.dart';
 
 import '../../domain/entity/app_user.dart';
+import '../pages/home/tabs/feed/feed_tab.dart';
 
 class ProfileLayout extends StatelessWidget {
   final AppUser user;
@@ -101,7 +102,7 @@ class ProfileLayout extends StatelessWidget {
               languageLearningGoal: user.languageLearningGoal,
               hobbies: user.hobbies,
             ),
-            const PostListView(),
+            FeedTab(uid: user.id),
           ],
         ),
       ),
@@ -145,24 +146,6 @@ class _TabBarDelegate extends SliverPersistentHeaderDelegate {
   @override
   bool shouldRebuild(covariant SliverPersistentHeaderDelegate oldDelegate) =>
       false;
-}
-
-class PostListView extends StatelessWidget {
-  const PostListView({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return ListView.builder(
-      padding: const EdgeInsets.all(0),
-      itemCount: 10,
-      itemBuilder: (context, index) {
-        return ListTile(
-          title: Text('Post #$index'),
-          subtitle: Text('This is a sample post in the list.'),
-        );
-      },
-    );
-  }
 }
 
 class ProfileDetailsTab extends StatelessWidget {
