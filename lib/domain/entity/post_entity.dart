@@ -9,6 +9,10 @@ class PostEntity {
   final String userTargetLanguage;
   final String? userDistrict;
   final GeoPoint? userLocation;
+  final String? userBio;
+  final DateTime? userBirthdate;
+  final String? userHobbies;
+  final String? userLanguageLearningGoal;
   final String content;
   final List<String> imageUrl;
   final List<String> tags;
@@ -27,6 +31,10 @@ class PostEntity {
     required this.userTargetLanguage,
     this.userDistrict,
     this.userLocation,
+    this.userBio,
+    this.userBirthdate,
+    this.userHobbies,
+    this.userLanguageLearningGoal,
     required this.content,
     required this.imageUrl,
     required this.tags,
@@ -62,6 +70,10 @@ class PostEntity {
       userTargetLanguage: userTargetLanguage ?? this.userTargetLanguage,
       userDistrict: userDistrict,
       userLocation: userLocation,
+      userBio: userBio,
+      userBirthdate: userBirthdate,
+      userHobbies: userHobbies,
+      userLanguageLearningGoal: userLanguageLearningGoal,
       content: content ?? this.content,
       imageUrl: imageUrl ?? this.imageUrl,
       tags: tags ?? this.tags,
