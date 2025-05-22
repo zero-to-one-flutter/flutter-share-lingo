@@ -286,6 +286,7 @@ class _PostItemState extends State<PostItem> {
                     context,
                     NetworkImage(images[0]),
                     swipeDismissible: true,
+                    doubleTapZoomable: true,
                   ),
               child: Container(
                 decoration: BoxDecoration(
@@ -315,6 +316,7 @@ class _PostItemState extends State<PostItem> {
                         context,
                         multiImageProvider,
                         swipeDismissible: true,
+                        doubleTapZoomable: true,
                       );
                     },
                     child: Container(
@@ -341,6 +343,7 @@ class _PostItemState extends State<PostItem> {
                         context,
                         multiImageProvider,
                         swipeDismissible: true,
+                        doubleTapZoomable: true,
                       );
                     },
                     child: Container(
@@ -379,6 +382,7 @@ class _PostItemState extends State<PostItem> {
                         context,
                         multiImageProvider,
                         swipeDismissible: true,
+                        doubleTapZoomable: true,
                       );
                     },
                     child: Container(
@@ -412,6 +416,7 @@ class _PostItemState extends State<PostItem> {
                               context,
                               multiImageProvider,
                               swipeDismissible: true,
+                              doubleTapZoomable: true,
                             );
                           },
                           child: Container(
@@ -440,6 +445,7 @@ class _PostItemState extends State<PostItem> {
                               context,
                               multiImageProvider,
                               swipeDismissible: true,
+                              doubleTapZoomable: true,
                             );
                           },
                           child: Container(
