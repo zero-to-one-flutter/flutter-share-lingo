@@ -48,8 +48,7 @@ class _PostItemState extends ConsumerState<PostItem> {
         .getCachedImageProviders(widget.post);
 
     final DateTime now = ref.watch(timeAgoNotifierProvider);
-    return InkWell(
-      highlightColor: AppColors.lightGrey,
+    return GestureDetector(
       onTap: () async {
         if (PostDetailPage.currentPostId != widget.post.id) {
           // ✅ Firestore에서 최신 데이터 가져오기
@@ -75,7 +74,8 @@ class _PostItemState extends ConsumerState<PostItem> {
           });
         }
       },
-      child: Padding(
+      child: Container(
+        color: Colors.transparent,
         padding: const EdgeInsets.symmetric(horizontal: 10),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
