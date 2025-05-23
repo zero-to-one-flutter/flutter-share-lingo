@@ -47,6 +47,7 @@ class _PostItemState extends ConsumerState<PostItem> {
       highlightColor: AppColors.lightGrey,
       onTap: () {
         if (PostDetailPage.currentPostId != widget.post.id) {
+          PostDetailPage.currentPostId = widget.post.id;
           Navigator.push(
             context,
             MaterialPageRoute(
