@@ -4,7 +4,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:share_lingo/domain/entity/post_entity.dart';
-import 'package:share_lingo/presentation/pages/home/tabs/feed/feed_view_model.dart';
 import 'package:share_lingo/presentation/pages/home/tabs/write/vote_state.dart';
 import 'package:share_lingo/presentation/pages/home/tabs/write/widgets/poll_post_card.dart';
 import 'package:share_lingo/presentation/pages/home/widgets/post_item.dart';

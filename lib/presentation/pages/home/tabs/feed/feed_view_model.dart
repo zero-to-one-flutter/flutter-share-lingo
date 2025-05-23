@@ -103,34 +103,6 @@ class FeedNotifier
     return [];
   }
 
-  Future<List<PostEntity>> fetchLatestPosts() async {
-    PostEntity? firstPost;
-
-    if (state.asData == null) return [];
-    final currentPosts = state.asData!.value;
-    firstPost = currentPosts.isNotEmpty ? currentPosts.first : null;
-
-    if (firstPost != null) {
-      try {
-        final user = ref.read(userGlobalViewModelProvider);
-        final latestPosts = await ref
-            .read(fetchLatestPostsUsecaseProvider)
-            .execute(firstPost, filter: arg.filter, user: user);
-
-        if (latestPosts.isEmpty) return [];
-
-        latestPosts.removeWhere((post) => post.uid == firstPost!.uid);
-
-        state = AsyncData([...latestPosts, ...currentPosts]);
-        return latestPosts;
-      } catch (e, st) {
-        state = AsyncError(e, st);
-        return [];
-      }
-    }
-    return [];
-  }
-
   Future<List<PostEntity>> refreshAndUpdatePosts() async {
     PostEntity? firstPost;
 
@@ -140,8 +112,6 @@ class FeedNotifier
 
     // 새 포스트 20개 가져오기
     if (firstPost != null) {
-      // 기존 포스트 최신 50개만 남기기
-      List<PostEntity> remainPosts = currentPosts.take(50).toList();
       try {
         final user = ref.read(userGlobalViewModelProvider);
 
@@ -158,17 +128,7 @@ class FeedNotifier
             .read(fetchCurrentUpdatedPostsUsecase)
             .execute(firstPost, filter: arg.filter, user: user);
 
-        final updateMap = {for (var post in currentUpdatedPosts) post.id: post};
-
-        final updatedRemainPosts =
-            remainPosts.map((post) {
-              if (updateMap.containsKey(post.id)) {
-                return updateMap[post.id]!;
-              }
-              return post;
-            }).toList();
-
-        state = AsyncData([...latestPosts, ...updatedRemainPosts]);
+        state = AsyncData([...latestPosts, ...currentUpdatedPosts]);
         log('refreshAndUpdated 실행 완료');
       } catch (e, st) {
         state = AsyncError(e, st);
