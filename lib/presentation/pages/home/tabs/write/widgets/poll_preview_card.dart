@@ -50,7 +50,7 @@ class PollPreviewCard extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 16),
-          ...options.map((option) => _buildOption(option)).toList(),
+          ...[for (final option in options) _buildOption(option)],
           const SizedBox(height: 12),
           if (onDelete != null)
             Align(
