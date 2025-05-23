@@ -169,8 +169,8 @@ class FeedNotifier
             }).toList();
 
         state = AsyncData([...latestPosts, ...updatedRemainPosts]);
+        log('refreshAndUpdated 실행 완료');
       } catch (e, st) {
-        log('에러 발생');
         state = AsyncError(e, st);
         return [];
       }
