@@ -5,37 +5,44 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:share_lingo/core/providers/data_providers.dart';
-import 'package:share_lingo/domain/repository/post_repository.dart';
-import 'package:share_lingo/domain/usecase/fetch_current_updated_posts_usecase.dart';
-import 'package:share_lingo/domain/usecase/fetch_initial_posts_usecase.dart';
 import 'package:share_lingo/domain/entity/post_entity.dart';
-import 'package:share_lingo/domain/usecase/fetch_lastest_posts_usecase.dart';
-import 'package:share_lingo/domain/usecase/fetch_older_posts_usecase.dart';
 import 'package:share_lingo/domain/usecase/fetch_posts_by_uid_usecase.dart';
 
+import '../../../../user_global_view_model.dart';
+
+@immutable
+class FeedQueryArg {
+  final String? uid;
+  final String? filter;
+
+  const FeedQueryArg({this.uid, this.filter});
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is FeedQueryArg &&
+          runtimeType == other.runtimeType &&
+          uid == other.uid &&
+          filter == other.filter;
+
+  @override
+  int get hashCode => uid.hashCode ^ filter.hashCode;
+}
+
+
 class FeedNotifier
-    extends AutoDisposeFamilyAsyncNotifier<List<PostEntity>, String?> {
-  late final FetchInitialPostsUsecase initialPostsUsecase;
-  late final FetchOlderPostsUsecase olderPostsUsecase;
-  late final FetchLastestPostsUsecase latestPostsUsecase;
-  late final FetchCurrentUpdatedPostsUsecase currentUpdatedPostsUsecase;
-  late final PostRepository repository;
+    extends AutoDisposeFamilyAsyncNotifier<List<PostEntity>, FeedQueryArg> {
 
   bool _isInitialized = false;
 
   @override
-  Future<List<PostEntity>> build(String? uid) async {
-    if (uid != null) {
-      return await ref.read(fetchPostsByUidUsecaseProvider).execute(uid);
+  Future<List<PostEntity>> build(FeedQueryArg arg) async {
+    if (arg.uid != null) {
+      return await ref.read(fetchPostsByUidUsecaseProvider).execute(arg.uid!);
     }
 
     // 중복 초기화 방지
     if (!_isInitialized) {
-      initialPostsUsecase = ref.read(fetchInitialPostsUsecaseProvider);
-      olderPostsUsecase = ref.read(fetchOlderPostsUsecaseProvider);
-      latestPostsUsecase = ref.read(fetchLatestPostsUsecaseProvider);
-      currentUpdatedPostsUsecase = ref.read(fetchCurrentUpdatedPostsUsecase);
-      repository = ref.read(postRepositoryProvider);
       _isInitialized = true;
     }
 
@@ -54,10 +61,15 @@ class FeedNotifier
 
   Future<List<PostEntity>> _fetchInitialPosts() async {
     try {
-      if (arg != null) {
-        return await ref.read(fetchPostsByUidUsecaseProvider).execute(arg!);
+      if (arg.uid != null) {
+        return await ref.read(fetchPostsByUidUsecaseProvider).execute(arg.uid!);
       }
-      final posts = await initialPostsUsecase.execute();
+
+      final user = ref.read(userGlobalViewModelProvider);
+      final posts = await ref.read(fetchInitialPostsUsecaseProvider).execute(
+        filter: arg.filter,
+        user: user,
+      );
       return posts;
     } catch (e, st) {
       state = AsyncError(e, st);
@@ -75,7 +87,13 @@ class FeedNotifier
 
     if (lastPost != null) {
       try {
-        final olderPosts = await olderPostsUsecase.execute(lastPost);
+        final user = ref.read(userGlobalViewModelProvider);
+        final olderPosts = await ref.read(fetchOlderPostsUsecaseProvider).execute(
+          lastPost,
+          filter: arg.filter,
+          user: user,
+        );
+
         if (olderPosts.isEmpty) return [];
 
         olderPosts.removeWhere((post) => post.uid == lastPost!.uid);
@@ -99,7 +117,13 @@ class FeedNotifier
 
     if (firstPost != null) {
       try {
-        final latestPosts = await latestPostsUsecase.execute(firstPost);
+        final user = ref.read(userGlobalViewModelProvider);
+        final latestPosts = await ref.read(fetchLatestPostsUsecaseProvider).execute(
+          firstPost,
+          filter: arg.filter,
+          user: user,
+        );
+
         if (latestPosts.isEmpty) return [];
 
         latestPosts.removeWhere((post) => post.uid == firstPost!.uid);
@@ -126,13 +150,22 @@ class FeedNotifier
       // 기존 포스트 최신 50개만 남기기
       List<PostEntity> remainPosts = currentPosts.take(50).toList();
       try {
-        final latestPosts = await latestPostsUsecase.execute(firstPost);
+        final user = ref.read(userGlobalViewModelProvider);
+
+        final latestPosts = await ref.read(fetchLatestPostsUsecaseProvider).execute(
+          firstPost,
+          filter: arg.filter,
+          user: user,
+        );
+
         if (latestPosts.isEmpty) return [];
 
         latestPosts.removeWhere((post) => post.uid == firstPost!.uid);
         // 서버에서 firstpost 기준 기존글 50개만 가지고 오기
-        final currentUpdatedPosts = await currentUpdatedPostsUsecase.execute(
+        final currentUpdatedPosts = await ref.read(fetchCurrentUpdatedPostsUsecase).execute(
           firstPost,
+          filter: arg.filter,
+          user: user,
         );
 
         final updateMap = {for (var post in currentUpdatedPosts) post.id: post};
@@ -164,7 +197,7 @@ class FeedNotifier
 }
 
 final feedNotifierProvider = AsyncNotifierProvider.autoDispose
-    .family<FeedNotifier, List<PostEntity>, String?>(FeedNotifier.new);
+    .family<FeedNotifier, List<PostEntity>, FeedQueryArg>(FeedNotifier.new);
 
 class TimeAgoNotifier extends AutoDisposeNotifier<DateTime> {
   @override
