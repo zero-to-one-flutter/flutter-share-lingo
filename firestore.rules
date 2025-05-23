@@ -1,0 +1,81 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // --- Dev bypass ---
+    function isDev() {
+      return request.auth != null && request.auth.token.email in [
+        "penjan.eng@gmail.com"
+      ];
+    }
+
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return request.auth.uid == userId;
+    }
+
+    // Users collection
+    match /users/{userId} {
+      allow read: if isAuthenticated();
+      allow write: if isOwner(userId);
+    }
+
+    // Posts collection
+    match /posts/{postId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated();
+
+      allow update: if
+        // 1. 작성자인 경우 전체 수정 허용
+        isOwner(resource.data.uid) ||
+
+        // 2. 작성자가 아니더라도 pollVotes, userVotes만 수정하는 경우 허용
+        (
+          isAuthenticated() &&
+          request.resource.data.diff(resource.data).changedKeys().hasOnly(['pollVotes', 'userVotes']) &&
+          request.resource.data.pollVotes is map &&
+          request.resource.data.userVotes is map
+        );
+
+      allow delete: if isOwner(resource.data.uid);
+
+      // Comments subcollection
+      match /comments/{commentId} {
+        allow read: if isAuthenticated();
+        allow create: if isAuthenticated();
+        allow update, delete: if isOwner(resource.data.uid);
+
+        // Reports subcollection
+        match /reports/{reportId} {
+          allow read: if isDev(); // Only devs can read reports
+          allow create: if isAuthenticated() &&
+            request.resource.data.reporterId == request.auth.uid;
+        }
+      }
+
+      // Likes subcollection
+      match /likes/{likeId} {
+        allow read: if isAuthenticated();
+        allow write: if isAuthenticated() && likeId == request.auth.uid;
+      }
+    }
+
+    // Comment reports collection (root level)
+    match /comment_reports/{reportId} {
+      allow read: if isDev(); // Only devs can read reports
+      allow create: if isAuthenticated() &&
+        request.resource.data.reporterId == request.auth.uid;
+    }
+
+    // Post reports collection (root level)
+    match /reports/{reportId} {
+      allow read: if isDev(); // Only devs can read reports
+      allow create: if isAuthenticated() &&
+        request.resource.data.reporterId == request.auth.uid;
+    }
+  }
+} 
