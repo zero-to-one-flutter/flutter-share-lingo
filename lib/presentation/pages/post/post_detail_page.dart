@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -44,22 +46,33 @@ class _PostDetailPageState extends ConsumerState<PostDetailPage> {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () => FocusScope.of(context).unfocus(),
-      child: Scaffold(
-        appBar: AppBar(title: const Text('Post'), elevation: 0),
-        body: SingleChildScrollView(
-          child: Column(
-            children: [
-              PostItem(post: _post, displayComments: false),
-              if (_post.isPoll)
-                Padding(
-                  padding: const EdgeInsets.only(top: 16.0),
-                  child: PollPostCard(post: _post, now: DateTime.now()),
-                ),
-              const Divider(),
-              CommentSection(postId: _post.id),
-            ],
+    return PopScope(
+      canPop: true,
+      onPopInvokedWithResult: (bool didPop, Object? result) {
+        if (didPop) {
+          log('left detailPage');
+          // ref
+          //     .read(feedNotifierProvider(FeedQueryArg()).notifier)
+          //     .refreshAndUpdatePosts();
+        }
+      },
+      child: GestureDetector(
+        onTap: () => FocusScope.of(context).unfocus(),
+        child: Scaffold(
+          appBar: AppBar(title: const Text('Post'), elevation: 0),
+          body: SingleChildScrollView(
+            child: Column(
+              children: [
+                PostItem(post: _post, displayComments: false),
+                if (_post.isPoll)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 16.0),
+                    child: PollPostCard(post: _post, now: DateTime.now()),
+                  ),
+                const Divider(),
+                CommentSection(postId: _post.id),
+              ],
+            ),
           ),
         ),
       ),

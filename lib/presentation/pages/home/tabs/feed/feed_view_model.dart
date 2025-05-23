@@ -29,10 +29,8 @@ class FeedQueryArg {
   int get hashCode => uid.hashCode ^ filter.hashCode;
 }
 
-
 class FeedNotifier
     extends AutoDisposeFamilyAsyncNotifier<List<PostEntity>, FeedQueryArg> {
-
   bool _isInitialized = false;
 
   @override
@@ -66,10 +64,9 @@ class FeedNotifier
       }
 
       final user = ref.read(userGlobalViewModelProvider);
-      final posts = await ref.read(fetchInitialPostsUsecaseProvider).execute(
-        filter: arg.filter,
-        user: user,
-      );
+      final posts = await ref
+          .read(fetchInitialPostsUsecaseProvider)
+          .execute(filter: arg.filter, user: user);
       return posts;
     } catch (e, st) {
       state = AsyncError(e, st);
@@ -88,11 +85,9 @@ class FeedNotifier
     if (lastPost != null) {
       try {
         final user = ref.read(userGlobalViewModelProvider);
-        final olderPosts = await ref.read(fetchOlderPostsUsecaseProvider).execute(
-          lastPost,
-          filter: arg.filter,
-          user: user,
-        );
+        final olderPosts = await ref
+            .read(fetchOlderPostsUsecaseProvider)
+            .execute(lastPost, filter: arg.filter, user: user);
 
         if (olderPosts.isEmpty) return [];
 
@@ -100,36 +95,6 @@ class FeedNotifier
 
         state = AsyncData([...currentPosts, ...olderPosts]);
         return olderPosts;
-      } catch (e, st) {
-        state = AsyncError(e, st);
-        return [];
-      }
-    }
-    return [];
-  }
-
-  Future<List<PostEntity>> fetchLatestPosts() async {
-    PostEntity? firstPost;
-
-    if (state.asData == null) return [];
-    final currentPosts = state.asData!.value;
-    firstPost = currentPosts.isNotEmpty ? currentPosts.first : null;
-
-    if (firstPost != null) {
-      try {
-        final user = ref.read(userGlobalViewModelProvider);
-        final latestPosts = await ref.read(fetchLatestPostsUsecaseProvider).execute(
-          firstPost,
-          filter: arg.filter,
-          user: user,
-        );
-
-        if (latestPosts.isEmpty) return [];
-
-        latestPosts.removeWhere((post) => post.uid == firstPost!.uid);
-
-        state = AsyncData([...latestPosts, ...currentPosts]);
-        return latestPosts;
       } catch (e, st) {
         state = AsyncError(e, st);
         return [];
@@ -147,40 +112,25 @@ class FeedNotifier
 
     // 새 포스트 20개 가져오기
     if (firstPost != null) {
-      // 기존 포스트 최신 50개만 남기기
-      List<PostEntity> remainPosts = currentPosts.take(50).toList();
       try {
         final user = ref.read(userGlobalViewModelProvider);
 
-        final latestPosts = await ref.read(fetchLatestPostsUsecaseProvider).execute(
-          firstPost,
-          filter: arg.filter,
-          user: user,
-        );
+        final latestPosts = await ref
+            .read(fetchLatestPostsUsecaseProvider)
+            .execute(firstPost, filter: arg.filter, user: user);
 
-        if (latestPosts.isEmpty) return [];
+        if (latestPosts.isNotEmpty) {
+          latestPosts.removeWhere((post) => post.uid == firstPost!.uid);
+        }
 
-        latestPosts.removeWhere((post) => post.uid == firstPost!.uid);
         // 서버에서 firstpost 기준 기존글 50개만 가지고 오기
-        final currentUpdatedPosts = await ref.read(fetchCurrentUpdatedPostsUsecase).execute(
-          firstPost,
-          filter: arg.filter,
-          user: user,
-        );
+        final currentUpdatedPosts = await ref
+            .read(fetchCurrentUpdatedPostsUsecase)
+            .execute(firstPost, filter: arg.filter, user: user);
 
-        final updateMap = {for (var post in currentUpdatedPosts) post.id: post};
-
-        final updatedRemainPosts =
-            remainPosts.map((post) {
-              if (updateMap.containsKey(post.id)) {
-                return updateMap[post.id]!;
-              }
-              return post;
-            }).toList();
-
-        state = AsyncData([...latestPosts, ...updatedRemainPosts]);
+        state = AsyncData([...latestPosts, ...currentUpdatedPosts]);
+        log('refreshAndUpdated 실행 완료');
       } catch (e, st) {
-        log('에러 발생');
         state = AsyncError(e, st);
         return [];
       }
