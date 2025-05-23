@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../../app/constants/app_colors.dart';
 import '../../../../user_global_view_model.dart';
 import 'feed_tab.dart';
 
@@ -36,7 +37,7 @@ class _FeedTabState extends ConsumerState<FeedTab>
                 title: Text(
                   'ShareLingo',
                   style: TextStyle(
-                    color: Colors.black,
+                    color: AppColors.primary,
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
                   ),
