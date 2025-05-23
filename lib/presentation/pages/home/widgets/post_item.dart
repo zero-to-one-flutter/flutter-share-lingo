@@ -120,7 +120,7 @@ class _PostItemState extends ConsumerState<PostItem> {
   }
 
   Widget _topBar(DateTime now) {
-    return InkWell(
+    return GestureDetector(
       onTap: () {
         Navigator.of(context).push(
           MaterialPageRoute(
