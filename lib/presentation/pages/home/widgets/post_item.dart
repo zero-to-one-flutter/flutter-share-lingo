@@ -38,6 +38,9 @@ class PostItem extends ConsumerStatefulWidget {
 }
 
 class _PostItemState extends ConsumerState<PostItem> {
+  // ignore: unused_field
+  final bool _showEmojiPicker = false;
+
   @override
   Widget build(BuildContext context) {
     final List<ImageProvider> cachedImages = ref
@@ -45,8 +48,7 @@ class _PostItemState extends ConsumerState<PostItem> {
         .getCachedImageProviders(widget.post);
 
     final DateTime now = ref.watch(timeAgoNotifierProvider);
-    return InkWell(
-      highlightColor: AppColors.lightGrey,
+    return GestureDetector(
       onTap: () async {
         if (PostDetailPage.currentPostId != widget.post.id) {
           // ✅ Firestore에서 최신 데이터 가져오기
@@ -61,6 +63,7 @@ class _PostItemState extends ConsumerState<PostItem> {
           final dto = PostDto.fromMap(doc.id, doc.data()!);
           final freshPost = dto.toEntity();
 
+          if (!context.mounted) return;
           await Navigator.push(
             context,
             MaterialPageRoute(
@@ -71,7 +74,8 @@ class _PostItemState extends ConsumerState<PostItem> {
           });
         }
       },
-      child: Padding(
+      child: Container(
+        color: Colors.transparent,
         padding: const EdgeInsets.symmetric(horizontal: 10),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -116,7 +120,7 @@ class _PostItemState extends ConsumerState<PostItem> {
   }
 
   Widget _topBar(DateTime now) {
-    return InkWell(
+    return GestureDetector(
       onTap: () {
         Navigator.of(context).push(
           MaterialPageRoute(
