@@ -60,10 +60,10 @@ class _CommentSectionState extends ConsumerState<CommentSection> {
         .add(commentDto.toMap());
 
     // Update the post's comment count
-    await FirebaseFirestore.instance
-        .collection('posts')
-        .doc(widget.postId)
-        .update({'commentCount': FieldValue.increment(1)});
+    // await FirebaseFirestore.instance
+    //     .collection('posts')
+    //     .doc(widget.postId)
+    //     .update({'commentCount': FieldValue.increment(1)});
 
     _commentController.clear();
     setState(() {
@@ -95,10 +95,10 @@ class _CommentSectionState extends ConsumerState<CommentSection> {
         .delete();
 
     // Update the post's comment count
-    await FirebaseFirestore.instance
-        .collection('posts')
-        .doc(widget.postId)
-        .update({'commentCount': FieldValue.increment(-1)});
+    // await FirebaseFirestore.instance
+    //     .collection('posts')
+    //     .doc(widget.postId)
+    //     .update({'commentCount': FieldValue.increment(-1)});
   }
 
   Future<void> _toggleReaction(String commentId, String emoji) async {

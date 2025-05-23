@@ -14,7 +14,7 @@ class GeneralUtils {
       locale: const Locale('ko'),
       initialDate: initialDate ?? now.subtract(const Duration(days: 365 * 20)),
       firstDate: DateTime(1900),
-      lastDate: now,
+      lastDate: DateTime(now.year - 18, now.month, now.day),
       builder: (context, child) {
         return Theme(
           data: Theme.of(context).copyWith(

@@ -1,12 +1,13 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import '../../../../../../app/constants/app_colors.dart';
 
 class PollInputDialog extends StatefulWidget {
   final void Function({
-    required String question,
-    required String option1,
-    required String option2,
-  })
-  onConfirm;
+  required String question,
+  required String option1,
+  required String option2,
+  }) onConfirm;
 
   const PollInputDialog({super.key, required this.onConfirm});
 
@@ -27,58 +28,52 @@ class _PollInputDialogState extends State<PollInputDialog> {
     super.dispose();
   }
 
-  InputDecoration _buildInputDecoration(String label) {
-    return InputDecoration(
-      labelText: label,
-      filled: true,
-      fillColor: Colors.grey.shade100,
-      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-      border: OutlineInputBorder(
+  Widget _buildTextField(TextEditingController controller, String placeholder) {
+    return CupertinoTextField(
+      controller: controller,
+      placeholder: placeholder,
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+      style: const TextStyle(fontSize: 16),
+      decoration: BoxDecoration(
+        color: CupertinoColors.systemGrey6,
         borderRadius: BorderRadius.circular(12),
-        borderSide: const BorderSide(color: Colors.grey),
-      ),
-      focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
-        borderSide: const BorderSide(color: Colors.deepPurple),
       ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
-      backgroundColor: Colors.white,
+    return CupertinoAlertDialog(
       title: const Text(
         '투표',
-        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+        style: TextStyle(
+          fontWeight: FontWeight.bold,
+          fontSize: 18,
+        ),
       ),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          TextField(
-            controller: _questionController,
-            decoration: _buildInputDecoration('질문을 입력하세요'),
+      content: Padding(
+        padding: const EdgeInsets.only(top: 12),
+        child: Material(
+          color: Colors.transparent,
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                _buildTextField(_questionController, '질문을 입력하세요'),
+                const SizedBox(height: 12),
+                _buildTextField(_option1Controller, '선택지 1'),
+                const SizedBox(height: 12),
+                _buildTextField(_option2Controller, '선택지 2'),
+              ],
+            ),
           ),
-          const SizedBox(height: 14),
-          TextField(
-            controller: _option1Controller,
-            decoration: _buildInputDecoration('선택지 1'),
-          ),
-          const SizedBox(height: 14),
-          TextField(
-            controller: _option2Controller,
-            decoration: _buildInputDecoration('선택지 2'),
-          ),
-        ],
+        ),
       ),
-      actionsPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
       actions: [
-        TextButton(
+        CupertinoDialogAction(
           onPressed: () => Navigator.of(context).pop(),
           child: const Text('취소', style: TextStyle(color: Colors.grey)),
         ),
-        ElevatedButton(
+        CupertinoDialogAction(
           onPressed: () {
             final q = _questionController.text.trim();
             final o1 = _option1Controller.text.trim();
@@ -89,14 +84,14 @@ class _PollInputDialogState extends State<PollInputDialog> {
               Navigator.of(context).pop();
             }
           },
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.deepPurple,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
+          isDefaultAction: true,
+          child: Text(
+            '확인',
+            style: TextStyle(
+              color: AppColors.buttonsBlue,
+              fontWeight: FontWeight.bold,
             ),
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
           ),
-          child: const Text('확인', style: TextStyle(color: Colors.white)),
         ),
       ],
     );
