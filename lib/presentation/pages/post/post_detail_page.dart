@@ -9,6 +9,8 @@ import 'package:share_lingo/presentation/pages/home/tabs/write/widgets/poll_post
 import 'package:share_lingo/presentation/pages/home/widgets/post_item.dart';
 import 'package:share_lingo/presentation/widgets/comment_section.dart';
 
+import '../home/tabs/feed/feed_view_model.dart';
+
 class PostDetailPage extends ConsumerStatefulWidget {
   final PostEntity post;
   static String? currentPostId;
@@ -51,9 +53,9 @@ class _PostDetailPageState extends ConsumerState<PostDetailPage> {
       onPopInvokedWithResult: (bool didPop, Object? result) {
         if (didPop) {
           log('left detailPage');
-          // ref
-          //     .read(feedNotifierProvider(FeedQueryArg()).notifier)
-          //     .refreshAndUpdatePosts();
+          ref
+              .read(feedNotifierProvider(FeedQueryArg()).notifier)
+              .refreshAndUpdatePosts();
         }
       },
       child: GestureDetector(
