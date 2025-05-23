@@ -23,6 +23,13 @@ class PostDto {
   final int commentCount;
   final bool deleted;
 
+  // 투표 관련 필드 추가
+  final bool isPoll;
+  final String? pollQuestion;
+  final List<String>? pollOptions;
+  final Map<String, int>? pollVotes;
+  final Map<String, int>? userVotes;
+
   PostDto({
     required this.id,
     required this.uid,
@@ -44,6 +51,11 @@ class PostDto {
     required this.likeCount,
     required this.commentCount,
     required this.deleted,
+    this.isPoll = false,
+    this.pollQuestion,
+    this.pollOptions,
+    this.pollVotes,
+    this.userVotes,
   });
 
   factory PostDto.fromMap(String id, Map<String, dynamic> map) {
@@ -68,6 +80,22 @@ class PostDto {
       likeCount: map['likeCount'] ?? 0,
       commentCount: map['commentCount'] ?? 0,
       deleted: map['deleted'] ?? false,
+
+      // 투표 관련 매핑
+      isPoll: map['isPoll'] ?? false,
+      pollQuestion: map['pollQuestion'],
+      pollOptions:
+          map['pollOptions'] != null
+              ? List<String>.from(map['pollOptions'])
+              : null,
+      pollVotes:
+          map['pollVotes'] != null
+              ? Map<String, int>.from(map['pollVotes'])
+              : null,
+      userVotes:
+          map['userVotes'] != null
+              ? Map<String, int>.from(map['userVotes'])
+              : null,
     );
   }
 
@@ -92,6 +120,13 @@ class PostDto {
       'likeCount': likeCount,
       'commentCount': commentCount,
       'deleted': deleted,
+
+      // 투표 관련 필드도 포함
+      'isPoll': isPoll,
+      'pollQuestion': pollQuestion,
+      'pollOptions': pollOptions,
+      'pollVotes': pollVotes,
+      'userVotes': userVotes,
     };
   }
 
@@ -117,6 +152,13 @@ class PostDto {
       likeCount: likeCount,
       commentCount: commentCount,
       deleted: deleted,
+
+      // 투표 필드 매핑
+      isPoll: isPoll,
+      pollQuestion: pollQuestion,
+      pollOptions: pollOptions,
+      pollVotes: pollVotes,
+      userVotes: userVotes,
     );
   }
 
@@ -131,21 +173,30 @@ class PostDto {
       userDistrict: entity.userDistrict,
       userLocation: entity.userLocation,
       userBio: entity.userBio,
-      userBirthdate: entity.userBirthdate != null
-          ? Timestamp.fromDate(entity.userBirthdate!)
-          : null,
+      userBirthdate:
+          entity.userBirthdate != null
+              ? Timestamp.fromDate(entity.userBirthdate!)
+              : null,
       userHobbies: entity.userHobbies,
       userLanguageLearningGoal: entity.userLanguageLearningGoal,
       content: entity.content,
       imageUrl: entity.imageUrl,
       tags: entity.tags,
       createdAt: entity.createdAt,
-      updatedAt: entity.updatedAt != null
-          ? Timestamp.fromDate(entity.updatedAt!)
-          : null,
+      updatedAt:
+          entity.updatedAt != null
+              ? Timestamp.fromDate(entity.updatedAt!)
+              : null,
       likeCount: entity.likeCount,
       commentCount: entity.commentCount,
       deleted: entity.deleted,
+
+      //  투표 필드 매핑
+      isPoll: entity.isPoll,
+      pollQuestion: entity.pollQuestion,
+      pollOptions: entity.pollOptions,
+      pollVotes: entity.pollVotes,
+      userVotes: entity.userVotes,
     );
   }
 }

@@ -9,7 +9,10 @@ import 'package:share_lingo/core/utils/snackbar_util.dart';
 import 'package:share_lingo/domain/entity/post_entity.dart';
 import 'package:share_lingo/presentation/pages/home/tabs/feed/feed_view_model.dart';
 import 'package:share_lingo/presentation/pages/home/tabs/write/post_write_view_model.dart';
+import 'package:share_lingo/presentation/pages/home/tabs/write/vote_state.dart';
 import 'package:share_lingo/presentation/pages/home/tabs/write/widgets/cancel_button.dart';
+import 'package:share_lingo/presentation/pages/home/tabs/write/widgets/poll_input_dialog.dart';
+import 'package:share_lingo/presentation/pages/home/tabs/write/widgets/poll_preview_card.dart';
 import 'package:share_lingo/presentation/pages/home/tabs/write/widgets/post_input_field.dart';
 import 'package:share_lingo/presentation/pages/home/tabs/write/widgets/submit_button.dart';
 import 'package:share_lingo/presentation/pages/home/tabs/write/widgets/tag_row_button.dart';
@@ -35,6 +38,8 @@ class _PostWriteTabState extends ConsumerState<PostWriteTab> {
 
   final ImagePicker _picker = ImagePicker();
   final YoloDetection _yoloModel = YoloDetection();
+  String? uiPollQuestion;
+  List<String>? uiPollOptions;
 
   @override
   void initState() {
@@ -43,10 +48,14 @@ class _PostWriteTabState extends ConsumerState<PostWriteTab> {
       text: widget.post?.content ?? '',
     );
     _existingImageUrls = List.from(widget.post?.imageUrl ?? []);
-
+    //투표 미리보기용 상태 초기화
+    if (widget.post?.isPoll == true) {
+      uiPollQuestion = widget.post?.pollQuestion;
+      uiPollOptions = widget.post?.pollOptions;
+    }
     //수정모드일 경우 기존 태그 불러오기
     if (widget.post?.tags != null && widget.post!.tags.isNotEmpty) {
-      _selectedTags.addAll(widget.post!.tags.map((e) => '#$e'));
+      _selectedTags.addAll(widget.post!.tags);
     }
     Future.microtask(() async {
       try {
@@ -125,8 +134,30 @@ class _PostWriteTabState extends ConsumerState<PostWriteTab> {
     );
 
     final combinedImageUrls = [..._existingImageUrls, ...newImageUrls];
-
+    if (uiPollQuestion != null && uiPollOptions != null) {
+      ref
+          .read(postWriteViewModelProvider.notifier)
+          .setPollData(question: uiPollQuestion!, options: uiPollOptions!);
+    }
     if (widget.post != null) {
+      // 기존 투표 정보 무효화
+      if (uiPollQuestion != null && uiPollOptions != null) {
+        final postId = widget.post!.id;
+
+        // 상태 리셋
+        ref.read(voteStateProvider.notifier).reset(postId);
+
+        // 빈 값으로 다시 설정 (선택도 초기화)
+        ref
+            .read(voteStateProvider.notifier)
+            .set(
+              postId,
+              VoteState(
+                pollVotes: {}, // 새로운 투표니까 초기화
+                selectedIndex: null,
+              ),
+            );
+      }
       // 수정 모드
       await ref
           .read(postWriteViewModelProvider.notifier)
@@ -136,9 +167,10 @@ class _PostWriteTabState extends ConsumerState<PostWriteTab> {
             imageUrls: combinedImageUrls,
             tags: _selectedTags,
           );
+      // 피드 데이터 무효화해서 새로 불러오게 함
+      ref.invalidate(feedNotifierProvider);
       if (!mounted) return;
-      SnackbarUtil.showSnackBar(context, '수정되었습니다');
-      Navigator.of(context).pop(true);
+      Navigator.of(context).popUntil((route) => route.isFirst);
       return;
     }
 
@@ -213,7 +245,22 @@ class _PostWriteTabState extends ConsumerState<PostWriteTab> {
                       children: [
                         PostInputField(controller: _contentController),
                         const SizedBox(height: 16),
+                        // 투표 미리보기 카드
+                        if (uiPollQuestion != null && uiPollOptions != null)
+                          PollPreviewCard(
+                            question: uiPollQuestion!,
+                            options: uiPollOptions!,
+                            onDelete: () {
+                              setState(() {
+                                uiPollQuestion = null;
+                                uiPollOptions = null;
+                              });
 
+                              ref
+                                  .read(postWriteViewModelProvider.notifier)
+                                  .setPollData(question: '', options: []);
+                            },
+                          ),
                         if (_existingImageUrls.isNotEmpty)
                           SizedBox(
                             height: 100,
@@ -292,6 +339,35 @@ class _PostWriteTabState extends ConsumerState<PostWriteTab> {
                             }
                           },
                           onPickImage: _pickImage,
+                          onAddPoll: () {
+                            showDialog(
+                              context: context,
+                              builder:
+                                  (context) => PollInputDialog(
+                                    onConfirm: ({
+                                      required question,
+                                      required option1,
+                                      required option2,
+                                    }) {
+                                      // UI 상태 갱신
+                                      setState(() {
+                                        uiPollQuestion = question;
+                                        uiPollOptions = [option1, option2];
+                                      });
+
+                                      // 뷰모델에도 전달
+                                      ref
+                                          .read(
+                                            postWriteViewModelProvider.notifier,
+                                          )
+                                          .setPollData(
+                                            question: question,
+                                            options: [option1, option2],
+                                          );
+                                    },
+                                  ),
+                            );
+                          },
                         ),
                         if (_selectedTags.isNotEmpty)
                           Padding(

@@ -1,9 +1,11 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_image_viewer/easy_image_viewer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:share_lingo/app/constants/app_colors.dart';
 import 'package:share_lingo/core/utils/format_time_ago.dart';
 import 'package:share_lingo/core/utils/general_utils.dart';
+import 'package:share_lingo/data/dto/post_dto.dart';
 import 'package:share_lingo/domain/entity/post_entity.dart';
 import 'package:share_lingo/presentation/pages/home/tabs/feed/feed_view_model.dart';
 import 'package:share_lingo/presentation/pages/home/widgets/expandable_text.dart';
@@ -36,6 +38,9 @@ class PostItem extends ConsumerStatefulWidget {
 }
 
 class _PostItemState extends ConsumerState<PostItem> {
+  // ignore: unused_field
+  final bool _showEmojiPicker = false;
+
   @override
   Widget build(BuildContext context) {
     final List<ImageProvider> cachedImages = ref
@@ -43,21 +48,34 @@ class _PostItemState extends ConsumerState<PostItem> {
         .getCachedImageProviders(widget.post);
 
     final DateTime now = ref.watch(timeAgoNotifierProvider);
-    return InkWell(
-      highlightColor: AppColors.lightGrey,
-      onTap: () {
+    return GestureDetector(
+      onTap: () async {
         if (PostDetailPage.currentPostId != widget.post.id) {
-          Navigator.push(
+          // ✅ Firestore에서 최신 데이터 가져오기
+          final doc =
+              await FirebaseFirestore.instance
+                  .collection('posts')
+                  .doc(widget.post.id)
+                  .get();
+
+          if (!doc.exists) return; // 예외 처리
+
+          final dto = PostDto.fromMap(doc.id, doc.data()!);
+          final freshPost = dto.toEntity();
+
+          if (!context.mounted) return;
+          await Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => PostDetailPage(post: widget.post),
+              builder: (context) => PostDetailPage(post: freshPost),
             ),
           ).then((value) {
             PostDetailPage.currentPostId = null;
           });
         }
       },
-      child: Padding(
+      child: Container(
+        color: Colors.transparent,
         padding: const EdgeInsets.symmetric(horizontal: 10),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -102,7 +120,7 @@ class _PostItemState extends ConsumerState<PostItem> {
   }
 
   Widget _topBar(DateTime now) {
-    return InkWell(
+    return GestureDetector(
       onTap: () {
         Navigator.of(context).push(
           MaterialPageRoute(

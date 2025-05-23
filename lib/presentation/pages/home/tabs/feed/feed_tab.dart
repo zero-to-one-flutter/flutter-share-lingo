@@ -65,7 +65,7 @@ class PostListContent extends ConsumerWidget {
                             FeedQueryArg(uid: uid, filter: filter),
                           ).notifier,
                         )
-                        .fetchLatestPosts();
+                        .refreshAndUpdatePosts();
                   },
                 );
                 throttler.run();

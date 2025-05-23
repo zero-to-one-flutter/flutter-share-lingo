@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:share_lingo/core/providers/data_providers.dart';
 import 'package:share_lingo/domain/entity/post_entity.dart';
@@ -12,6 +13,11 @@ class PostWriteViewModel extends StateNotifier<AsyncValue<void>> {
   final CreatePostUseCase createPostUseCase;
   final UploadImageUseCase uploadImageUseCase;
   final UpdatePostUseCase updatePostUseCase;
+
+  /// --- 투표 관련 상태 관리용 변수 ---
+  bool _isPoll = false;
+  String? _pollQuestion;
+  List<String>? _pollOptions;
 
   PostWriteViewModel({
     required this.createPostUseCase,
@@ -61,6 +67,12 @@ class PostWriteViewModel extends StateNotifier<AsyncValue<void>> {
         likeCount: 0,
         commentCount: 0,
         deleted: false,
+
+        isPoll: _isPoll,
+        pollQuestion: _pollQuestion,
+        pollOptions: _pollOptions,
+        pollVotes: null, // 초기에는 투표 결과 없음
+        userVotes: null, // 초기에는 유저 투표 없음
       );
 
       await createPostUseCase(post);
@@ -80,14 +92,67 @@ class PostWriteViewModel extends StateNotifier<AsyncValue<void>> {
   }) async {
     state = const AsyncLoading();
     try {
-      await updatePostUseCase(
-        id: id,
-        content: content,
-        imageUrls: imageUrls,
-        tags: tags,
-      );
+      final updateData = {
+        'content': content,
+        'imageUrl': imageUrls,
+        'tags': tags,
+      };
+      final hasPoll =
+          _pollQuestion?.isNotEmpty == true && _pollOptions?.isNotEmpty == true;
+      if (hasPoll) {
+        updateData.addAll({
+          'isPoll': true,
+          if (_pollQuestion != null) 'pollQuestion': _pollQuestion!,
+          if (_pollOptions != null) 'pollOptions': _pollOptions!,
+          'pollVotes': <String, int>{},
+          'userVotes': <String, int>{},
+        });
+      } else {
+        updateData.addAll({
+          'isPoll': false,
+          'pollQuestion': FieldValue.delete(),
+          'pollOptions': FieldValue.delete(),
+          'pollVotes': FieldValue.delete(),
+          'userVotes': FieldValue.delete(),
+        });
+      }
+
+      final docRef = FirebaseFirestore.instance.collection('posts').doc(id);
+      await docRef.update(updateData);
+
       if (!mounted) return;
       state = const AsyncData(null);
+    } catch (e, st) {
+      if (mounted) {
+        state = AsyncError(e, st);
+      }
+    }
+  }
+
+  /// --- 외부에서 호출할 수 있는 설정 메서드 ---
+  void setPollData({required String question, required List<String> options}) {
+    _isPoll = true;
+    _pollQuestion = question;
+    _pollOptions = options;
+  }
+
+  Future<void> deletePoll(String postId) async {
+    state = const AsyncLoading();
+
+    try {
+      final docRef = FirebaseFirestore.instance.collection('posts').doc(postId);
+
+      await docRef.update({
+        'isPoll': false,
+        'pollQuestion': FieldValue.delete(),
+        'pollOptions': FieldValue.delete(),
+        'pollVotes': FieldValue.delete(),
+        'userVotes': FieldValue.delete(),
+      });
+
+      if (mounted) {
+        state = const AsyncData(null);
+      }
     } catch (e, st) {
       if (mounted) {
         state = AsyncError(e, st);
