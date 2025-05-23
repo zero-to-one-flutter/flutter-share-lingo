@@ -118,4 +118,17 @@ class PostRepositoryImpl implements PostRepository {
   Stream<List<String>> getPostLikes(String postId) {
     return remoteDataSource.getPostLikes(postId);
   }
+
+  @override
+  Future<void> voteOnPost({
+    required String postId,
+    required String uid,
+    required int selectedIndex,
+  }) async {
+    await remoteDataSource.voteOnPost(
+      postId: postId,
+      uid: uid,
+      selectedIndex: selectedIndex,
+    );
+  }
 }

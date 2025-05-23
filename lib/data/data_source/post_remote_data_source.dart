@@ -166,4 +166,36 @@ class PostRemoteDataSource {
         .doc(uid)
         .delete();
   }
+
+  Future<void> voteOnPost({
+    required String postId,
+    required String uid,
+    required int selectedIndex,
+  }) async {
+    final postRef = firestore.collection('posts').doc(postId);
+
+    await firestore.runTransaction(
+      (transaction) async {
+        final snapshot = await transaction.get(postRef);
+        final data = snapshot.data() ?? {};
+
+        final pollVotes = Map<String, dynamic>.from(data['pollVotes'] ?? {});
+        final userVotes = Map<String, dynamic>.from(data['userVotes'] ?? {});
+
+        if (userVotes.containsKey(uid)) {
+          throw Exception('이미 투표한 사용자입니다.');
+        }
+
+        final indexStr = selectedIndex.toString();
+        pollVotes[indexStr] = (pollVotes[indexStr] ?? 0) + 1;
+        userVotes[uid] = selectedIndex;
+
+        transaction.update(postRef, {
+          'pollVotes': pollVotes,
+          'userVotes': userVotes,
+        });
+      },
+      maxAttempts: 5, // 최대 재시도 횟수
+    );
+  }
 }

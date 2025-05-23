@@ -26,4 +26,9 @@ abstract class PostRepository {
   Future<bool> isPostLiked(String postId, String userId);
   Stream<int> getPostLikeCount(String postId);
   Stream<List<String>> getPostLikes(String postId);
+  Future<void> voteOnPost({
+    required String postId,
+    required String uid,
+    required int selectedIndex,
+  });
 }
