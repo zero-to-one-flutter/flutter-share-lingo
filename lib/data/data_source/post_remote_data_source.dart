@@ -122,19 +122,9 @@ class PostRemoteDataSource {
     final query = _applyFilter(base, filter, user);
     final snapshot = await query.get();
 
-    final doc = await firestore.collection('posts').doc(firstPost.id).get();
-    if (!doc.exists) {
-      return snapshot.docs
-          .map((doc) => PostDto.fromMap(doc.id, doc.data()))
-          .toList();
-    }
-
-    final firstPostDto = PostDto.fromMap(doc.id, doc.data()!);
-    final dtoList =
-        snapshot.docs
-            .map((doc) => PostDto.fromMap(doc.id, doc.data()))
-            .toList();
-    return [firstPostDto, ...dtoList];
+    return snapshot.docs
+        .map((doc) => PostDto.fromMap(doc.id, doc.data()))
+        .toList();
   }
 
   Future<void> updatePost({
