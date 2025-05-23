@@ -8,8 +8,6 @@ import 'package:share_lingo/presentation/pages/home/tabs/feed/feed_view_model.da
 import 'package:share_lingo/presentation/pages/home/tabs/write/post_write_tab.dart';
 import 'package:share_lingo/presentation/pages/report/report_page.dart';
 
-import '../../../../core/utils/dialogue_util.dart';
-
 class PostMenuButton extends ConsumerWidget {
   final PostEntity post;
 
@@ -72,25 +70,28 @@ class PostMenuButton extends ConsumerWidget {
                     navigator.pop();
                     final confirm = await showCupertinoDialog<bool>(
                       context: context,
-                      builder: (_) => CupertinoAlertDialog(
-                        title: const Text('정말 삭제할까요?'),
-                        content: const Text('삭제된 글은 복구할 수 없습니다.'),
-                        actions: [
-                          CupertinoDialogAction(
-                            onPressed: () => navigator.pop(false),
-                            child: const Text('취소'),
+                      builder:
+                          (_) => CupertinoAlertDialog(
+                            title: const Text('정말 삭제할까요?'),
+                            content: const Text('삭제된 글은 복구할 수 없습니다.'),
+                            actions: [
+                              CupertinoDialogAction(
+                                onPressed: () => navigator.pop(false),
+                                child: const Text('취소'),
+                              ),
+                              CupertinoDialogAction(
+                                isDestructiveAction: true,
+                                onPressed: () => navigator.pop(true),
+                                child: const Text('삭제'),
+                              ),
+                            ],
                           ),
-                          CupertinoDialogAction(
-                            isDestructiveAction: true,
-                            onPressed: () => navigator.pop(true),
-                            child: const Text('삭제'),
-                          ),
-                        ],
-                      ),
                     );
 
                     if (confirm == true) {
-                      await ref.read(postRepositoryProvider).deletePost(post.id);
+                      await ref
+                          .read(postRepositoryProvider)
+                          .deletePost(post.id);
                       ref.invalidate(feedNotifierProvider);
                       scaffoldMessenger.showSnackBar(
                         const SnackBar(content: Text('게시글이 삭제되었습니다')),
@@ -108,10 +109,11 @@ class PostMenuButton extends ConsumerWidget {
                     navigator.pop();
                     await navigator.push(
                       MaterialPageRoute(
-                        builder: (_) => ReportPage(
-                          postId: post.id,
-                          postContent: post.content,
-                        ),
+                        builder:
+                            (_) => ReportPage(
+                              postId: post.id,
+                              postContent: post.content,
+                            ),
                       ),
                     );
                   },
@@ -133,9 +135,7 @@ class PostMenuButton extends ConsumerWidget {
   }) {
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(14),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
       elevation: 0,
       color: Colors.white,
       child: ListTile(
@@ -153,7 +153,6 @@ class PostMenuButton extends ConsumerWidget {
       ),
     );
   }
-
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
