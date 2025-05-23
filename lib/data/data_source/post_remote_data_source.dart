@@ -83,7 +83,11 @@ class PostRemoteDataSource {
     return reversedList.reversed.toList();
   }
 
-  Query<Map<String, dynamic>> _applyFilter(Query<Map<String, dynamic>> base, String? filter, AppUser? user) {
+  Query<Map<String, dynamic>> _applyFilter(
+    Query<Map<String, dynamic>> base,
+    String? filter,
+    AppUser? user,
+  ) {
     if (filter == 'recommended' && user != null) {
       return base
           .where('userNativeLanguage', isEqualTo: user.targetLanguage)
@@ -101,14 +105,20 @@ class PostRemoteDataSource {
     return base;
   }
 
-  Future<List<PostDto>> fetchCurrentPosts(PostEntity firstPost) async {
-    final snapshot =
-        await firestore
-            .collection('posts')
-            .orderBy('createdAt', descending: true)
-            .startAfter([firstPost.createdAt])
-            .limit(50)
-            .get();
+  Future<List<PostDto>> fetchCurrentPosts(
+    PostEntity firstPost, {
+    String? filter,
+    AppUser? user,
+  }) async {
+    Query<Map<String, dynamic>> base = firestore
+        .collection('posts')
+        .orderBy('createdAt', descending: true)
+        .startAfter([firstPost.createdAt])
+        .limit(50);
+
+    final query = _applyFilter(base, filter, user);
+    final snapshot = await query.get();
+
     return snapshot.docs
         .map((doc) => PostDto.fromMap(doc.id, doc.data()))
         .toList();

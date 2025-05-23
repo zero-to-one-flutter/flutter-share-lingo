@@ -23,28 +23,56 @@ class PostRepositoryImpl implements PostRepository {
   }
 
   @override
-  Future<List<PostEntity>> fetchInitialPosts({String? filter, AppUser? user}) async {
-    final dtoList = await remoteDataSource.fetchInitialPosts(filter: filter, user: user);
+  Future<List<PostEntity>> fetchInitialPosts({
+    String? filter,
+    AppUser? user,
+  }) async {
+    final dtoList = await remoteDataSource.fetchInitialPosts(
+      filter: filter,
+      user: user,
+    );
     return dtoList.map((dto) => dto.toEntity()).toList();
   }
 
   @override
-  Future<List<PostEntity>> fetchOlderPosts(PostEntity lastPost, {String? filter, AppUser? user}) async {
-    final dtoList = await remoteDataSource.fetchOlderPosts(lastPost, filter: filter, user: user);
+  Future<List<PostEntity>> fetchOlderPosts(
+    PostEntity lastPost, {
+    String? filter,
+    AppUser? user,
+  }) async {
+    final dtoList = await remoteDataSource.fetchOlderPosts(
+      lastPost,
+      filter: filter,
+      user: user,
+    );
     return dtoList.map((dto) => dto.toEntity()).toList();
   }
 
   @override
-  Future<List<PostEntity>> fetchLatestPosts(PostEntity firstPost, {String? filter, AppUser? user}) async {
-    final dtoList = await remoteDataSource.fetchLatestPosts(firstPost, filter: filter, user: user);
+  Future<List<PostEntity>> fetchLatestPosts(
+    PostEntity firstPost, {
+    String? filter,
+    AppUser? user,
+  }) async {
+    final dtoList = await remoteDataSource.fetchLatestPosts(
+      firstPost,
+      filter: filter,
+      user: user,
+    );
     return dtoList.map((dto) => dto.toEntity()).toList();
   }
 
   @override
   Future<List<PostEntity>> fetchCurrentUpdatedPosts(
-    PostEntity firstPost,
-  ) async {
-    final dtoList = await remoteDataSource.fetchCurrentPosts(firstPost)
+      PostEntity firstPost, {
+        String? filter,
+        AppUser? user,
+      }) async {
+    final dtoList = await remoteDataSource.fetchCurrentPosts(
+      firstPost,
+      filter: filter,
+      user: user,
+    )
       ..where((p) => p.updatedAt != null).toList();
     return dtoList.map((dto) => dto.toEntity()).toList();
   }

@@ -9,7 +9,6 @@ import 'package:share_lingo/domain/repository/post_repository.dart';
 import 'package:share_lingo/domain/usecase/fetch_current_updated_posts_usecase.dart';
 import 'package:share_lingo/domain/usecase/fetch_initial_posts_usecase.dart';
 import 'package:share_lingo/domain/entity/post_entity.dart';
-import 'package:share_lingo/domain/usecase/fetch_initial_posts_usecase.dart';
 import 'package:share_lingo/domain/usecase/fetch_lastest_posts_usecase.dart';
 import 'package:share_lingo/domain/usecase/fetch_older_posts_usecase.dart';
 import 'package:share_lingo/domain/usecase/fetch_posts_by_uid_usecase.dart';
@@ -26,10 +25,10 @@ class FeedQueryArg {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-          other is FeedQueryArg &&
-              runtimeType == other.runtimeType &&
-              uid == other.uid &&
-              filter == other.filter;
+      other is FeedQueryArg &&
+          runtimeType == other.runtimeType &&
+          uid == other.uid &&
+          filter == other.filter;
 
   @override
   int get hashCode => uid.hashCode ^ filter.hashCode;
@@ -166,13 +165,22 @@ class FeedNotifier
       // 기존 포스트 최신 50개만 남기기
       List<PostEntity> remainPosts = currentPosts.take(50).toList();
       try {
-        final latestPosts = await latestPostsUsecase.execute(firstPost);
+        final user = ref.read(userGlobalViewModelProvider);
+
+        final latestPosts = await latestPostsUsecase.execute(
+          firstPost,
+          filter: arg.filter,
+          user: user,
+        );
+
         if (latestPosts.isEmpty) return [];
 
         latestPosts.removeWhere((post) => post.uid == firstPost!.uid);
         // 서버에서 firstpost 기준 기존글 50개만 가지고 오기
         final currentUpdatedPosts = await currentUpdatedPostsUsecase.execute(
           firstPost,
+          filter: arg.filter,
+          user: user,
         );
 
         final updateMap = {for (var post in currentUpdatedPosts) post.id: post};

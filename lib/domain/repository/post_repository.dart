@@ -9,7 +9,7 @@ abstract class PostRepository {
   Future<List<PostEntity>> fetchInitialPosts({String? filter, AppUser? user});
   Future<List<PostEntity>> fetchOlderPosts(PostEntity lastPost, {String? filter, AppUser? user});
   Future<List<PostEntity>> fetchLatestPosts(PostEntity firstPost, {String? filter, AppUser? user});
-  Future<List<PostEntity>> fetchCurrentUpdatedPosts(PostEntity firstPost);
+  Future<List<PostEntity>> fetchCurrentUpdatedPosts(PostEntity firstPost, {String? filter, AppUser? user});
   Future<void> updatePost({
     required String id,
     required String content,
