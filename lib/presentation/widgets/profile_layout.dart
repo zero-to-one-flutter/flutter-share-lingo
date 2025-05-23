@@ -3,7 +3,7 @@ import 'package:share_lingo/app/constants/app_colors.dart';
 import 'package:share_lingo/presentation/widgets/profile_images.dart';
 
 import '../../domain/entity/app_user.dart';
-import '../pages/home/tabs/feed/feed_tab.dart';
+import '../pages/home/tabs/feed/posts_feed_tab.dart';
 
 class ProfileLayout extends StatelessWidget {
   final AppUser user;

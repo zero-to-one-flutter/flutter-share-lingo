@@ -101,17 +101,17 @@ exports.updateUpdatedAtOnCommentChange = functions.firestore
 // 4. Comment Count Management
 /////////////////////////
 
-//exports.updateCommentCount = functions.firestore
-//  .document("posts/{postId}/comments/{commentId}")
-//  .onWrite(async (change, context) => {
-//    const postId = context.params.postId;
-//    const postRef = db.collection("posts").doc(postId);
-//
-//    const commentsSnapshot = await postRef.collection("comments").get();
-//    const commentCount = commentsSnapshot.size;
-//
-//    return postRef.update({ commentCount });
-//  });
+exports.updateCommentCount = functions.firestore
+  .document("posts/{postId}/comments/{commentId}")
+  .onWrite(async (change, context) => {
+    const postId = context.params.postId;
+    const postRef = db.collection("posts").doc(postId);
+
+    const commentsSnapshot = await postRef.collection("comments").get();
+    const commentCount = commentsSnapshot.size;
+
+    return postRef.update({ commentCount });
+  });
 
 /////////////////////////
 // 5. Like Count Management
