@@ -103,10 +103,10 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
               ),
               actions: [
                 CupertinoDialogAction(
-                  child: const Text("확인"),
                   onPressed:
                       accepted ? () => Navigator.of(context).pop() : null,
                   isDefaultAction: true,
+                  child: const Text("확인"),
                 ),
               ],
             );
