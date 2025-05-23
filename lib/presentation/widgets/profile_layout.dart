@@ -40,43 +40,48 @@ class ProfileLayout extends StatelessWidget {
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
-                            const SizedBox(width: 7),
-                            Text(
-                              '${user.age}세',
-                              style: const TextStyle(
-                                fontSize: 16,
-                                color: Colors.black54,
+                            if (user.age != null) ...[
+                              const SizedBox(width: 7),
+                              Text(
+                                '${user.age}세',
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.black54,
+                                ),
                               ),
-                            ),
+                            ],
                           ],
                         ),
                         const SizedBox(height: 5),
-                        Row(
-                          children: [
-                            Text(
-                              user.nativeLanguage!,
-                              style: const TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500,
+                        if (user.nativeLanguage != null &&
+                            user.targetLanguage != null)
+                          Row(
+                            children: [
+                              Text(
+                                user.nativeLanguage!,
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                ),
                               ),
-                            ),
-                            const SizedBox(width: 8),
-                            const Icon(Icons.sync_alt, size: 16),
-                            const SizedBox(width: 8),
-                            Text(
-                              user.targetLanguage!,
-                              style: const TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500,
+                              const SizedBox(width: 8),
+                              const Icon(Icons.sync_alt, size: 16),
+                              const SizedBox(width: 8),
+                              Text(
+                                user.targetLanguage!,
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                ),
                               ),
-                            ),
-                          ],
-                        ),
+                            ],
+                          ),
                         const SizedBox(height: 14),
-                        Text(
-                          user.bio!,
-                          style: const TextStyle(fontSize: 16.2, height: 1.4),
-                        ),
+                        if (user.bio != null && user.bio!.isNotEmpty)
+                          Text(
+                            user.bio!,
+                            style: const TextStyle(fontSize: 16.2, height: 1.4),
+                          ),
                       ],
                     ),
                   ),
