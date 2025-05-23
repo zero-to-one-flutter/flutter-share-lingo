@@ -4,11 +4,13 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:share_lingo/domain/usecase/fetch_current_updated_posts_usecase.dart';
 import 'package:share_lingo/domain/usecase/fetch_initial_posts_usecase.dart';
 import 'package:share_lingo/domain/usecase/fetch_lastest_posts_usecase.dart';
 import 'package:share_lingo/domain/usecase/fetch_older_posts_usecase.dart';
 import 'package:share_lingo/domain/usecase/update_post_usecase.dart';
 import 'package:share_lingo/domain/usecase/upload_image_usecase.dart';
+import 'package:share_lingo/domain/usecase/vote_post_usecase.dart';
 
 import '../../app/constants/app_constants.dart';
 import '../../data/data_source/firebase_auth_data_source.dart';
@@ -94,6 +96,10 @@ final fetchLatestPostsUsecaseProvider = Provider(
   (ref) => FetchLastestPostsUsecase(ref.read(postRepositoryProvider)),
 );
 
+final fetchCurrentUpdatedPostsUsecase = Provider(
+  (ref) => FetchCurrentUpdatedPostsUsecase(ref.read(postRepositoryProvider)),
+);
+
 final updatePostUseCaseProvider = Provider<UpdatePostUseCase>((ref) {
   final repository = ref.read(postRepositoryProvider);
   return UpdatePostUseCase(repository);
@@ -112,18 +118,22 @@ final dioProvider = Provider<Dio>((ref) {
 });
 
 final locationDataSourceProvider = Provider<LocationDataSource>(
-      (ref) => VworldLocationDataSource(ref.read(dioProvider)),
+  (ref) => VworldLocationDataSource(ref.read(dioProvider)),
 );
 
 final locationRepositoryProvider = Provider<LocationRepository>(
-      (ref) => LocationRepositoryImpl(ref.read(locationDataSourceProvider)),
+  (ref) => LocationRepositoryImpl(ref.read(locationDataSourceProvider)),
 );
 
 // Image
 final imageStorageDataSourceProvider = Provider<ImageStorageDataSource>(
-      (ref) => FirebaseImageStorageDataSource(FirebaseStorage.instance),
+  (ref) => FirebaseImageStorageDataSource(FirebaseStorage.instance),
 );
 
 final imageRepositoryProvider = Provider<ImageRepository>(
-      (ref) => ImageRepositoryImpl(ref.read(imageStorageDataSourceProvider)),
+  (ref) => ImageRepositoryImpl(ref.read(imageStorageDataSourceProvider)),
+);
+
+final votePostUseCaseProvider = Provider(
+  (ref) => VotePostUseCase(ref.read(postRepositoryProvider)),
 );

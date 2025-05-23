@@ -8,6 +8,7 @@ abstract class PostRepository {
   Future<List<PostEntity>> fetchInitialPosts();
   Future<List<PostEntity>> fetchOlderPosts(PostEntity lastPost);
   Future<List<PostEntity>> fetchLatestPosts(PostEntity firstPost);
+  Future<List<PostEntity>> fetchCurrentUpdatedPosts(PostEntity firstPost);
   Future<void> updatePost({
     required String id,
     required String content,
@@ -25,4 +26,9 @@ abstract class PostRepository {
   Future<bool> isPostLiked(String postId, String userId);
   Stream<int> getPostLikeCount(String postId);
   Stream<List<String>> getPostLikes(String postId);
+  Future<void> voteOnPost({
+    required String postId,
+    required String uid,
+    required int selectedIndex,
+  });
 }

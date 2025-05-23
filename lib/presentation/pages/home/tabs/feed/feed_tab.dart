@@ -2,38 +2,40 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:share_lingo/core/utils/throttler_util.dart';
 import 'package:share_lingo/presentation/pages/home/tabs/feed/feed_view_model.dart';
+import 'package:share_lingo/presentation/pages/home/tabs/write/widgets/poll_post_card.dart';
 import 'package:share_lingo/presentation/pages/home/widgets/post_item.dart';
 
 import '../../../../../app/constants/app_colors.dart';
 
 class FeedTab extends StatelessWidget {
-  const FeedTab({super.key});
+  final String? uid;
+
+  const FeedTab({super.key, this.uid});
 
   @override
   Widget build(BuildContext context) {
     return Consumer(
       builder: (context, ref, child) {
-        final feedAsync = ref.watch(feedNotifierProvider);
+        final feedAsync = ref.watch(feedNotifierProvider(uid));
 
         return Column(
           children: [
-            AppBar(
-              title: Text(
-                'ShareLingo',
-                style: TextStyle(
-                  color: AppColors.primary,
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
+            if (uid == null)
+              AppBar(
+                title: Text(
+                  'ShareLingo',
+                  style: TextStyle(
+                    color: AppColors.primary,
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
-            ),
-
             Expanded(
               child: feedAsync.when(
                 loading: () => const Center(child: CircularProgressIndicator()),
                 error: (err, _) => Center(child: Text('에러 발생: $err')),
-                data: (data) {
-                  final posts = data;
+                data: (posts) {
                   if (posts.isEmpty) {
                     return const Center(child: Text('게시글이 없습니다.'));
                   }
@@ -41,7 +43,11 @@ class FeedTab extends StatelessWidget {
                   final throttler = Throttler(
                     duration: Duration(seconds: 1),
                     callback: () {
-                      ref.read(feedNotifierProvider.notifier).fetchOlderPosts();
+                      if (uid == null) {
+                        ref
+                            .read(feedNotifierProvider(uid).notifier)
+                            .fetchOlderPosts();
+                      }
                     },
                   );
                   // 무한 스크롤
@@ -58,15 +64,17 @@ class FeedTab extends StatelessWidget {
                     // 당겨서 새로고침
                     child: RefreshIndicator(
                       onRefresh: () {
-                        final throttler = Throttler(
-                          duration: Duration(seconds: 1),
-                          callback: () {
-                            ref
-                                .read(feedNotifierProvider.notifier)
-                                .fetchLatestPosts();
-                          },
-                        );
-                        throttler.run();
+                        if (uid == null) {
+                          final throttler = Throttler(
+                            duration: Duration(seconds: 1),
+                            callback: () {
+                              ref
+                                  .read(feedNotifierProvider(uid).notifier)
+                                  .refreshAndUpdatePosts();
+                            },
+                          );
+                          throttler.run();
+                        }
                         return Future.value();
                       },
 
