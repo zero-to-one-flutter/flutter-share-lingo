@@ -1,7 +1,6 @@
 import 'package:easy_image_viewer/easy_image_viewer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:share_lingo/app/constants/app_colors.dart';
 import 'package:share_lingo/core/utils/format_time_ago.dart';
 import 'package:share_lingo/core/utils/general_utils.dart';
@@ -10,8 +9,6 @@ import 'package:share_lingo/presentation/pages/home/tabs/feed/feed_view_model.da
 import 'package:share_lingo/presentation/pages/home/widgets/expandable_text.dart';
 import 'package:share_lingo/presentation/pages/home/widgets/post_menu_button.dart';
 import 'package:share_lingo/presentation/widgets/app_cached_image.dart';
-import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
-import 'package:share_lingo/presentation/user_global_view_model.dart';
 
 import '../../../../domain/entity/app_user.dart';
 import '../../post/post_detail_page.dart';
@@ -39,6 +36,7 @@ class PostItem extends ConsumerStatefulWidget {
 }
 
 class _PostItemState extends ConsumerState<PostItem> {
+  // ignore: unused_field
   final bool _showEmojiPicker = false;
 
   @override
