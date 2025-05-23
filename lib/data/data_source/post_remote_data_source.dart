@@ -69,6 +69,19 @@ class PostRemoteDataSource {
     return reversedList.reversed.toList();
   }
 
+  Future<List<PostDto>> fetchCurrentPosts(PostEntity firstPost) async {
+    final snapshot =
+        await firestore
+            .collection('posts')
+            .orderBy('createdAt', descending: true)
+            .startAfter([firstPost.createdAt])
+            .limit(50)
+            .get();
+    return snapshot.docs
+        .map((doc) => PostDto.fromMap(doc.id, doc.data()))
+        .toList();
+  }
+
   Future<void> updatePost({
     required String id,
     required String content,

@@ -69,7 +69,7 @@ class FeedTab extends StatelessWidget {
                             callback: () {
                               ref
                                   .read(feedNotifierProvider(uid).notifier)
-                                  .fetchLatestPosts();
+                                  .refreshAndUpdatePosts();
                             },
                           );
                           throttler.run();
