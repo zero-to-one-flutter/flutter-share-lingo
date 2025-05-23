@@ -96,10 +96,13 @@ class PostRemoteDataSource {
       return base
           .where('userNativeLanguage', isEqualTo: user.nativeLanguage)
           .where('userTargetLanguage', isEqualTo: user.targetLanguage);
-    } else if (filter == 'nearby' &&
-        user != null &&
-        user.district != null &&
-        user.district != '') {
+    } else if (filter == 'nearby') {
+      if (user == null || user.district == null || user.district!.isEmpty) {
+        return base.where(
+          'userDistrict',
+          isEqualTo: '__none__',
+        ); // unlikely to match anything
+      }
       return base.where('userDistrict', isEqualTo: user.district);
     }
     return base;
