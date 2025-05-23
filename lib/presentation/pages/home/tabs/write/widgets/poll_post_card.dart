@@ -3,10 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:share_lingo/core/providers/data_providers.dart';
 import 'package:share_lingo/domain/entity/post_entity.dart';
-import 'package:share_lingo/core/utils/format_time_ago.dart';
-import 'package:share_lingo/core/utils/general_utils.dart';
 import 'package:share_lingo/presentation/pages/home/tabs/write/vote_state.dart';
-import 'package:share_lingo/presentation/widgets/app_cached_image.dart';
 
 class PollPostCard extends ConsumerStatefulWidget {
   final PostEntity post;
