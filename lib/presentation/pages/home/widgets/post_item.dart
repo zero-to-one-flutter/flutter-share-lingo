@@ -64,6 +64,7 @@ class _PostItemState extends ConsumerState<PostItem> {
           final dto = PostDto.fromMap(doc.id, doc.data()!);
           final freshPost = dto.toEntity();
 
+          if (!context.mounted) return;
           await Navigator.push(
             context,
             MaterialPageRoute(
