@@ -29,10 +29,8 @@ class FeedQueryArg {
   int get hashCode => uid.hashCode ^ filter.hashCode;
 }
 
-
 class FeedNotifier
     extends AutoDisposeFamilyAsyncNotifier<List<PostEntity>, FeedQueryArg> {
-
   bool _isInitialized = false;
 
   @override
@@ -66,10 +64,9 @@ class FeedNotifier
       }
 
       final user = ref.read(userGlobalViewModelProvider);
-      final posts = await ref.read(fetchInitialPostsUsecaseProvider).execute(
-        filter: arg.filter,
-        user: user,
-      );
+      final posts = await ref
+          .read(fetchInitialPostsUsecaseProvider)
+          .execute(filter: arg.filter, user: user);
       return posts;
     } catch (e, st) {
       state = AsyncError(e, st);
@@ -88,11 +85,9 @@ class FeedNotifier
     if (lastPost != null) {
       try {
         final user = ref.read(userGlobalViewModelProvider);
-        final olderPosts = await ref.read(fetchOlderPostsUsecaseProvider).execute(
-          lastPost,
-          filter: arg.filter,
-          user: user,
-        );
+        final olderPosts = await ref
+            .read(fetchOlderPostsUsecaseProvider)
+            .execute(lastPost, filter: arg.filter, user: user);
 
         if (olderPosts.isEmpty) return [];
 
@@ -118,11 +113,9 @@ class FeedNotifier
     if (firstPost != null) {
       try {
         final user = ref.read(userGlobalViewModelProvider);
-        final latestPosts = await ref.read(fetchLatestPostsUsecaseProvider).execute(
-          firstPost,
-          filter: arg.filter,
-          user: user,
-        );
+        final latestPosts = await ref
+            .read(fetchLatestPostsUsecaseProvider)
+            .execute(firstPost, filter: arg.filter, user: user);
 
         if (latestPosts.isEmpty) return [];
 
@@ -152,21 +145,18 @@ class FeedNotifier
       try {
         final user = ref.read(userGlobalViewModelProvider);
 
-        final latestPosts = await ref.read(fetchLatestPostsUsecaseProvider).execute(
-          firstPost,
-          filter: arg.filter,
-          user: user,
-        );
+        final latestPosts = await ref
+            .read(fetchLatestPostsUsecaseProvider)
+            .execute(firstPost, filter: arg.filter, user: user);
 
-        if (latestPosts.isEmpty) return [];
+        if (latestPosts.isNotEmpty) {
+          latestPosts.removeWhere((post) => post.uid == firstPost!.uid);
+        }
 
-        latestPosts.removeWhere((post) => post.uid == firstPost!.uid);
         // 서버에서 firstpost 기준 기존글 50개만 가지고 오기
-        final currentUpdatedPosts = await ref.read(fetchCurrentUpdatedPostsUsecase).execute(
-          firstPost,
-          filter: arg.filter,
-          user: user,
-        );
+        final currentUpdatedPosts = await ref
+            .read(fetchCurrentUpdatedPostsUsecase)
+            .execute(firstPost, filter: arg.filter, user: user);
 
         final updateMap = {for (var post in currentUpdatedPosts) post.id: post};
 
