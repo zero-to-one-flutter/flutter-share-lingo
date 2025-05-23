@@ -8,6 +8,8 @@ import 'package:share_lingo/presentation/pages/home/tabs/feed/feed_view_model.da
 import 'package:share_lingo/presentation/pages/home/tabs/write/post_write_tab.dart';
 import 'package:share_lingo/presentation/pages/report/report_page.dart';
 
+import '../../../../core/utils/dialogue_util.dart';
+
 class PostMenuButton extends ConsumerWidget {
   final PostEntity post;
 
@@ -68,22 +70,20 @@ class PostMenuButton extends ConsumerWidget {
                   iconColor: Colors.red,
                   onTap: () async {
                     navigator.pop();
-                    final confirm = await showDialog<bool>(
+                    final confirm = await showCupertinoDialog<bool>(
                       context: context,
-                      builder: (_) => AlertDialog(
+                      builder: (_) => CupertinoAlertDialog(
                         title: const Text('정말 삭제할까요?'),
                         content: const Text('삭제된 글은 복구할 수 없습니다.'),
                         actions: [
-                          TextButton(
+                          CupertinoDialogAction(
                             onPressed: () => navigator.pop(false),
                             child: const Text('취소'),
                           ),
-                          TextButton(
+                          CupertinoDialogAction(
+                            isDestructiveAction: true,
                             onPressed: () => navigator.pop(true),
-                            child: const Text(
-                              '삭제',
-                              style: TextStyle(color: Colors.red),
-                            ),
+                            child: const Text('삭제'),
                           ),
                         ],
                       ),

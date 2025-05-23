@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -409,54 +410,29 @@ class _CommentSectionState extends ConsumerState<CommentSection> {
                                                       color: Colors.red,
                                                     ),
                                                     onTap: () async {
-                                                      Navigator.pop(context);
-                                                      final confirm = await showDialog<
-                                                        bool
-                                                      >(
+                                                      Navigator.pop(context); // Close the bottom sheet first
+
+                                                      final confirm = await showCupertinoDialog<bool>(
                                                         context: context,
-                                                        builder:
-                                                            (_) => AlertDialog(
-                                                              title: const Text(
-                                                                '정말 삭제할까요?',
-                                                              ),
-                                                              content: const Text(
-                                                                '삭제된 댓글은 복구할 수 없습니다.',
-                                                              ),
-                                                              actions: [
-                                                                TextButton(
-                                                                  onPressed:
-                                                                      () => Navigator.pop(
-                                                                        context,
-                                                                        false,
-                                                                      ),
-                                                                  child:
-                                                                      const Text(
-                                                                        '취소',
-                                                                      ),
-                                                                ),
-                                                                TextButton(
-                                                                  onPressed:
-                                                                      () => Navigator.pop(
-                                                                        context,
-                                                                        true,
-                                                                      ),
-                                                                  child: const Text(
-                                                                    '삭제',
-                                                                    style: TextStyle(
-                                                                      color:
-                                                                          Colors
-                                                                              .red,
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                              ],
+                                                        builder: (dialogContext) => CupertinoAlertDialog(
+                                                          title: const Text('정말 삭제할까요?'),
+                                                          content: const Text('삭제된 댓글은 복구할 수 없습니다.'),
+                                                          actions: [
+                                                            CupertinoDialogAction(
+                                                              onPressed: () => Navigator.pop(dialogContext, false),
+                                                              child: const Text('취소'),
                                                             ),
+                                                            CupertinoDialogAction(
+                                                              isDestructiveAction: true,
+                                                              onPressed: () => Navigator.pop(dialogContext, true),
+                                                              child: const Text('삭제'),
+                                                            ),
+                                                          ],
+                                                        ),
                                                       );
 
                                                       if (confirm == true) {
-                                                        _deleteComment(
-                                                          comment.id,
-                                                        );
+                                                        _deleteComment(comment.id);
                                                       }
                                                     },
                                                   ),
