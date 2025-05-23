@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:share_lingo/presentation/widgets/input_decorations.dart';
 import '../../../core/utils/dialogue_util.dart';
+import '../../../core/utils/general_utils.dart';
 import '../../../core/utils/snackbar_util.dart';
 import '../../../domain/entity/app_user.dart';
 import '../../widgets/language_selection_modal.dart';
@@ -58,38 +59,9 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
   }
 
   Future<void> _pickBirthdate() async {
-    final now = DateTime.now();
-    final picked = await showDatePicker(
+    final picked = await GeneralUtils.pickBirthdate(
       context: context,
-      locale: Locale('ko'),
-      initialDate: birthdate ?? now.subtract(const Duration(days: 365 * 20)),
-      firstDate: DateTime(1900),
-      lastDate: now,
-      builder: (context, child) {
-        return Theme(
-          data: Theme.of(context).copyWith(
-            colorScheme: const ColorScheme.light(
-              primary: Colors.blueAccent,
-              // Example crimson color
-              onPrimary: Colors.white,
-              // Text color on primary (e.g. header text)
-              surface: Colors.white,
-              // Dialog background color
-              onSurface: Colors.black87, // Default text color
-            ),
-            datePickerTheme: const DatePickerThemeData(
-              backgroundColor: Colors.white,
-              headerBackgroundColor: Colors.blueAccent,
-              // crimson
-              headerForegroundColor: Colors.white,
-              dayForegroundColor: WidgetStatePropertyAll(Colors.black87),
-              todayForegroundColor: WidgetStatePropertyAll(Colors.white),
-              todayBackgroundColor: WidgetStatePropertyAll(Colors.blueAccent),
-            ),
-          ),
-          child: child!,
-        );
-      },
+      initialDate: birthdate,
     );
     if (picked != null) {
       birthdate = picked;
