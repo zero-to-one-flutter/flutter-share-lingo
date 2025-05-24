@@ -65,13 +65,16 @@ class _PostDetailPageState extends ConsumerState<PostDetailPage> {
           body: SingleChildScrollView(
             child: Column(
               children: [
-                PostItem(post: _post, displayComments: false),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: PostItem(post: _post, displayComments: false),
+                ),
                 if (_post.isPoll)
                   Padding(
-                    padding: const EdgeInsets.only(top: 16.0),
+                    padding: const EdgeInsets.only(top: 6, left: 8, right: 8),
                     child: PollPostCard(post: _post, now: DateTime.now()),
                   ),
-                const Divider(),
+                // const Divider(),
                 CommentSection(postId: _post.id),
               ],
             ),

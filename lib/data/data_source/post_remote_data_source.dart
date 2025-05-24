@@ -38,9 +38,11 @@ class PostRemoteDataSource {
     final query = _applyFilter(base, filter, user);
     final snapshot = await query.get();
 
-    return snapshot.docs
-        .map((doc) => PostDto.fromMap(doc.id, doc.data()))
-        .toList();
+    final posts =
+        snapshot.docs
+            .map((doc) => PostDto.fromMap(doc.id, doc.data()))
+            .toList();
+    return _excludeSelf(posts, filter, user);
   }
 
   Future<List<PostDto>> fetchOlderPosts(
@@ -57,9 +59,11 @@ class PostRemoteDataSource {
     final query = _applyFilter(base, filter, user);
     final snapshot = await query.get();
 
-    return snapshot.docs
-        .map((doc) => PostDto.fromMap(doc.id, doc.data()))
-        .toList();
+    final posts =
+        snapshot.docs
+            .map((doc) => PostDto.fromMap(doc.id, doc.data()))
+            .toList();
+    return _excludeSelf(posts, filter, user);
   }
 
   Future<List<PostDto>> fetchLatestPosts(
@@ -80,7 +84,18 @@ class PostRemoteDataSource {
         snapshot.docs
             .map((doc) => PostDto.fromMap(doc.id, doc.data()))
             .toList();
-    return reversedList.reversed.toList();
+    return _excludeSelf(reversedList.reversed.toList(), filter, user);
+  }
+
+  List<PostDto> _excludeSelf(
+    List<PostDto> posts,
+    String? filter,
+    AppUser? user,
+  ) {
+    if (filter != null && user != null) {
+      return posts.where((post) => post.uid != user.id).toList();
+    }
+    return posts;
   }
 
   Query<Map<String, dynamic>> _applyFilter(
@@ -122,9 +137,10 @@ class PostRemoteDataSource {
     final query = _applyFilter(base, filter, user);
     final snapshot = await query.get();
 
-    return snapshot.docs
+    final posts = snapshot.docs
         .map((doc) => PostDto.fromMap(doc.id, doc.data()))
         .toList();
+    return _excludeSelf(posts, filter, user);
   }
 
   Future<void> updatePost({

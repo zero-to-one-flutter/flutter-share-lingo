@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:share_lingo/core/utils/logger.dart';
 
 import '../../../domain/entity/app_user.dart';
@@ -6,22 +7,46 @@ import '../../../domain/usecase/sign_in_with_google_usecase.dart';
 
 class LoginState {
   final bool isLoading;
+  final bool hasAgreedToTerms;
   final String? errorMessage;
 
-  const LoginState({this.isLoading = false, this.errorMessage});
+  const LoginState({
+    this.isLoading = false,
+    this.hasAgreedToTerms = false,
+    this.errorMessage,
+  });
 
-  LoginState copyWith({bool? isLoading, String? errorMessage}) {
+  LoginState copyWith({
+    bool? isLoading,
+    bool? hasAgreedToTerms,
+    String? errorMessage,
+  }) {
     return LoginState(
       isLoading: isLoading ?? this.isLoading,
+      hasAgreedToTerms: hasAgreedToTerms ?? this.hasAgreedToTerms,
       errorMessage: errorMessage,
     );
   }
 }
 
 class LoginViewModel extends Notifier<LoginState> {
+  static const String _agreementKey = 'user_agreed_to_terms';
+
   @override
   LoginState build() {
     return const LoginState();
+  }
+
+  Future<void> loadAgreement() async {
+    final prefs = await SharedPreferences.getInstance();
+    final agreed = prefs.getBool(_agreementKey) ?? false;
+    state = state.copyWith(hasAgreedToTerms: agreed);
+  }
+
+  Future<void> setAgreement(bool value) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_agreementKey, value);
+    state = state.copyWith(hasAgreedToTerms: value);
   }
 
   Future<AppUser?> signIn() async {

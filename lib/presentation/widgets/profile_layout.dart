@@ -32,29 +32,40 @@ class ProfileLayout extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Row(
-                          children: [
-                            SizedBox(
-                              width: (MediaQuery.of(context).size.width) * 0.7,
-                              child: Text(
-                                user.name,
-                                style: const TextStyle(
-                                  fontSize: 22,
-                                  fontWeight: FontWeight.bold,
+                        LayoutBuilder(
+                          builder: (context, constraints) {
+                            return Row(
+                              children: [
+                                ConstrainedBox(
+                                  constraints: BoxConstraints(
+                                    maxWidth:
+                                        user.age != null
+                                            ? constraints.maxWidth - 50
+                                            : constraints.maxWidth,
+                                  ),
+                                  child: Text(
+                                    user.name,
+                                    style: const TextStyle(
+                                      fontSize: 22,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 1,
+                                  ),
                                 ),
-                              ),
-                            ),
-                            if (user.age != null) ...[
-                              const SizedBox(width: 7),
-                              Text(
-                                '${user.age}세',
-                                style: const TextStyle(
-                                  fontSize: 16,
-                                  color: Colors.black54,
-                                ),
-                              ),
-                            ],
-                          ],
+                                if (user.age != null) ...[
+                                  const SizedBox(width: 7),
+                                  Text(
+                                    '${user.age}세',
+                                    style: const TextStyle(
+                                      fontSize: 16,
+                                      color: Colors.black54,
+                                    ),
+                                  ),
+                                ],
+                              ],
+                            );
+                          },
                         ),
                         const SizedBox(height: 5),
                         if (user.nativeLanguage != null &&

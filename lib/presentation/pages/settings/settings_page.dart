@@ -41,6 +41,16 @@ class SettingsPage extends ConsumerWidget {
     }
   }
 
+  Future<void> _launchUrl(BuildContext context, String url) async {
+    final uri = Uri.parse(url);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.inAppBrowserView);
+    } else {
+      if (!context.mounted) return;
+      SnackbarUtil.showSnackBar(context, 'URL을 열 수 없습니다');
+    }
+  }
+
   Future<void> _logout(BuildContext context, WidgetRef ref) async {
     try {
       final result = await DialogueUtil.showAppCupertinoDialog(
@@ -97,6 +107,22 @@ class SettingsPage extends ConsumerWidget {
             // margin: EdgeInsetsDirectional.only(start: 18, end: 18, top: 7, bottom: 7),
             title: Text('정보', style: AppStyles.mediumText),
             tiles: [
+              SettingsTile(
+                leading: const Icon(Icons.article_outlined),
+                title: Text('이용약관'),
+                onPressed: (context) => _launchUrl(
+                  context,
+                  'https://englim.me/share-lingo-page/terms',
+                ),
+              ),
+              SettingsTile(
+                leading: const Icon(Icons.vpn_key),
+                title: Text('개인정보처리방침'),
+                onPressed: (context) => _launchUrl(
+                  context,
+                  'https://englim.me/share-lingo-page',
+                ),
+              ),
               SettingsTile(
                 leading: const Icon(Icons.email),
                 title: Text('개발자들에게 문의'),
