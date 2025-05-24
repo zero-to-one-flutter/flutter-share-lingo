@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:share_lingo/app/constants/app_constants.dart';
+import 'package:share_lingo/core/firebase_service.dart';
 import 'package:share_lingo/core/utils/navigation_util.dart';
 
 import '../../user_global_view_model.dart';
@@ -18,6 +19,15 @@ class LoginPage extends ConsumerWidget {
 
     if (appUser != null && appUser.id.isNotEmpty && context.mounted) {
       ref.read(userGlobalViewModelProvider.notifier).setUser(appUser);
+      await FirebaseService.analytics.logEvent(
+        name: 'login_success',
+        parameters: {
+          'method': 'google',
+          'user_id': appUser.id,
+          'user_name': appUser.name,
+        },
+      );
+      if (!context.mounted) return;
       NavigationUtil.navigateBasedOnProfile(context, appUser);
     }
   }

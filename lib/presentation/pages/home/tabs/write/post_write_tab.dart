@@ -185,7 +185,7 @@ class _PostWriteTabState extends ConsumerState<PostWriteTab> {
     );
 
     if (!mounted) return;
-    await ref.read(feedNotifierProvider(FeedQueryArg()).notifier).refreshAndUpdatePosts();
+    await ref.read(feedNotifierProvider(FeedQueryArg()).notifier).refresh();
     await ref
         .read(
           feedNotifierProvider(

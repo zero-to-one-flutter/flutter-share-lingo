@@ -3,6 +3,7 @@ import 'package:easy_image_viewer/easy_image_viewer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:share_lingo/app/constants/app_colors.dart';
+import 'package:share_lingo/core/firebase_service.dart';
 import 'package:share_lingo/core/utils/format_time_ago.dart';
 import 'package:share_lingo/core/utils/general_utils.dart';
 import 'package:share_lingo/data/dto/post_dto.dart';
@@ -18,8 +19,10 @@ import '../../profile/profile_page.dart';
 
 class PostItem extends ConsumerStatefulWidget {
   final PostEntity post;
+
   // final DateTime now;
   final bool displayComments;
+
   // final List<ImageProvider> cachedImages;
 
   const PostItem({
@@ -50,6 +53,10 @@ class _PostItemState extends ConsumerState<PostItem> {
     final DateTime now = ref.watch(timeAgoNotifierProvider);
     return GestureDetector(
       onTap: () async {
+        await FirebaseService.analytics.logEvent(
+          name: 'post_clicked',
+          parameters: {'postId': widget.post.id.toString()},
+        );
         if (PostDetailPage.currentPostId != widget.post.id) {
           // ✅ Firestore에서 최신 데이터 가져오기
           final doc =
@@ -156,66 +163,79 @@ class _PostItemState extends ConsumerState<PostItem> {
             ),
           ),
           SizedBox(width: 10),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Text(
-                    widget.post.userName,
-                    style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
-                  ),
-                  SizedBox(width: 8),
-                  Text(
-                    FormatTimeAgo.formatTimeAgo(
-                      now: now,
-                      createdAt: widget.post.createdAt,
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                LayoutBuilder(
+                  builder: (context, constraints) {
+                    return Row(
+                      children: [
+                        ConstrainedBox(
+                          constraints: BoxConstraints(
+                            maxWidth: constraints.maxWidth - 100,
+                          ),
+                          child: Text(
+                            widget.post.userName,
+                            style: TextStyle(
+                              fontSize: 17,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
+                          ),
+                        ),
+                        SizedBox(width: 8),
+                        Text(
+                          FormatTimeAgo.formatTimeAgo(
+                            now: now,
+                            createdAt: widget.post.createdAt,
+                          ),
+                          style: TextStyle(
+                            fontSize: 15,
+                            color: Colors.black54,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    );
+                  },
+                ),
+                Row(
+                  children: [
+                    Text(
+                      GeneralUtils.getLanguageCodeByName(
+                        widget.post.userNativeLanguage,
+                      )!.toUpperCase(),
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black54,
+                      ),
                     ),
-                    style: TextStyle(
-                      fontSize: 15,
-                      color: Colors.black54,
-                      fontWeight: FontWeight.w600,
+                    SizedBox(
+                      width: 30,
+                      child: Icon(
+                        Icons.sync_alt_outlined,
+                        size: 16,
+                        color: Colors.black26,
+                      ),
                     ),
-                  ),
-                ],
-              ),
-              Row(
-                children: [
-                  Text(
-                    // 'KR',
-                    GeneralUtils.getLanguageCodeByName(
-                      widget.post.userNativeLanguage,
-                    )!.toUpperCase(),
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black54,
+                    Text(
+                      GeneralUtils.getLanguageCodeByName(
+                        widget.post.userTargetLanguage,
+                      )!.toUpperCase(),
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black54,
+                      ),
                     ),
-                  ),
-                  SizedBox(
-                    width: 30,
-                    child: Icon(
-                      Icons.sync_alt_outlined,
-                      size: 16,
-                      color: Colors.black26,
-                    ),
-                  ),
-                  Text(
-                    // 'EN',
-                    GeneralUtils.getLanguageCodeByName(
-                      widget.post.userTargetLanguage,
-                    )!.toUpperCase(),
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black54,
-                    ),
-                  ),
-                ],
-              ),
-            ],
+                  ],
+                ),
+              ],
+            ),
           ),
-          Spacer(),
           PostMenuButton(post: widget.post),
         ],
       ),

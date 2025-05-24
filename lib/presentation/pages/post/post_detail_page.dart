@@ -55,7 +55,7 @@ class _PostDetailPageState extends ConsumerState<PostDetailPage> {
           log('left detailPage');
           ref
               .read(feedNotifierProvider(FeedQueryArg()).notifier)
-              .refreshAndUpdatePosts();
+              .refresh();
         }
       },
       child: GestureDetector(

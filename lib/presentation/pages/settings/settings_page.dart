@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:settings_ui/settings_ui.dart';
 import 'package:share_lingo/app/constants/app_colors.dart';
+import 'package:share_lingo/core/firebase_service.dart';
 import 'package:share_lingo/core/utils/dialogue_util.dart';
 import 'package:share_lingo/domain/usecase/sign_out_use_case.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -51,6 +52,8 @@ class SettingsPage extends ConsumerWidget {
       if (result == AppDialogResult.confirm) {
         await ref.read(signOutUseCaseProvider).execute();
         ref.read(userGlobalViewModelProvider.notifier).clearUser();
+
+        await FirebaseService.analytics.logEvent(name: 'logout');
 
         // ignore: use_build_context_synchronously
         Navigator.of(context).pushAndRemoveUntil(
