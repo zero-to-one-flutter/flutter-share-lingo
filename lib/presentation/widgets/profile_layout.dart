@@ -34,11 +34,14 @@ class ProfileLayout extends StatelessWidget {
                       children: [
                         Row(
                           children: [
-                            Text(
-                              user.name,
-                              style: const TextStyle(
-                                fontSize: 22,
-                                fontWeight: FontWeight.bold,
+                            SizedBox(
+                              width: (MediaQuery.of(context).size.width) * 0.7,
+                              child: Text(
+                                user.name,
+                                style: const TextStyle(
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                             ),
                             if (user.age != null) ...[

@@ -51,12 +51,10 @@ class _PostItemState extends ConsumerState<PostItem> {
     final DateTime now = ref.watch(timeAgoNotifierProvider);
     return GestureDetector(
       onTap: () async {
-        print('logEvent: post_clicked');
         await FirebaseService.analytics.logEvent(
           name: 'post_clicked',
           parameters: {'postId': widget.post.id.toString()},
         );
-        print('✅ Firebase event logged: post_clicked');
         if (PostDetailPage.currentPostId != widget.post.id) {
           // ✅ Firestore에서 최신 데이터 가져오기
           final doc =
@@ -168,9 +166,17 @@ class _PostItemState extends ConsumerState<PostItem> {
             children: [
               Row(
                 children: [
-                  Text(
-                    widget.post.userName,
-                    style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+                  SizedBox(
+                    width: (MediaQuery.of(context).size.width) * 0.45,
+                    child: Text(
+                      widget.post.userName,
+                      style: TextStyle(
+                        fontSize: 17,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
+                    ),
                   ),
                   SizedBox(width: 8),
                   Text(
