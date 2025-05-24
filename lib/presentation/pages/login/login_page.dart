@@ -27,6 +27,7 @@ class LoginPage extends ConsumerWidget {
           'user_name': appUser.name,
         },
       );
+      if (!context.mounted) return;
       NavigationUtil.navigateBasedOnProfile(context, appUser);
     }
   }
