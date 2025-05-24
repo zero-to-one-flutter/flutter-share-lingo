@@ -9,6 +9,8 @@ import 'package:share_lingo/presentation/user_global_view_model.dart';
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:flutter/foundation.dart' as foundation;
 
+import '../pages/report/comment_report_page.dart';
+
 class CommentSection extends ConsumerStatefulWidget {
   final String postId;
 
@@ -301,149 +303,230 @@ class _CommentSectionState extends ConsumerState<CommentSection> {
                                   ],
                                 ),
                               ),
-                              if (isOwner)
-                                IconButton(
-                                  icon: const Icon(Icons.more_vert),
-                                  onPressed: () {
-                                    showModalBottomSheet(
-                                      context: context,
-                                      isScrollControlled: true,
-                                      backgroundColor: Colors.grey[200],
-                                      shape: const RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.vertical(
-                                          top: Radius.circular(16),
-                                        ),
+                              IconButton(
+                                icon: const Icon(Icons.more_vert),
+                                onPressed: () {
+                                  showModalBottomSheet(
+                                    context: context,
+                                    isScrollControlled: true,
+                                    backgroundColor: Colors.grey[200],
+                                    shape: const RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.vertical(
+                                        top: Radius.circular(16),
                                       ),
-                                      builder:
-                                          (context) => Padding(
-                                            padding: const EdgeInsets.only(
-                                              top: 8,
-                                              bottom: 24,
+                                    ),
+                                    builder:
+                                        (context) => Padding(
+                                      padding: const EdgeInsets.only(
+                                        top: 8,
+                                        bottom: 24,
+                                      ),
+                                      child: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Container(
+                                            width: 40,
+                                            height: 5,
+                                            decoration: BoxDecoration(
+                                              color: Colors.grey[400],
+                                              borderRadius:
+                                              BorderRadius.circular(10),
                                             ),
-                                            child: Column(
-                                              mainAxisSize: MainAxisSize.min,
-                                              children: [
-                                                Container(
-                                                  width: 40,
-                                                  height: 5,
-                                                  decoration: BoxDecoration(
-                                                    color: Colors.grey[400],
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                          10,
-                                                        ),
-                                                  ),
-                                                  margin: const EdgeInsets.only(
-                                                    bottom: 12,
-                                                  ),
-                                                ),
-                                                Card(
-                                                  margin:
-                                                      const EdgeInsets.symmetric(
-                                                        horizontal: 12,
-                                                        vertical: 6,
-                                                      ),
-                                                  shape: RoundedRectangleBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                          14,
-                                                        ),
-                                                  ),
-                                                  elevation: 0,
-                                                  color: Colors.white,
-                                                  child: ListTile(
-                                                    contentPadding:
-                                                        const EdgeInsets.symmetric(
-                                                          horizontal: 16,
-                                                          vertical: 6,
-                                                        ),
-                                                    title: const Text(
-                                                      '수정',
-                                                      style: TextStyle(
-                                                        fontSize: 16,
-                                                        fontWeight:
-                                                            FontWeight.w500,
-                                                      ),
-                                                    ),
-                                                    trailing: const Icon(
-                                                      Icons.edit,
-                                                    ),
-                                                    onTap: () {
-                                                      setState(() {
-                                                        _isEditing[comment.id] =
-                                                            true;
-                                                      });
-                                                      Navigator.pop(context);
-                                                    },
-                                                  ),
-                                                ),
-                                                Card(
-                                                  margin:
-                                                      const EdgeInsets.symmetric(
-                                                        horizontal: 12,
-                                                        vertical: 6,
-                                                      ),
-                                                  shape: RoundedRectangleBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                          14,
-                                                        ),
-                                                  ),
-                                                  elevation: 0,
-                                                  color: Colors.white,
-                                                  child: ListTile(
-                                                    contentPadding:
-                                                        const EdgeInsets.symmetric(
-                                                          horizontal: 16,
-                                                          vertical: 6,
-                                                        ),
-                                                    title: const Text(
-                                                      '삭제',
-                                                      style: TextStyle(
-                                                        fontSize: 16,
-                                                        fontWeight:
-                                                            FontWeight.w500,
-                                                        color: Colors.red,
-                                                      ),
-                                                    ),
-                                                    trailing: const Icon(
-                                                      Icons.delete,
-                                                      color: Colors.red,
-                                                    ),
-                                                    onTap: () async {
-                                                      Navigator.pop(context); // Close the bottom sheet first
-
-                                                      final confirm = await showCupertinoDialog<bool>(
-                                                        context: context,
-                                                        builder: (dialogContext) => CupertinoAlertDialog(
-                                                          title: const Text('정말 삭제할까요?'),
-                                                          content: const Text('삭제된 댓글은 복구할 수 없습니다.'),
-                                                          actions: [
-                                                            CupertinoDialogAction(
-                                                              onPressed: () => Navigator.pop(dialogContext, false),
-                                                              child: const Text('취소'),
-                                                            ),
-                                                            CupertinoDialogAction(
-                                                              isDestructiveAction: true,
-                                                              onPressed: () => Navigator.pop(dialogContext, true),
-                                                              child: const Text('삭제'),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      );
-
-                                                      if (confirm == true) {
-                                                        _deleteComment(comment.id);
-                                                      }
-                                                    },
-                                                  ),
-                                                ),
-                                              ],
+                                            margin: const EdgeInsets.only(
+                                              bottom: 12,
                                             ),
                                           ),
-                                    );
-                                  },
-                                ),
+                                          if (isOwner) ...[
+                                            Card(
+                                              margin:
+                                              const EdgeInsets.symmetric(
+                                                horizontal: 12,
+                                                vertical: 6,
+                                              ),
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                BorderRadius.circular(
+                                                  14,
+                                                ),
+                                              ),
+                                              elevation: 0,
+                                              color: Colors.white,
+                                              child: ListTile(
+                                                contentPadding:
+                                                const EdgeInsets.symmetric(
+                                                  horizontal: 16,
+                                                  vertical: 6,
+                                                ),
+                                                title: const Text(
+                                                  '수정',
+                                                  style: TextStyle(
+                                                    fontSize: 16,
+                                                    fontWeight:
+                                                    FontWeight.w500,
+                                                  ),
+                                                ),
+                                                trailing: const Icon(
+                                                  Icons.edit,
+                                                ),
+                                                onTap: () {
+                                                  setState(() {
+                                                    _isEditing[comment.id] =
+                                                    true;
+                                                  });
+                                                  Navigator.pop(context);
+                                                },
+                                              ),
+                                            ),
+                                            Card(
+                                              margin:
+                                              const EdgeInsets.symmetric(
+                                                horizontal: 12,
+                                                vertical: 6,
+                                              ),
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                BorderRadius.circular(
+                                                  14,
+                                                ),
+                                              ),
+                                              elevation: 0,
+                                              color: Colors.white,
+                                              child: ListTile(
+                                                contentPadding:
+                                                const EdgeInsets.symmetric(
+                                                  horizontal: 16,
+                                                  vertical: 6,
+                                                ),
+                                                title: const Text(
+                                                  '삭제',
+                                                  style: TextStyle(
+                                                    fontSize: 16,
+                                                    fontWeight:
+                                                    FontWeight.w500,
+                                                    color: Colors.red,
+                                                  ),
+                                                ),
+                                                trailing: const Icon(
+                                                  Icons.delete,
+                                                  color: Colors.red,
+                                                ),
+                                                onTap: () async {
+                                                  Navigator.pop(context);
+                                                  final confirm = await showCupertinoDialog<
+                                                      bool
+                                                  >(
+                                                    context: context,
+                                                    builder:
+                                                        (
+                                                        dialogContext,
+                                                        ) => CupertinoAlertDialog(
+                                                      title: const Text(
+                                                        '정말 삭제할까요?',
+                                                      ),
+                                                      content: const Text(
+                                                        '삭제된 댓글은 복구할 수 없습니다.',
+                                                      ),
+                                                      actions: [
+                                                        CupertinoDialogAction(
+                                                          onPressed:
+                                                              () => Navigator.pop(
+                                                            dialogContext,
+                                                            false,
+                                                          ),
+                                                          child:
+                                                          const Text(
+                                                            '취소',
+                                                          ),
+                                                        ),
+                                                        CupertinoDialogAction(
+                                                          isDestructiveAction:
+                                                          true,
+                                                          onPressed:
+                                                              () => Navigator.pop(
+                                                            dialogContext,
+                                                            true,
+                                                          ),
+                                                          child:
+                                                          const Text(
+                                                            '삭제',
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  );
+
+                                                  if (confirm == true) {
+                                                    _deleteComment(
+                                                      comment.id,
+                                                    );
+                                                  }
+                                                },
+                                              ),
+                                            ),
+                                          ],
+                                          if (!isOwner)
+                                            Card(
+                                              margin:
+                                              const EdgeInsets.symmetric(
+                                                horizontal: 12,
+                                                vertical: 6,
+                                              ),
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                BorderRadius.circular(
+                                                  14,
+                                                ),
+                                              ),
+                                              elevation: 0,
+                                              color: Colors.white,
+                                              child: ListTile(
+                                                contentPadding:
+                                                const EdgeInsets.symmetric(
+                                                  horizontal: 16,
+                                                  vertical: 6,
+                                                ),
+                                                title: const Text(
+                                                  '신고',
+                                                  style: TextStyle(
+                                                    fontSize: 16,
+                                                    fontWeight:
+                                                    FontWeight.w500,
+                                                    color: Colors.red,
+                                                  ),
+                                                ),
+                                                trailing: const Icon(
+                                                  Icons.flag,
+                                                  color: Colors.red,
+                                                ),
+                                                onTap: () {
+                                                  Navigator.pop(context);
+                                                  Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                      builder:
+                                                          (
+                                                          context,
+                                                          ) => CommentReportPage(
+                                                        postId:
+                                                        widget
+                                                            .postId,
+                                                        commentId:
+                                                        comment.id,
+                                                        commentContent:
+                                                        comment
+                                                            .content,
+                                                      ),
+                                                    ),
+                                                  );
+                                                },
+                                              ),
+                                            ),
+                                        ],
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
                             ],
                           ),
                           const SizedBox(height: 8),
