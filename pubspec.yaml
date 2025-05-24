@@ -41,6 +41,7 @@ dependencies:
       ref: main
   easy_image_viewer: ^1.5.1
   emoji_picker_flutter: ^4.3.0
+  firebase_analytics: ^11.4.6
 
 dev_dependencies:
   flutter_native_splash: ^2.3.10

@@ -1,7 +1,9 @@
 import 'dart:async';
 
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -36,8 +38,11 @@ void main() async {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
+  static FirebaseAnalytics analytics = FirebaseAnalytics.instance;
+
   @override
   Widget build(BuildContext context) {
+    print("print('🔥 DEBUG MODE: $kDebugMode')");
     return MaterialApp(
       title: AppConstants.appTitle,
       debugShowCheckedModeBanner: false,
@@ -51,6 +56,9 @@ class MyApp extends StatelessWidget {
       supportedLocales: [Locale('ko')],
       locale: Locale(('ko')),
       home: const AppEntryPage(),
+      navigatorObservers: [
+        FirebaseAnalyticsObserver(analytics: MyApp.analytics),
+      ],
     );
   }
 }

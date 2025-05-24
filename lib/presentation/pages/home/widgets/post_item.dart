@@ -3,6 +3,7 @@ import 'package:easy_image_viewer/easy_image_viewer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:share_lingo/app/constants/app_colors.dart';
+import 'package:share_lingo/core/firebase_service.dart';
 import 'package:share_lingo/core/utils/format_time_ago.dart';
 import 'package:share_lingo/core/utils/general_utils.dart';
 import 'package:share_lingo/data/dto/post_dto.dart';
@@ -50,6 +51,12 @@ class _PostItemState extends ConsumerState<PostItem> {
     final DateTime now = ref.watch(timeAgoNotifierProvider);
     return GestureDetector(
       onTap: () async {
+        print('logEvent: post_clicked');
+        await FirebaseService.analytics.logEvent(
+          name: 'post_clicked',
+          parameters: {'postId': widget.post.id.toString()},
+        );
+        print('✅ Firebase event logged: post_clicked');
         if (PostDetailPage.currentPostId != widget.post.id) {
           // ✅ Firestore에서 최신 데이터 가져오기
           final doc =

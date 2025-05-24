@@ -66,5 +66,9 @@
 		<true/>
 		<key>UIViewControllerBasedStatusBarAppearance</key>
 		<false/>
+		<key>FirebaseAnalyticsCollectionEnabled</key>
+		<true/>
+		<key>FIRDebugEnabled</key>
+		<true/>
 	</dict>
 </plist>
