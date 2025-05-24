@@ -304,7 +304,7 @@ class _CommentSectionState extends ConsumerState<CommentSection> {
                                 ),
                               ),
                               IconButton(
-                                icon: const Icon(Icons.more_vert),
+                                icon: const Icon(CupertinoIcons.ellipsis),
                                 onPressed: () {
                                   showModalBottomSheet(
                                     context: context,
