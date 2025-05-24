@@ -48,7 +48,6 @@ class _PostDetailPageState extends ConsumerState<PostDetailPage> {
 
   @override
   Widget build(BuildContext context) {
-    /*
     return PopScope(
       canPop: true,
       onPopInvokedWithResult: (bool didPop, Object? result) {
@@ -59,23 +58,23 @@ class _PostDetailPageState extends ConsumerState<PostDetailPage> {
               .refreshAndUpdatePosts();
         }
       },
-     */
-    return GestureDetector(
-      onTap: () => FocusScope.of(context).unfocus(),
-      child: Scaffold(
-        appBar: AppBar(title: const Text('Post'), elevation: 0),
-        body: SingleChildScrollView(
-          child: Column(
-            children: [
-              PostItem(post: _post, displayComments: false),
-              if (_post.isPoll)
-                Padding(
-                  padding: const EdgeInsets.only(top: 16.0),
-                  child: PollPostCard(post: _post, now: DateTime.now()),
-                ),
-              const Divider(),
-              CommentSection(postId: _post.id),
-            ],
+      child: GestureDetector(
+        onTap: () => FocusScope.of(context).unfocus(),
+        child: Scaffold(
+          appBar: AppBar(title: const Text('Post'), elevation: 0),
+          body: SingleChildScrollView(
+            child: Column(
+              children: [
+                PostItem(post: _post, displayComments: false),
+                if (_post.isPoll)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 16.0),
+                    child: PollPostCard(post: _post, now: DateTime.now()),
+                  ),
+                const Divider(),
+                CommentSection(postId: _post.id),
+              ],
+            ),
           ),
         ),
       ),
