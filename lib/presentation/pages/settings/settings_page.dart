@@ -46,6 +46,7 @@ class SettingsPage extends ConsumerWidget {
     if (await canLaunchUrl(uri)) {
       await launchUrl(uri, mode: LaunchMode.inAppBrowserView);
     } else {
+      if (!context.mounted) return;
       SnackbarUtil.showSnackBar(context, 'URL을 열 수 없습니다');
     }
   }
