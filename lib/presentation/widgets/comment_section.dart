@@ -184,7 +184,7 @@ class _CommentSectionState extends ConsumerState<CommentSection> {
                   child: TextField(
                     controller: _commentController,
                     decoration: InputDecoration(
-                      hintText: 'Add a comment...',
+                      hintText: '댓글을 입력하세요...',
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
                         borderSide: BorderSide.none,
@@ -263,6 +263,7 @@ class _CommentSectionState extends ConsumerState<CommentSection> {
                   _isEditing.putIfAbsent(comment.id, () => false);
 
                   return Card(
+                    color: Colors.white,
                     margin: const EdgeInsets.symmetric(
                       horizontal: 16,
                       vertical: 8,
@@ -569,6 +570,7 @@ class _CommentSectionState extends ConsumerState<CommentSection> {
           loading: () => const Center(child: CircularProgressIndicator()),
           error: (error, stack) => Center(child: Text('Error: $error')),
         ),
+        SizedBox(height: 50,),
       ],
     );
   }
