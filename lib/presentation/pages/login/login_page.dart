@@ -1,18 +1,143 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:share_lingo/app/constants/app_constants.dart';
 import 'package:share_lingo/core/firebase_service.dart';
 import 'package:share_lingo/core/utils/navigation_util.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../user_global_view_model.dart';
 import 'login_view_model.dart';
 
-class LoginPage extends ConsumerWidget {
+class LoginPage extends ConsumerStatefulWidget {
   const LoginPage({super.key});
 
+  @override
+  ConsumerState<LoginPage> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends ConsumerState<LoginPage> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final viewModel = ref.read(loginViewModelProvider.notifier);
+      await viewModel.loadAgreement(); // load value from SharedPreferences
+
+      final state = ref.read(loginViewModelProvider);
+      if (!state.hasAgreedToTerms) {
+        _showConsentDialog();
+      }
+    });
+  }
+
+  Future<void> _showConsentDialog() async {
+    bool accepted = false;
+
+    await showCupertinoDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return PopScope(
+              canPop: false,
+              onPopInvokedWithResult: (bool didPop, Object? result) async {},
+              child: CupertinoAlertDialog(
+                title: const Text("이용약관 및 개인정보처리방침"),
+                content: Column(
+                  children: [
+                    const SizedBox(height: 10),
+                    Text(
+                      "앱 사용을 위해 아래 약관에 동의해 주세요.",
+                      style: TextStyle(fontSize: 14),
+                    ),
+                    const SizedBox(height: 17),
+                    GestureDetector(
+                      onTap:
+                          () => launchUrl(
+                            Uri.parse(
+                              'https://englim.me/share-lingo-page/terms',
+                            ),
+                          ),
+                      child: Text(
+                        "📜  이용약관 보기",
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: CupertinoColors.activeBlue,
+                          // decoration: TextDecoration.underline,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    GestureDetector(
+                      onTap:
+                          () => launchUrl(
+                            Uri.parse('https://englim.me/share-lingo-page'),
+                          ),
+                      child: Text(
+                        "📄  개인정보처리방침 보기",
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: CupertinoColors.activeBlue,
+                          // decoration: TextDecoration.underline,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 14),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(top: 2),
+                          child: Transform.scale(
+                            scale: 1.3, // makes the checkbox larger
+                            child: CupertinoCheckbox(
+                              value: accepted,
+                              onChanged: (bool? value) {
+                                setState(() => accepted = value ?? false);
+                              },
+                            ),
+                          ),
+                        ),
+                        const Text(
+                          "위 약관에 동의합니다.",
+                          style: TextStyle(fontSize: 15),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+                actions: [
+                  CupertinoDialogAction(
+                    onPressed:
+                        accepted
+                            ? () {
+                              ref
+                                  .read(loginViewModelProvider.notifier)
+                                  .setAgreement(true);
+                              Navigator.of(context).pop();
+                            }
+                            : null,
+                    isDefaultAction: true,
+                    child: const Text("확인"),
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
   void _login(WidgetRef ref, BuildContext context) async {
+    // if (kDebugMode) {
+    //   final prefs = await SharedPreferences.getInstance();
+    //   await prefs.remove('user_agreed_to_terms');
+    // }
     final loginState = ref.read(loginViewModelProvider);
-    if (loginState.isLoading) return;
+    if (loginState.isLoading || !loginState.hasAgreedToTerms) return;
 
     final loginViewModel = ref.read(loginViewModelProvider.notifier);
     final appUser = await loginViewModel.signIn();
@@ -33,7 +158,7 @@ class LoginPage extends ConsumerWidget {
   }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final loginState = ref.watch(loginViewModelProvider);
     return Scaffold(
       backgroundColor: Colors.white,
@@ -95,7 +220,7 @@ class LoginPage extends ConsumerWidget {
                   ),
                 ),
               ),
-              SizedBox(height: 30),
+              const SizedBox(height: 30),
             ],
           ),
         ),
