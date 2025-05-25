@@ -12,7 +12,8 @@
 ## 📱 화면 및 기능 개요
 
 ### 스플래시 화면
-앱 로딩 시 초기 스플래시 화면
+- 앱 로딩 시 초기 스플래시 화면
+
 <img src="https://github.com/user-attachments/assets/834622fa-14cd-40d3-9974-ec29424906e8" alt="Screenshot_1748175373" width="300"/>
 
 
@@ -55,7 +56,7 @@
 - Google 로그인 버튼
 
 <img src="https://github.com/user-attachments/assets/e0883a3c-c68a-46e7-a021-4ed26f52dbf4" alt="Screenshot_1748175373" width="300"/>
-<img src="(https://github.com/user-attachments/assets/06bbd7b0-f26d-4b93-839a-62c53a65cb89" width="300"/>
+<img src="(https://github.com/user-attachments/assets/06bbd7b0-f26d-4b93-839a-62c53a65cb89" alt="Screenshot_1748175373" width="300"/>
 
 ### 프로필 수정 페이지
 - 이름, 프로필 사진, 모국어, 배우고 싶은 언어, 자기소개 수정
