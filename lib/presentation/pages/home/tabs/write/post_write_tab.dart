@@ -120,6 +120,9 @@ class _PostWriteTabState extends ConsumerState<PostWriteTab> {
   Future<void> _submit() async {
     if (_formKey.currentState?.validate() != true) return;
 
+    final viewModel = ref.read(postWriteViewModelProvider.notifier);
+    viewModel.setLoading();
+
     final content = _contentController.text.trim();
     if (content.isEmpty) return;
 
@@ -135,9 +138,7 @@ class _PostWriteTabState extends ConsumerState<PostWriteTab> {
 
     final combinedImageUrls = [..._existingImageUrls, ...newImageUrls];
     if (uiPollQuestion != null && uiPollOptions != null) {
-      ref
-          .read(postWriteViewModelProvider.notifier)
-          .setPollData(question: uiPollQuestion!, options: uiPollOptions!);
+      viewModel.setPollData(question: uiPollQuestion!, options: uiPollOptions!);
     }
     if (widget.post != null) {
       // 기존 투표 정보 무효화
@@ -159,14 +160,12 @@ class _PostWriteTabState extends ConsumerState<PostWriteTab> {
             );
       }
       // 수정 모드
-      await ref
-          .read(postWriteViewModelProvider.notifier)
-          .updatePost(
-            id: widget.post!.id,
-            content: content,
-            imageUrls: combinedImageUrls,
-            tags: _selectedTags,
-          );
+      await viewModel.updatePost(
+        id: widget.post!.id,
+        content: content,
+        imageUrls: combinedImageUrls,
+        tags: _selectedTags,
+      );
       // 피드 데이터 무효화해서 새로 불러오게 함
       ref.invalidate(feedNotifierProvider);
       if (!mounted) return;
@@ -175,8 +174,7 @@ class _PostWriteTabState extends ConsumerState<PostWriteTab> {
     }
 
     // 새 글 작성
-    final postNotifier = ref.read(postWriteViewModelProvider.notifier);
-    await postNotifier.submitPost(
+    await viewModel.submitPost(
       ref: ref,
       uid: uid,
       content: content,
