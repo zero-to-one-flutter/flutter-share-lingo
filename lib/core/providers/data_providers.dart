@@ -8,6 +8,8 @@ import 'package:share_lingo/domain/usecase/fetch_current_updated_posts_usecase.d
 import 'package:share_lingo/domain/usecase/fetch_initial_posts_usecase.dart';
 import 'package:share_lingo/domain/usecase/fetch_lastest_posts_usecase.dart';
 import 'package:share_lingo/domain/usecase/fetch_older_posts_usecase.dart';
+import 'package:share_lingo/domain/usecase/like_post_use_case.dart';
+import 'package:share_lingo/domain/usecase/unlike_post_use_case.dart';
 import 'package:share_lingo/domain/usecase/update_post_usecase.dart';
 import 'package:share_lingo/domain/usecase/upload_image_usecase.dart';
 import 'package:share_lingo/domain/usecase/vote_post_usecase.dart';
@@ -137,3 +139,13 @@ final imageRepositoryProvider = Provider<ImageRepository>(
 final votePostUseCaseProvider = Provider(
   (ref) => VotePostUseCase(ref.read(postRepositoryProvider)),
 );
+
+final likePostUsecaseProvider = Provider<LikePostUseCase>((ref) {
+  final repository = ref.read(postRepositoryProvider);
+  return LikePostUseCase(repository);
+});
+
+final unlikePostUsecaseProvider = Provider<UnlikePostUseCase>((ref) {
+  final repository = ref.read(postRepositoryProvider);
+  return UnlikePostUseCase(repository);
+});

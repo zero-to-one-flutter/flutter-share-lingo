@@ -144,6 +144,14 @@ class FeedNotifier
           .take(3)
           .map((e) => CachedNetworkImageProvider(e))
           .toList();
+
+  Future<void> likePost(String postId, String userId) async {
+    await ref.read(likePostUsecaseProvider).execute(postId, userId);
+  }
+
+  Future<void> unlikePost(String postId, String userId) async {
+    await ref.read(unlikePostUsecaseProvider).execute(postId, userId);
+  }
 }
 
 final feedNotifierProvider = AsyncNotifierProvider.autoDispose

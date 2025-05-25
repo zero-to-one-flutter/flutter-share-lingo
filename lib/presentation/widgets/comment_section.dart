@@ -10,6 +10,7 @@ import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:flutter/foundation.dart' as foundation;
 
 import '../pages/report/comment_report_page.dart';
+import 'app_cached_image.dart';
 
 class CommentSection extends ConsumerStatefulWidget {
   final String postId;
@@ -277,9 +278,12 @@ class _CommentSectionState extends ConsumerState<CommentSection> {
                         children: [
                           Row(
                             children: [
-                              CircleAvatar(
-                                backgroundImage: NetworkImage(
-                                  comment.userProfileImage,
+                              ClipOval(
+                                child: AppCachedImage(
+                                  imageUrl: comment.userProfileImage,
+                                  width: 38,
+                                  height: 38,
+                                  fit: BoxFit.cover,
                                 ),
                               ),
                               const SizedBox(width: 8),

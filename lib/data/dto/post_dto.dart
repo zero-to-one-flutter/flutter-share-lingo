@@ -20,6 +20,7 @@ class PostDto {
   final DateTime createdAt;
   final Timestamp? updatedAt;
   final int likeCount;
+  final List<String> likedBy;
   final int commentCount;
   final bool deleted;
 
@@ -49,6 +50,7 @@ class PostDto {
     required this.createdAt,
     this.updatedAt,
     required this.likeCount,
+    this.likedBy = const [],
     required this.commentCount,
     required this.deleted,
     this.isPoll = false,
@@ -78,6 +80,7 @@ class PostDto {
       createdAt: (map['createdAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
       updatedAt: map['updatedAt'] as Timestamp?,
       likeCount: map['likeCount'] ?? 0,
+      likedBy: List<String>.from(map['likedBy'] ?? []),
       commentCount: map['commentCount'] ?? 0,
       deleted: map['deleted'] ?? false,
 
@@ -118,6 +121,7 @@ class PostDto {
       'createdAt': FieldValue.serverTimestamp(),
       'updatedAt': updatedAt,
       'likeCount': likeCount,
+      'likedBy': likedBy,
       'commentCount': commentCount,
       'deleted': deleted,
 
@@ -150,6 +154,7 @@ class PostDto {
       createdAt: createdAt,
       updatedAt: updatedAt?.toDate(),
       likeCount: likeCount,
+      likedBy: likedBy,
       commentCount: commentCount,
       deleted: deleted,
 
@@ -188,6 +193,7 @@ class PostDto {
               ? Timestamp.fromDate(entity.updatedAt!)
               : null,
       likeCount: entity.likeCount,
+      likedBy: entity.likedBy,
       commentCount: entity.commentCount,
       deleted: entity.deleted,
 

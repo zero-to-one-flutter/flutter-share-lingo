@@ -19,6 +19,7 @@ class PostEntity {
   final DateTime createdAt;
   final DateTime? updatedAt;
   final int likeCount;
+  final List<String> likedBy;
   final int commentCount;
   final bool deleted;
 
@@ -48,6 +49,7 @@ class PostEntity {
     required this.createdAt,
     this.updatedAt,
     required this.likeCount,
+    this.likedBy = const [],
     required this.commentCount,
     required this.deleted,
     //  투표 관련 필드 추가
@@ -71,6 +73,8 @@ class PostEntity {
     DateTime? createdAt,
     DateTime? updatedAt,
     int? likeCount,
+    List<String>? likedBy,
+
     int? commentCount,
     bool? deleted,
   }) {
@@ -93,6 +97,7 @@ class PostEntity {
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
       likeCount: likeCount ?? this.likeCount,
+      likedBy: likedBy ?? this.likedBy,
       commentCount: commentCount ?? this.commentCount,
       deleted: deleted ?? this.deleted,
     );
