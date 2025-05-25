@@ -56,7 +56,7 @@
 - Google 로그인 버튼
 
 <img src="https://github.com/user-attachments/assets/e0883a3c-c68a-46e7-a021-4ed26f52dbf4" alt="Screenshot_1748175373" width="300"/>
-<img src="(https://github.com/user-attachments/assets/06bbd7b0-f26d-4b93-839a-62c53a65cb89" alt="Screenshot_1748175373" width="300"/>
+<img src="https://github.com/user-attachments/assets/8305e8af-fb8b-41f8-96a0-faffc3f2f9d9" alt="Screenshot_1748175373" width="300"/>
 
 ### 프로필 수정 페이지
 - 이름, 프로필 사진, 모국어, 배우고 싶은 언어, 자기소개 수정
@@ -72,6 +72,25 @@
 <img src="https://github.com/user-attachments/assets/68ef4af9-ccc7-4ff2-9026-acd5cb5b733d" alt="Screenshot_1748175373" width="300"/>
 <img src="https://github.com/user-attachments/assets/add82325-c959-4401-8ebd-c74cca78a395" alt="Screenshot_1748175373" width="300"/>
 
+### 게시물신고 댓글 신고 기능
+<img src="https://github.com/user-attachments/assets/ccb87584-f4d4-4829-a158-17c48e6b7c5e" alt="Screenshot_1748175373" width="300"/>
+<img src="https://github.com/user-attachments/assets/2b652e1c-f30c-4c47-b4f6-8b74c3fdf315" alt="Screenshot_1748175373" width="300"/>
+<img src="https://github.com/user-attachments/assets/6258c533-cad9-4740-a984-875e51118bc4" alt="Screenshot_1748175373" width="300"/>
+
+### 텐서플로우 yolo 모델 적용
+- yolo 적용으로 사람이미지 선택시 사람이미지 업로드 못하게 막는 기능
+
+
+<img src="https://github.com/user-attachments/assets/b4793995-8943-424b-89db-c2bdf63c2378" alt="Screenshot_1748175373" width="300"/>
+<img src="https://github.com/user-attachments/assets/fd0a8eb7-a910-462c-9f19-4e912d36eb46" alt="Screenshot_1748175373" width="300"/>
+
+### 투표기능 
+
+
+<img src="https://github.com/user-attachments/assets/79bc28c5-d9ad-415c-a3ef-db8a1c31153d" alt="Screenshot_1748175373" width="300"/>
+<img src="https://github.com/user-attachments/assets/e15683a9-9ff2-4a02-a597-128171390a26" alt="Screenshot_1748175373" width="300"/>
+<img src="https://github.com/user-attachments/assets/52aa0c6f-8f61-4a75-8b1e-41416ab982ba" alt="Screenshot_1748175373" width="300"/>
+<img src="https://github.com/user-attachments/assets/39e2e150-dae4-4d01-b901-aaa63eeabefc" alt="Screenshot_1748175373" width="300"/>
 
 ---
 
