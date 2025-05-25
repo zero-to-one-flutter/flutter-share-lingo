@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_image_viewer/easy_image_viewer.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:share_lingo/app/constants/app_colors.dart';
@@ -43,9 +44,17 @@ class PostItem extends ConsumerStatefulWidget {
 class _PostItemState extends ConsumerState<PostItem> {
   // ignore: unused_field
   final bool _showEmojiPicker = false;
+  late PostEntity _post;
+
+  @override
+  void initState() {
+    super.initState();
+    _post = widget.post;
+  }
 
   @override
   Widget build(BuildContext context) {
+    final userId = FirebaseAuth.instance.currentUser?.uid ?? '';
     final List<ImageProvider> cachedImages = ref
         .read(feedNotifierProvider(FeedQueryArg()).notifier)
         .getCachedImageProviders(widget.post);
@@ -94,6 +103,48 @@ class _PostItemState extends ConsumerState<PostItem> {
             if (cachedImages.isNotEmpty) SizedBox(height: 10),
             _imageBox(cachedImages),
             _tagBar(),
+            //  좋아요 버튼
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                IconButton(
+                  icon: Icon(
+                    _post.likedBy.contains(userId)
+                        ? Icons.favorite
+                        : Icons.favorite_border,
+                    color: _post.likedBy.contains(userId) ? Colors.red : null,
+                  ),
+                  onPressed: () async {
+                    final feedNotifier = ref.read(
+                      feedNotifierProvider(const FeedQueryArg()).notifier,
+                    );
+
+                    PostEntity updatedPost = _post;
+
+                    if (_post.likedBy.contains(userId)) {
+                      await feedNotifier.unlikePost(_post.id, userId);
+                      // UI만 즉시 반영
+                      updatedPost = updatedPost.copyWith(
+                        likeCount: updatedPost.likeCount - 1,
+                        likedBy: List.from(updatedPost.likedBy)..remove(userId),
+                      );
+                    } else {
+                      await feedNotifier.likePost(_post.id, userId);
+                      // UI만 즉시 반영
+                      updatedPost = updatedPost.copyWith(
+                        likeCount: updatedPost.likeCount + 1,
+                        likedBy: List.from(updatedPost.likedBy)..add(userId),
+                      );
+                    }
+
+                    setState(() {
+                      _post = updatedPost;
+                    });
+                  },
+                ),
+                Text('${_post.likeCount}'),
+              ],
+            ),
             // comment 개수 표시
             // detail 페이지에서는 표시 X
             !widget.displayComments

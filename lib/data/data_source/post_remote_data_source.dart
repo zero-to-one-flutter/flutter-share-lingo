@@ -137,9 +137,10 @@ class PostRemoteDataSource {
     final query = _applyFilter(base, filter, user);
     final snapshot = await query.get();
 
-    final posts = snapshot.docs
-        .map((doc) => PostDto.fromMap(doc.id, doc.data()))
-        .toList();
+    final posts =
+        snapshot.docs
+            .map((doc) => PostDto.fromMap(doc.id, doc.data()))
+            .toList();
     return _excludeSelf(posts, filter, user);
   }
 
@@ -210,22 +211,34 @@ class PostRemoteDataSource {
         .toList();
   }
 
-  Future<void> likePost(String postId, String uid) async {
-    await firestore
-        .collection('posts')
-        .doc(postId)
-        .collection('likes')
-        .doc(uid)
-        .set({'timestamp': FieldValue.serverTimestamp()});
+  Future<void> likePost(String postId, String userId) async {
+    final postRef = firestore.collection('posts').doc(postId);
+
+    await firestore.runTransaction((transaction) async {
+      // 좋아요 목록에 추가
+      transaction.set(postRef.collection('likes').doc(userId), {
+        'timestamp': FieldValue.serverTimestamp(),
+      });
+      // 게시글 likeCount 1 증가
+      transaction.update(postRef, {
+        'likeCount': FieldValue.increment(1),
+        'likedBy': FieldValue.arrayUnion([userId]),
+      });
+    });
   }
 
-  Future<void> unlikePost(String postId, String uid) async {
-    await firestore
-        .collection('posts')
-        .doc(postId)
-        .collection('likes')
-        .doc(uid)
-        .delete();
+  Future<void> unlikePost(String postId, String userId) async {
+    final postRef = firestore.collection('posts').doc(postId);
+
+    await firestore.runTransaction((transaction) async {
+      // 좋아요 목록에서 제거
+      transaction.delete(postRef.collection('likes').doc(userId));
+      // 게시글 likeCount 1 감소
+      transaction.update(postRef, {
+        'likeCount': FieldValue.increment(-1),
+        'likedBy': FieldValue.arrayRemove([userId]),
+      });
+    });
   }
 
   Future<void> voteOnPost({
