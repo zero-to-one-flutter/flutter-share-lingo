@@ -48,36 +48,35 @@ class _PostDetailPageState extends ConsumerState<PostDetailPage> {
 
   @override
   Widget build(BuildContext context) {
-    return PopScope(
-      canPop: true,
-      onPopInvokedWithResult: (bool didPop, Object? result) {
-        if (didPop) {
-          log('left detailPage');
-          ref
-              .read(feedNotifierProvider(FeedQueryArg()).notifier)
-              .refresh();
-        }
-      },
-      child: GestureDetector(
-        onTap: () => FocusScope.of(context).unfocus(),
-        child: Scaffold(
-          appBar: AppBar(title: const Text('Post'), elevation: 0),
-          body: SingleChildScrollView(
-            child: Column(
-              children: [
+    // return PopScope(
+    //     canPop: true,
+    //     onPopInvokedWithResult: (bool didPop, Object? result) {
+    //       if (didPop) {
+    //         log('left detailPage');
+    //         ref
+    //             .read(feedNotifierProvider(FeedQueryArg()).notifier)
+    //             .refresh();
+    //       }
+    //     },
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
+      child: Scaffold(
+        appBar: AppBar(title: const Text('Post'), elevation: 0),
+        body: SingleChildScrollView(
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: PostItem(post: _post, displayComments: false),
+              ),
+              if (_post.isPoll)
                 Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: PostItem(post: _post, displayComments: false),
+                  padding: const EdgeInsets.only(top: 6, left: 8, right: 8),
+                  child: PollPostCard(post: _post, now: DateTime.now()),
                 ),
-                if (_post.isPoll)
-                  Padding(
-                    padding: const EdgeInsets.only(top: 6, left: 8, right: 8),
-                    child: PollPostCard(post: _post, now: DateTime.now()),
-                  ),
-                // const Divider(),
-                CommentSection(postId: _post.id),
-              ],
-            ),
+              // const Divider(),
+              CommentSection(postId: _post.id),
+            ],
           ),
         ),
       ),
