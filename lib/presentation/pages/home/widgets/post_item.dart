@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_image_viewer/easy_image_viewer.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:share_lingo/app/constants/app_colors.dart';
@@ -12,6 +11,7 @@ import 'package:share_lingo/domain/entity/post_entity.dart';
 import 'package:share_lingo/presentation/pages/home/tabs/feed/feed_view_model.dart';
 import 'package:share_lingo/presentation/pages/home/widgets/expandable_text.dart';
 import 'package:share_lingo/presentation/pages/home/widgets/post_menu_button.dart';
+import 'package:share_lingo/presentation/user_global_view_model.dart';
 import 'package:share_lingo/presentation/widgets/app_cached_image.dart';
 
 import '../../../../domain/entity/app_user.dart';
@@ -54,7 +54,7 @@ class _PostItemState extends ConsumerState<PostItem> {
 
   @override
   Widget build(BuildContext context) {
-    final userId = FirebaseAuth.instance.currentUser?.uid ?? '';
+    final userId = ref.read(userGlobalViewModelProvider)!.id;
     final List<ImageProvider> cachedImages = ref
         .read(feedNotifierProvider(FeedQueryArg()).notifier)
         .getCachedImageProviders(widget.post);
@@ -103,48 +103,6 @@ class _PostItemState extends ConsumerState<PostItem> {
             if (cachedImages.isNotEmpty) SizedBox(height: 10),
             _imageBox(cachedImages),
             _tagBar(),
-            //  좋아요 버튼
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                IconButton(
-                  icon: Icon(
-                    _post.likedBy.contains(userId)
-                        ? Icons.favorite
-                        : Icons.favorite_border,
-                    color: _post.likedBy.contains(userId) ? Colors.red : null,
-                  ),
-                  onPressed: () async {
-                    final feedNotifier = ref.read(
-                      feedNotifierProvider(const FeedQueryArg()).notifier,
-                    );
-
-                    PostEntity updatedPost = _post;
-
-                    if (_post.likedBy.contains(userId)) {
-                      await feedNotifier.unlikePost(_post.id, userId);
-                      // UI만 즉시 반영
-                      updatedPost = updatedPost.copyWith(
-                        likeCount: updatedPost.likeCount - 1,
-                        likedBy: List.from(updatedPost.likedBy)..remove(userId),
-                      );
-                    } else {
-                      await feedNotifier.likePost(_post.id, userId);
-                      // UI만 즉시 반영
-                      updatedPost = updatedPost.copyWith(
-                        likeCount: updatedPost.likeCount + 1,
-                        likedBy: List.from(updatedPost.likedBy)..add(userId),
-                      );
-                    }
-
-                    setState(() {
-                      _post = updatedPost;
-                    });
-                  },
-                ),
-                Text('${_post.likeCount}'),
-              ],
-            ),
             // comment 개수 표시
             // detail 페이지에서는 표시 X
             !widget.displayComments
@@ -154,17 +112,69 @@ class _PostItemState extends ConsumerState<PostItem> {
                     SizedBox(height: 15),
                     Row(
                       children: [
+                        //  좋아요 버튼
+                        SizedBox(
+                          height: 25,
+                          width: 25,
+                          child: IconButton(
+                            padding: EdgeInsets.all(0.0),
+                            icon: Icon(
+                              size: 23,
+                              _post.likedBy.contains(userId)
+                                  ? Icons.favorite
+                                  : Icons.favorite_border,
+                              color:
+                              _post.likedBy.contains(userId)
+                                  ? Colors.red
+                                  : Color(0XFF6F6F6F),
+                            ),
+                            onPressed: () async {
+                              final feedNotifier = ref.read(
+                                feedNotifierProvider(const FeedQueryArg()).notifier,
+                              );
+
+                              PostEntity updatedPost = _post;
+
+                              if (_post.likedBy.contains(userId)) {
+                                await feedNotifier.unlikePost(_post.id, userId);
+                                // UI만 즉시 반영
+                                updatedPost = updatedPost.copyWith(
+                                  likeCount: updatedPost.likeCount - 1,
+                                  likedBy: List.from(updatedPost.likedBy)..remove(userId),
+                                );
+                              } else {
+                                await feedNotifier.likePost(_post.id, userId);
+                                // UI만 즉시 반영
+                                updatedPost = updatedPost.copyWith(
+                                  likeCount: updatedPost.likeCount + 1,
+                                  likedBy: List.from(updatedPost.likedBy)..add(userId),
+                                );
+                              }
+
+                              setState(() {
+                                _post = updatedPost;
+                              });
+                            },
+                          ),
+                        ),
+                        SizedBox(width: 2),
+                        Text(
+                          '${_post.likeCount}',
+                          style: TextStyle(fontSize: 16, color: Color(0XFF6F6F6F)),
+                        ),
+
+                        SizedBox(width: 15),
                         Icon(
-                          Icons.chat_bubble_outline_outlined,
-                          color: Colors.grey[500],
+                          Icons.mode_comment_outlined,
+                          color: Color(0XFF6F6F6F),
                           size: 20,
                         ),
-                        SizedBox(width: 8),
+                        SizedBox(width: 4),
                         Text(
                           '${widget.post.commentCount}',
                           style: TextStyle(
-                            fontSize: 14,
-                            color: Colors.grey[700],
+                            fontSize: 16,
+                            color: Color(0XFF6F6F6F),
                           ),
                         ),
                       ],
