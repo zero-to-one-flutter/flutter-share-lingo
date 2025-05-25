@@ -13,7 +13,7 @@
 
 ### 스플래시 화면
 앱 로딩 시 초기 스플래시 화면
-
+<img src="https://github.com/user-attachments/assets/834622fa-14cd-40d3-9974-ec29424906e8" alt="Screenshot_1748175373" width="500"/>
 ### BottomNavigationBar
 - 홈탭
 - 글 작성 탭
@@ -21,30 +21,38 @@
 
 ### 피드탭 (홈 페이지)
 - 게시글 리스트: 사용자 프로필 이미지, 사용자 이름, 모국어 ↔ 배우고 싶은 언어, 글, 사진
-- 코멘트 버튼, 태그 표시, 무한 스크롤
-
+ 코멘트 버튼, 태그 표시, 무한 스크롤
+<img src="https://github.com/user-attachments/assets/b1da6d02-cb9b-47d1-a62f-8419ce1d4589" alt="Screenshot_1748175373" width="500"/>
 ### 글작성 페이지
 - 내용 TextField
 - 사진 업로드 버튼
 - 태그 선택 (태그 페이지로 이동)
-- 완료/제출 버튼
-
+-게시 버튼 
+<img src="https://github.com/user-attachments/assets/721e2a09-7271-49db-92f7-2ef2ef91baae" alt="Screenshot_1748175373" width="500"/>
 ### 태그 선택 페이지
 - 태그 리스트 표시
+<img src="https://github.com/user-attachments/assets/a0d71263-46e6-43e7-b15c-f631040bcfe3" alt="Screenshot_1748175373" width="500"/>
 
 ### 글 상세 페이지 / 코멘트 페이지
 - 게시글 상세: 프로필, 이름, 내용, 사진
 - 댓글 리스트: 댓글내용, 작성일
 - 하단 댓글 입력창 및 아이콘
+<img src="https://github.com/user-attachments/assets/034f9500-cbe1-4628-a5f3-9af9446e024a" alt="Screenshot_1748175373" width="500"/>
+<img src="https://github.com/user-attachments/assets/5424c122-91ed-4a34-af42-2bcced054cf2" alt="Screenshot_1748175373" width="500"/>
 
 ### 로그인 페이지
 - Google 로그인 버튼
+<img src="https://github.com/user-attachments/assets/e0883a3c-c68a-46e7-a021-4ed26f52dbf4" alt="Screenshot_1748175373" width="500"/>
+<img src="(https://github.com/user-attachments/assets/06bbd7b0-f26d-4b93-839a-62c53a65cb89" width="500"/>
 
 ### 프로필 수정 페이지
 - 이름, 프로필 사진, 모국어, 배우고 싶은 언어, 자기소개 수정
-
+<img src="https://github.com/user-attachments/assets/1b1eac50-9a91-4ff7-b201-0e431b022d54" alt="Screenshot_1748175373" width="500"/>
 ### 프로필 페이지
 - 이름, 프로필 사진, 모국어 ↔ 배우고 싶은 언어, 자기소개
+<img src="https://github.com/user-attachments/assets/68ef4af9-ccc7-4ff2-9026-acd5cb5b733d" alt="Screenshot_1748175373" width="500"/>
+<img src="https://github.com/user-attachments/assets/add82325-c959-4401-8ebd-c74cca78a395" alt="Screenshot_1748175373" width="500"/>
+
 
 ---
 
