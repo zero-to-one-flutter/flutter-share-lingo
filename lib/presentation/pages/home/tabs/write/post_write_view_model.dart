@@ -25,6 +25,11 @@ class PostWriteViewModel extends StateNotifier<AsyncValue<void>> {
     required this.updatePostUseCase,
   }) : super(const AsyncData(null));
 
+
+  void setLoading() {
+    state = const AsyncLoading();
+  }
+
   Future<void> submitPost({
     required WidgetRef ref,
     required String uid,
@@ -32,7 +37,7 @@ class PostWriteViewModel extends StateNotifier<AsyncValue<void>> {
     required List<String> tags,
     required List<Uint8List> imageBytesList,
   }) async {
-    state = const AsyncLoading();
+    // state = const AsyncLoading();
 
     try {
       final user = ref.read(userGlobalViewModelProvider);
@@ -90,7 +95,7 @@ class PostWriteViewModel extends StateNotifier<AsyncValue<void>> {
     required List<String> imageUrls,
     required List<String> tags,
   }) async {
-    state = const AsyncLoading();
+    // state = const AsyncLoading();
     try {
       final updateData = {
         'content': content,
