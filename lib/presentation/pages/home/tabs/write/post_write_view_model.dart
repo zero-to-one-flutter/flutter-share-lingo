@@ -25,7 +25,6 @@ class PostWriteViewModel extends StateNotifier<AsyncValue<void>> {
     required this.updatePostUseCase,
   }) : super(const AsyncData(null));
 
-
   void setLoading() {
     state = const AsyncLoading();
   }
@@ -96,15 +95,35 @@ class PostWriteViewModel extends StateNotifier<AsyncValue<void>> {
     required List<String> tags,
   }) async {
     // state = const AsyncLoading();
+
+    // Firestore 인스턴스
+    final docRef = FirebaseFirestore.instance.collection('posts').doc(id);
+
+    //  기존 데이터 불러오기
+    final docSnapshot = await docRef.get();
+    final existingData = docSnapshot.data();
+    // 기존 투표 데이터 (null 허용)
+    final existingPollQuestion = existingData?['pollQuestion'] as String?;
+    final existingPollOptions =
+        (existingData?['pollOptions'] as List<dynamic>?)?.cast<String>();
+
     try {
       final updateData = {
         'content': content,
         'imageUrl': imageUrls,
         'tags': tags,
       };
+
       final hasPoll =
           _pollQuestion?.isNotEmpty == true && _pollOptions?.isNotEmpty == true;
-      if (hasPoll) {
+
+      //  기존과 비교해서 실제로 투표가 수정되었는지 판단
+      final isPollModified =
+          _pollQuestion != existingPollQuestion ||
+          _pollOptions?.toString() != existingPollOptions?.toString();
+
+      if (hasPoll && isPollModified) {
+        // 새로 작성한 투표가 있고, 실제로 수정한 경우만 초기화
         updateData.addAll({
           'isPoll': true,
           if (_pollQuestion != null) 'pollQuestion': _pollQuestion!,
@@ -112,7 +131,20 @@ class PostWriteViewModel extends StateNotifier<AsyncValue<void>> {
           'pollVotes': <String, int>{},
           'userVotes': <String, int>{},
         });
-      } else {
+      } else if (!hasPoll &&
+          existingPollQuestion != null &&
+          existingPollOptions != null) {
+        // 새로 작성한 투표는 없지만, 기존에 투표가 있으면 유지
+        // 아무것도 안 추가 (기존 투표 데이터 유지)
+        updateData.addAll({
+          'isPoll': false,
+          'pollQuestion': FieldValue.delete(),
+          'pollOptions': FieldValue.delete(),
+          'pollVotes': FieldValue.delete(),
+          'userVotes': FieldValue.delete(),
+        });
+      } else if (!hasPoll) {
+        // 투표가 아예 없는 경우에만 삭제
         updateData.addAll({
           'isPoll': false,
           'pollQuestion': FieldValue.delete(),
@@ -122,7 +154,6 @@ class PostWriteViewModel extends StateNotifier<AsyncValue<void>> {
         });
       }
 
-      final docRef = FirebaseFirestore.instance.collection('posts').doc(id);
       await docRef.update(updateData);
 
       if (!mounted) return;
