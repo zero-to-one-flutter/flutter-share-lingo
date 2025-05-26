@@ -82,6 +82,20 @@ class _PollPostCardState extends ConsumerState<PollPostCard> {
                 ),
             ],
           ),
+          const SizedBox(height: 4),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Flexible(
+                child: Text(
+                  '총 투표 인원: $totalVotes명',
+                  style: const TextStyle(fontSize: 14, color: Colors.grey),
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
+                ),
+              ),
+            ],
+          ),
           const SizedBox(height: 10),
           for (int i = 0; i < options.length; i++)
             _buildOption(
