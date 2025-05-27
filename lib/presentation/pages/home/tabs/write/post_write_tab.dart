@@ -141,8 +141,12 @@ class _PostWriteTabState extends ConsumerState<PostWriteTab> {
       viewModel.setPollData(question: uiPollQuestion!, options: uiPollOptions!);
     }
     if (widget.post != null) {
+      //기존 투표 내용과 달라졌을때만 초기화
+      final isPollModified =
+          widget.post?.pollQuestion != uiPollQuestion ||
+          widget.post?.pollOptions?.toString() != uiPollOptions?.toString();
       // 기존 투표 정보 무효화
-      if (uiPollQuestion != null && uiPollOptions != null) {
+      if (uiPollQuestion != null && uiPollOptions != null && isPollModified) {
         final postId = widget.post!.id;
 
         // 상태 리셋
