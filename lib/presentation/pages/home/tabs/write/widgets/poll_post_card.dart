@@ -89,7 +89,7 @@ class _PollPostCardState extends ConsumerState<PollPostCard> {
               Flexible(
                 child: Text(
                   '총 투표 인원: $totalVotes명',
-                  style: const TextStyle(fontSize: 14, color: Colors.grey),
+                  style: const TextStyle(fontSize: 14),
                   overflow: TextOverflow.ellipsis,
                   maxLines: 1,
                 ),
