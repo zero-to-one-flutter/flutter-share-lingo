@@ -27,7 +27,8 @@ class UserGlobalViewModel extends Notifier<AppUser?> {
   String? calculateDistanceFrom(GeoPoint? otherLocation) {
     final userLocation = state?.location;
     if (userLocation == null || otherLocation == null) return null;
-    return userLocation.distanceFrom(otherLocation);
+    final distanceKm = userLocation.distanceFrom(otherLocation);
+    return '${distanceKm.toStringAsFixed(1)} km';
   }
 
   void setName(String name) {
